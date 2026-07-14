@@ -3,3 +3,9 @@ dist/
 .npm-cache/
 *.tsbuildinfo
 .DS_Store
+
+test-results/
+tests/
+.codex/
+docs/
+e2e/

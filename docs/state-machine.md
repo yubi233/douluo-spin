@@ -36,6 +36,7 @@ any stable play state -> rolling -> previous/derived stable state
 
 - 状态机只负责流程、上下文和守卫，不依赖 Vue 或 DOM。
 - 权重抽取位于 `engine.ts`，相同种子与操作顺序得到相同结果。
-- Vue store 负责动画等待、自动推进、撤销和浏览器存档，不自行改写业务阶段。
+- Vue store 负责动画等待、自动推进、撤销和浏览器存档，不自行改写业务阶段。一次已结算投掷前保存的完整 `MachineState` 是撤销原子边界；回退后由恢复的活动任务重建盘面、候选项和动画状态。
 - `RAW_DATA` 被解析为 `wheels.json`，运行时不执行原页面脚本。
+- 转盘覆盖是与角色存档并列的 UI 数据域：按池 ID 保存至 `douluo-wheel-overrides-v1`，不参与状态机迁移，不会被撤销或角色存档回滚。有效池在进入抽取、Canvas、概率与编辑器前统一合并，原始 JSON 不被变异。
 - 自由转盘是只读沙箱，不污染主状态机上下文。

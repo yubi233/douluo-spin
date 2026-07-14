@@ -9,6 +9,14 @@ export interface DrawResult {
   eligibleCount: number
 }
 
+export interface CandidateDistribution {
+  option: WheelOption
+  weight: number
+  probability: number
+  startAngle: number
+  endAngle: number
+}
+
 function containsAny(text: string, values: string[]) {
   return values.some((value) => text.includes(value))
 }
@@ -44,32 +52,46 @@ export function isEligible(option: WheelOption, task: RollTask, context: GameCon
   return true
 }
 
-export function drawOption(pool: WheelPool, task: RollTask, context: GameContext): DrawResult {
-  const enabled = enabledOptions(pool)
+export function candidateDistribution(pool: WheelPool, task: RollTask, context: GameContext): CandidateDistribution[] {
+  const enabled = enabledOptions(pool).filter((option) => optionWeight(option) > 0)
   const eligible = enabled.filter((option) => isEligible(option, task, context))
   const candidates = eligible.length > 0 ? eligible : enabled
-  if (candidates.length === 0) throw new Error(`转盘“${pool.name}”没有可用选项`)
+  if (candidates.length === 0) return []
 
   const total = candidates.reduce((sum, option) => sum + optionWeight(option), 0)
+  let startAngle = 0
+  return candidates.map((option) => {
+    const probability = optionWeight(option) / total
+    const endAngle = startAngle + probability * Math.PI * 2
+    const candidate = { option, weight: optionWeight(option), probability, startAngle, endAngle }
+    startAngle = endAngle
+    return candidate
+  })
+}
+
+export function drawOption(pool: WheelPool, task: RollTask, context: GameContext): DrawResult {
+  const candidates = candidateDistribution(pool, task, context)
+  if (candidates.length === 0) throw new Error(`转盘“${pool.name}”没有可用选项`)
+
+  const total = candidates.reduce((sum, candidate) => sum + candidate.weight, 0)
   const random = nextRandom(context.rng)
   let cursor = random.value * total
   let selected = candidates[candidates.length - 1]!
-  for (const option of candidates) {
-    cursor -= optionWeight(option)
+  for (const candidate of candidates) {
+    cursor -= candidate.weight
     if (cursor <= 0) {
-      selected = option
+      selected = candidate
       break
     }
   }
   return {
-    option: selected,
-    probability: optionWeight(selected) / total,
+    option: selected.option,
+    probability: selected.probability,
     nextRng: random.state,
     eligibleCount: candidates.length,
   }
 }
 
 export function previewOptions(pool: WheelPool, task: RollTask, context: GameContext): WheelOption[] {
-  const eligible = enabledOptions(pool).filter((option) => isEligible(option, task, context))
-  return eligible.length > 0 ? eligible : enabledOptions(pool)
+  return candidateDistribution(pool, task, context).map((candidate) => candidate.option)
 }

@@ -13,6 +13,7 @@ import type {
   TaskHandler,
   TransitionResult,
   WheelOption,
+  WheelPool,
 } from './types'
 
 const HUMAN_SETUP: Array<[string, string, TaskHandler]> = [
@@ -671,10 +672,10 @@ export function transition(current: MachineState, event: MachineEvent): Transiti
   return { state: current, accepted: false }
 }
 
-export function drawActiveTask(state: MachineState) {
+export function drawActiveTask(state: MachineState, resolvePool: (name: string) => WheelPool | undefined = findPool) {
   const active = state.context.activeTask
   if (state.value !== 'rolling' || !active) throw new Error('当前状态没有待抽取任务')
-  const pool = findPool(active.pool)
+  const pool = resolvePool(active.pool)
   if (!pool) throw new Error(`找不到转盘：${active.pool}`)
   return { pool, draw: drawOption(pool, active, state.context) }
 }

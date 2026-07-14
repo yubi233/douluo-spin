@@ -1,9 +1,11 @@
 import { computed, readonly, shallowRef } from 'vue'
 import { findPool } from '@/domain/catalog'
+import { previewOptions } from '@/domain/engine'
 import { drawActiveTask, createInitialState, transition } from '@/domain/machine'
 import { createSeed } from '@/domain/random'
 import type { MachineEvent, MachineState, StartRoute, WheelOption, WheelPool } from '@/domain/types'
 import { downloadText, safeFileName, soften } from '@/utils/text'
+import { useWheelOverrides } from './useWheelOverrides'
 
 const STORAGE_KEY = 'douluo-spin-vue-v1'
 const machine = shallowRef<MachineState>(createInitialState())
@@ -15,7 +17,22 @@ const wheelPool = shallowRef<WheelPool | null>(null)
 const wheelOptions = shallowRef<WheelOption[]>([])
 const wheelSelectedIndex = shallowRef(-1)
 const wheelSpinNonce = shallowRef(0)
+const wheelResetNonce = shallowRef(0)
 let autoTimer: number | null = null
+const overrides = useWheelOverrides()
+
+function currentTask() {
+  return machine.value.context.activeTask ?? machine.value.context.queue[0] ?? null
+}
+
+function refreshWheel(reset = true) {
+  const task = currentTask()
+  const pool = task ? overrides.resolve(task.pool) ?? null : null
+  wheelPool.value = pool
+  wheelOptions.value = pool && task ? previewOptions(pool, task, machine.value.context) : []
+  wheelSelectedIndex.value = -1
+  if (reset) wheelResetNonce.value += 1
+}
 
 function snapshot() {
   history.value = [...history.value.slice(-49), structuredClone(machine.value)]
@@ -46,10 +63,8 @@ function cancelStart() {
 function start(route: StartRoute, seed = createSeed()) {
   stopAuto()
   history.value = []
-  wheelPool.value = null
-  wheelOptions.value = []
-  wheelSelectedIndex.value = -1
   apply({ type: 'START', route, seed })
+  refreshWheel()
 }
 
 async function spin() {
@@ -58,15 +73,18 @@ async function spin() {
 
   isBusy.value = true
   try {
-    const { pool, draw } = drawActiveTask(machine.value)
-    machine.value.context.rng = draw.nextRng
+    const { pool, draw } = drawActiveTask(machine.value, overrides.resolve)
+    const rolling = structuredClone(machine.value)
+    rolling.context.rng = draw.nextRng
+    machine.value = rolling
     wheelPool.value = pool
-    wheelOptions.value = pool.options.filter((option) => option.enabled !== false)
+    wheelOptions.value = previewOptions(pool, machine.value.context.activeTask!, machine.value.context)
     wheelSelectedIndex.value = wheelOptions.value.findIndex((option) => option.id === draw.option.id)
     wheelSpinNonce.value += 1
     const duration = isTurbo.value ? 40 : machine.value.context.settings.spinDuration
     await new Promise((resolve) => window.setTimeout(resolve, duration))
     apply({ type: 'RESOLVE', option: draw.option, probability: draw.probability })
+    refreshWheel()
   } finally {
     isBusy.value = false
   }
@@ -107,6 +125,7 @@ function undo() {
   if (previous) {
     machine.value = structuredClone(previous)
     persist()
+    refreshWheel()
   }
 }
 
@@ -126,6 +145,7 @@ function restoreLocal(): boolean {
     machine.value = parsed.value === 'rolling'
       ? { ...parsed, value: parsed.context.resumeState ?? 'idle', context: { ...parsed.context, activeTask: null } }
       : parsed
+    refreshWheel()
     return true
   } catch {
     return false
@@ -140,6 +160,7 @@ function importSave(content: string): boolean {
     history.value = []
     machine.value = parsed
     persist()
+    refreshWheel()
     return true
   } catch {
     return false
@@ -166,6 +187,27 @@ function exportChronicle() {
     ...context.logs.map((entry) => `${entry.time}｜${entry.title}｜${entry.text}`),
   ]
   downloadText(`斗罗大陆人物传记_${safeFileName(context.seed)}.txt`, lines.join('\n'))
+}
+
+function applyWheelOverride(pool: WheelPool, options: readonly WheelOption[]): string | null {
+  const error = overrides.apply(pool, options)
+  if (!error) refreshWheel()
+  return error
+}
+
+function resetWheelOverride(poolId: string) {
+  overrides.reset(poolId)
+  refreshWheel()
+}
+
+function clearWheelOverrides() {
+  overrides.clear()
+  refreshWheel()
+}
+
+function exportWheelOverrides() {
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, '').replace('T', '-')
+  downloadText(`douluo-wheel-overrides-${stamp}.json`, overrides.exportJson(), 'application/json')
 }
 
 function setSoftenText(value: boolean) {
@@ -202,7 +244,8 @@ const phaseLabel = computed(() => ({
 })[machine.value.value])
 const activePool = computed(() => {
   const task = context.value.activeTask ?? context.value.queue[0]
-  return task ? findPool(task.pool) ?? null : null
+  const pool = task ? findPool(task.pool) ?? null : null
+  return pool ? overrides.effective(pool) : null
 })
 const taskTitle = computed(() => context.value.activeTask?.pool ?? context.value.queue[0]?.pool ?? (machine.value.value === 'ending' ? '本轮旅程已经结束' : '展开下一段命运'))
 const displayResult = computed(() => soften(context.value.lastResult || '等待第一次转动。', context.value.settings.softenText))
@@ -233,6 +276,8 @@ export function useGameStore() {
     wheelOptions: readonly(wheelOptions),
     wheelSelectedIndex: readonly(wheelSelectedIndex),
     wheelSpinNonce: readonly(wheelSpinNonce),
+    wheelResetNonce: readonly(wheelResetNonce),
+    overrideCount: overrides.count,
     openStart,
     cancelStart,
     start,
@@ -245,6 +290,10 @@ export function useGameStore() {
     importSave,
     exportSave,
     exportChronicle,
+    applyWheelOverride,
+    resetWheelOverride,
+    clearWheelOverrides,
+    exportWheelOverrides,
     setSoftenText,
     setSpinDuration,
   }

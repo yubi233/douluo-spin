@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { optionWeight } from '@/domain/catalog'
 import type { WheelOption } from '@/domain/types'
 
 const props = defineProps<{
   options: readonly WheelOption[]
   selectedIndex: number
   spinNonce: number
+  resetNonce: number
   duration: number
   disabled: boolean
 }>()
@@ -14,6 +16,7 @@ defineEmits<{ spin: [] }>()
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 const rotation = ref(0)
+const reducedMotion = ref(false)
 let observer: ResizeObserver | null = null
 
 const visibleOptions = computed(() => props.options.length > 0
@@ -39,12 +42,14 @@ function draw() {
   const options = visibleOptions.value
   const center = size / 2
   const radius = center - 8 * window.devicePixelRatio
-  const angle = Math.PI * 2 / options.length
+  const totalWeight = options.reduce((sum, option) => sum + optionWeight(option), 0)
   const palette = ['#294e50', '#755f2d', '#3e475e', '#6f3e42', '#315a46', '#544367']
   context.clearRect(0, 0, size, size)
 
+  let startAngle = -Math.PI / 2
   options.forEach((option, index) => {
-    const start = -Math.PI / 2 + index * angle
+    const angle = (optionWeight(option) / totalWeight) * Math.PI * 2
+    const start = startAngle
     context.beginPath()
     context.moveTo(center, center)
     context.arc(center, center, radius, start, start + angle)
@@ -66,6 +71,7 @@ function draw() {
       context.fillText(shorten(option.name), radius - 24 * window.devicePixelRatio, 0)
       context.restore()
     }
+    startAngle += angle
   })
 
   context.beginPath()
@@ -77,15 +83,24 @@ function draw() {
 
 watch(visibleOptions, () => nextTick(draw), { deep: false })
 watch(() => props.spinNonce, () => {
-  const count = visibleOptions.value.length
-  if (props.selectedIndex < 0 || count === 0) return
-  const segment = 360 / count
+  const options = visibleOptions.value
+  if (props.selectedIndex < 0 || options.length === 0) return
+  const totalWeight = options.reduce((sum, option) => sum + optionWeight(option), 0)
+  const previousWeight = options.slice(0, props.selectedIndex).reduce((sum, option) => sum + optionWeight(option), 0)
+  const selectedWeight = optionWeight(options[props.selectedIndex]!)
   const normalized = ((rotation.value % 360) + 360) % 360
-  const target = 360 - (props.selectedIndex + 0.5) * segment
+  const target = 360 - ((previousWeight + selectedWeight / 2) / totalWeight) * 360
   rotation.value += 2160 + ((target - normalized + 360) % 360)
 })
 
+watch(() => props.resetNonce, () => {
+  rotation.value = 0
+})
+
 onMounted(() => {
+  const query = window.matchMedia('(prefers-reduced-motion: reduce)')
+  reducedMotion.value = query.matches
+  query.addEventListener('change', (event) => { reducedMotion.value = event.matches })
   observer = new ResizeObserver(draw)
   if (canvas.value) observer.observe(canvas.value)
   draw()
@@ -100,9 +115,9 @@ onBeforeUnmount(() => observer?.disconnect())
     <canvas
       ref="canvas"
       class="wheel-canvas"
-      :style="{ transform: `rotate(${rotation}deg)`, transitionDuration: `${duration}ms` }"
+      :style="{ transform: `rotate(${rotation}deg)`, transitionDuration: `${reducedMotion ? Math.min(duration, 100) : duration}ms` }"
     />
-    <button class="wheel-trigger" :disabled="disabled" aria-label="转动命运轮盘" @click="$emit('spin')">
+    <button class="wheel-trigger" :disabled="disabled" :aria-busy="disabled" aria-label="转动命运轮盘" @click="$emit('spin')">
       <span>转动</span>
       <small>SPIN</small>
     </button>

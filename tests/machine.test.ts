@@ -54,6 +54,15 @@ describe('finite state machine', () => {
     expect(first.nextRng).toBe(second.nextRng)
   })
 
+  it('starts every supported entry route without changing the state-machine contract', () => {
+    for (const route of ['random', 'human', 'beast'] as const) {
+      const result = transition(createInitialState(), { type: 'START', route, seed: `route-${route}` })
+      expect(result.accepted).toBe(true)
+      expect(['humanSetup', 'beastSetup']).toContain(result.state.value)
+      expect(result.state.context.queue.length).toBeGreaterThan(0)
+    }
+  })
+
   it('moves lethal outcomes to the ending state', () => {
     const state = startHuman() as MachineState
     const deathTask: RollTask = {

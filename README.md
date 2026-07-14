@@ -7,7 +7,7 @@
 - Vue 3 Composition API
 - `shallowRef` + `computed`，不使用 Pinia
 - 纯 TypeScript 有限状态机
-- Vite + Vitest
+- Vite + Vitest + Playwright
 
 `shallowRef` 只保存一个 `MachineState`。每次事件由纯函数 `transition(state, event)` 生成下一状态并整体替换引用；完整转盘数据保持普通只读对象，不进入 Vue 深层响应式代理。
 
@@ -23,7 +23,22 @@ npm run dev
 ```bash
 npm test
 npm run build
+npm run test:e2e
 ```
+
+`npm run test:e2e` 使用真实本机 Chrome 验证桌面、移动端和七种响应式视口，并在 `test-results/iterations/v0.1/` 留下 trace、截图、报告和 MP4 流程录像。完整基准可运行 `npm run test:verify`。
+
+## GitHub Pages
+
+推送到 GitHub 仓库的 `main` 分支后，`.github/workflows/deploy-pages.yml` 会自动构建并部署站点。首次启用时，在仓库的 **Settings > Pages > Build and deployment** 中将 Source 设为 **GitHub Actions**。
+
+工作流会使用 GitHub 提供的页面基础路径构建，项目页和个人主页均无需再修改 Vite 配置。部署完成后的站点地址会显示在该次 Actions 运行的 `Deploy to GitHub Pages` 步骤中。
+
+## v0.1 本地数据
+
+- 角色存档使用 `douluo-spin-vue-v1`；转盘修改使用独立的 `douluo-wheel-overrides-v1`，两者不会相互覆盖。
+- 内置 `wheels.json` 始终只读。修改按稳定池 ID 合并为运行时有效池，编辑器可恢复单池默认值，更多菜单可导出审阅用 JSON。
+- 转盘扇区、条件过滤、概率和抽取复用同一归一化候选分布；相同种子、有效配置与操作顺序仍保持确定性。
 
 ## 目录
 

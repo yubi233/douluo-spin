@@ -1,5 +1,7 @@
 # 迭代计划 v0.1：双端界面重构
 
+> 状态：验收完成（2026-07-15）。范围以本文件第 1、8、10、11 节为准；验收、自动化和证据映射见第 10.1 节与 `docs/test/v0.1-automation.md`。
+
 ## 1. 迭代目标
 
 本轮不改写内置转盘默认数据、状态机迁移、角色存档格式和剧情数据；用户调整通过独立的本地覆盖层改变运行时有效事件与权重。
@@ -339,6 +341,22 @@
 - 自动化测试覆盖权重归一化、加权扇区落点、覆盖合并、持久化恢复、编辑校验和导出结构。
 - 不复制游戏状态，不新增与状态机并行的业务状态源。
 - 关键响应式行为至少有一组组件测试或端到端冒烟脚本覆盖。
+
+## 10.1 验收 ID 与覆盖矩阵
+
+| ID | 优先级 | 验收结果 | 实现归属 | 验证方式 |
+|---|---|---|---|---|
+| V01-FLOW-01 | P0 | 三条路线、手动/自动/极速推进和暂停可用 | `machine.ts`、`useGameStore.ts`、`App.vue` | Vitest、Playwright |
+| V01-UNDO-01 | P0 | 完整回退、连续回退、动画锁定与同配置重投确定性 | `useGameStore.ts`、`FateWheel.vue` | Vitest、Playwright |
+| V01-SAVE-01 | P1 | 浏览器存档、存档导入导出和传记导出保持可用 | `useGameStore.ts`、菜单 | Playwright 下载与持久化 |
+| V01-WEIGHT-01 | P0 | 候选、权重、概率、盘面扇区和落点使用同一归一化结果 | `engine.ts`、`FateWheel.vue` | Vitest、Canvas 浏览器断言 |
+| V01-OVERRIDE-01 | P0 | 覆盖按池 ID 合并，不变异内置 JSON，刷新后生效 | `overrides.ts`、`useWheelOverrides.ts` | Vitest、Playwright |
+| V01-EDITOR-01 | P0 | 编辑、增项、停用、校验和单池恢复默认可用 | `WheelEditorDialog.vue` | Vitest、Playwright |
+| V01-EXPORT-01 | P0 | 修改导出含版本、源信息、池摘要和最终完整事件 | `overrides.ts`、菜单 | Vitest、Playwright 下载 |
+| V01-RESP-01 | P0 | 七种视口无横向溢出，转盘尺寸和底栏符合约束 | `App.vue`、`styles.css` | Playwright 视口矩阵 |
+| V01-MOBILE-01 | P0 | 主舞台/角色/纪事共享业务状态，移动操作可单屏触达 | `App.vue`、`MobileTabs.vue` | Playwright |
+| V01-A11Y-01 | P1 | 标签、菜单、编辑器键盘可用，状态有文本，减弱动画生效 | 交互组件、`FateWheel.vue` | Playwright |
+| V01-DATA-01 | P0 | 273 池、25 标签和 2,456 选项不变 | `catalog.ts`、源数据 | Vitest |
 
 ## 11. v0.1 不包含
 
