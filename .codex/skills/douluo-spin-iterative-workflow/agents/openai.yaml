@@ -1,0 +1,7 @@
+interface:
+  display_name: "斗罗转盘全流程迭代"
+  short_description: "以 goal 跟踪完成规划、实施、双端验证、录屏与文档闭环"
+  default_prompt: "使用 $douluo-spin-iterative-workflow 以 goal 模式完成斗罗命运轮盘的一次全流程迭代，并提交计划、测试、双端浏览器证据和文档回填。"
+
+policy:
+  allow_implicit_invocation: false
