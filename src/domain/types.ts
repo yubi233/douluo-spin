@@ -1,8 +1,18 @@
+export interface OptionRequirements {
+  minAge?: number
+  maxAge?: number
+  minLevel?: number
+  maxLevel?: number
+  genders?: readonly string[]
+  storyStages?: readonly string[]
+}
+
 export interface WheelOption {
   id: string
   name: string
   enabled?: boolean
   weight?: number
+  requirements?: OptionRequirements
 }
 
 export interface WheelPool {

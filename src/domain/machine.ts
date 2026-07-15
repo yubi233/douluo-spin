@@ -1,5 +1,13 @@
 import { findPool, poolsForTag } from './catalog'
-import { FIREARM_MARTIAL_SOUL_NAMES, FIREARM_STORY_POOL_NAME } from './canonAdditions'
+import {
+  FACTION_STORY_CHECKPOINTS,
+  FIREARM_MARTIAL_SOUL_NAMES,
+  FIREARM_STORY_POOL_NAME,
+  SHREK_MENTOR_ENTRY_POOL_NAME,
+  SHREK_MENTOR_REUNION_POOL_NAME,
+  SHREK_MENTOR_TOURNAMENT_POOL_NAME,
+  factionStoryDefinitionFor,
+} from './canonAdditions'
 import { drawOption } from './engine'
 import {
   BEAST_MARTIAL_SOUL_CATEGORY_POOL,
@@ -218,11 +226,39 @@ function appearanceGrade(text: string): string {
   return text.match(/EX|[A-FS]/i)?.[0].toUpperCase() ?? text.replace(/（.*$/, '').trim()
 }
 
+const FACTION_HISTORY_SEPARATOR = '｜'
+
+function factionHistory(context: GameContext): string[] {
+  const stored = context.flags.factionHistory
+  if (typeof stored === 'string' && stored) return stored.split(FACTION_HISTORY_SEPARATOR).filter(Boolean)
+  return context.faction ? [context.faction] : []
+}
+
+function addAffiliation(context: GameContext, affiliation: string) {
+  const history = factionHistory(context)
+  if (!history.includes(affiliation)) history.push(affiliation)
+  context.flags.factionHistory = history.join(FACTION_HISTORY_SEPARATOR)
+}
+
+function skipPastStoryMilestones(context: GameContext, branch: 1 | 2 | 3) {
+  const currentTime = context.tangAge ?? -999
+  const projectedTournamentAge = (context.age ?? 0) + Math.max(0, 14 - currentTime)
+  const canStillEnterMentorArc = (branch === 1 || branch === 3) && currentTime < 18 && projectedTournamentAge >= 25
+  for (const [time] of STORY_PLAN[branch]) {
+    const preserveMentorMilestone = canStillEnterMentorArc && (time === 12 || time === 14)
+    if (time < currentTime && !preserveMentorMilestone) context.flags[`story:${branch}@${time}`] = true
+  }
+}
+
 function setFaction(context: GameContext, text: string) {
   context.faction = text.replace(/（.*$/, '').trim()
-  if (/史莱克|分支一/.test(text)) context.branch = 1
-  else if (/武魂殿|分支二/.test(text)) context.branch = 2
-  else context.branch = 3
+  addAffiliation(context, context.faction)
+  const factionStory = factionStoryDefinitionFor(context.faction)
+  if (factionStory) context.flags.factionId = factionStory.id
+  else delete context.flags.factionId
+  const branch = /史莱克|分支一/.test(text) ? 1 : /武魂殿|分支二/.test(text) ? 2 : 3
+  context.branch = branch
+  skipPastStoryMilestones(context, branch)
 }
 
 function queueInitialHumanContext(context: GameContext) {
@@ -265,15 +301,71 @@ function storyNumber(name: string): number | null {
   return value == null ? null : Number(value)
 }
 
+function nextFactionExclusiveStoryTask(context: GameContext): RollTask | null {
+  const definition = factionStoryDefinitionFor(context.faction)
+  if (!definition) return null
+
+  context.flags.factionId = definition.id
+  for (const checkpoint of FACTION_STORY_CHECKPOINTS) {
+    const age = context.age ?? -1
+    const meetsAge = age >= checkpoint.minAge && (checkpoint.maxAge == null || age <= checkpoint.maxAge)
+    const meetsLevel = checkpoint.minLevel == null || context.level >= checkpoint.minLevel
+    const flag = `factionStory:${definition.id}:${checkpoint.id}`
+    if (!meetsAge || !meetsLevel || context.flags[flag]) continue
+
+    context.flags[flag] = true
+    return task('势力专属剧情', definition.poolName, 'story', {
+      factionId: definition.id,
+      factionStoryStage: checkpoint.id,
+    })
+  }
+  return null
+}
+
+function hasPendingShrekMentorStory(context: GameContext): boolean {
+  const branch = context.branch
+  if (branch !== 1 && branch !== 3) return false
+
+  const currentTime = context.tangAge ?? -999
+  if (context.flags.shrekMentor && currentTime >= 19 && !context.flags.shrekMentorReunion) return true
+
+  const milestone = STORY_PLAN[branch].find(([time]) => currentTime >= time && !context.flags[`story:${branch}@${time}`])
+  if (!milestone) return false
+
+  const [time] = milestone
+  const projectedTournamentAge = (context.age ?? 0) + Math.max(0, 14 - currentTime)
+  return projectedTournamentAge >= 25 && (time === 12 || time === 14)
+}
+
 function nextStoryTasks(context: GameContext): RollTask[] {
   const branch = context.branch
   if (!branch) return []
   const currentTime = context.tangAge ?? -999
+  if (context.flags.shrekMentor && currentTime >= 19 && !context.flags.shrekMentorReunion) {
+    context.flags.shrekMentorReunion = true
+    if (branch === 1) context.flags['story:1@19'] = true
+    return [task(STORY_TAGS[branch], SHREK_MENTOR_REUNION_POOL_NAME, 'story', { milestone: 19 })]
+  }
   const milestone = STORY_PLAN[branch].find(([time]) => currentTime >= time && !context.flags[`story:${branch}@${time}`])
   if (!milestone) return []
   const [time, minimum, maximum] = milestone
   context.flags[`story:${branch}@${time}`] = true
+  if (currentTime >= 18 && time <= 14) return nextStoryTasks(context)
   const tagName = STORY_TAGS[branch]
+  const projectedTournamentAge = (context.age ?? 0) + Math.max(0, 14 - currentTime)
+  const requiresMentorRole = (branch === 1 || branch === 3) && projectedTournamentAge >= 25
+  if (requiresMentorRole && time === 12) {
+    const alreadyTeachingAtShrek = factionHistory(context).some((faction) => /史莱克学院任职教师/.test(faction))
+    const only = alreadyTeachingAtShrek
+      ? '本就在史莱克'
+      : '接受弗兰德|受大师邀请|保持现有身份'
+    return [task(tagName, SHREK_MENTOR_ENTRY_POOL_NAME, 'story', { milestone: time, only })]
+  }
+  if (requiresMentorRole && time === 14) {
+    return context.flags.shrekMentor
+      ? [task(tagName, SHREK_MENTOR_TOURNAMENT_POOL_NAME, 'story', { milestone: time })]
+      : []
+  }
   return poolsForTag(tagName)
     .filter((pool) => {
       const number = storyNumber(pool.name)
@@ -363,13 +455,25 @@ function prepareNext(state: MachineState): MachineState {
       else {
         const faction = nextFactionTask(context)
         if (faction) context.queue.push(faction)
-        else if ((context.age ?? 0) >= 16 && (context.age ?? 0) <= 22 && !context.flags.slaughter) {
-          context.flags.slaughter = true
-          context.queue.push(task('杀戮之都', '是否进入杀戮之都（角色在16岁~22岁限定事件，未满足年龄不能抽取）', 'story'))
-        } else {
-          const storyTasks = nextStoryTasks(context)
-          if (storyTasks.length > 0) context.queue.push(...storyTasks)
-          else context.queue.push(task('时间跳跃', humanGrowthPool(context), 'humanTime'))
+        else {
+          const mentorTasks = hasPendingShrekMentorStory(context) ? nextStoryTasks(context) : []
+          if (mentorTasks.length > 0) context.queue.push(...mentorTasks)
+          else if ((context.age ?? 0) >= 16 && (context.age ?? 0) <= 22 && !context.flags.slaughter) {
+            const factionStory = nextFactionExclusiveStoryTask(context)
+            if (factionStory) context.queue.push(factionStory)
+            else {
+              context.flags.slaughter = true
+              context.queue.push(task('杀戮之都', '是否进入杀戮之都（角色在16岁~22岁限定事件，未满足年龄不能抽取）', 'story'))
+            }
+          } else {
+            const factionStory = nextFactionExclusiveStoryTask(context)
+            if (factionStory) context.queue.push(factionStory)
+            else {
+              const storyTasks = nextStoryTasks(context)
+              if (storyTasks.length > 0) context.queue.push(...storyTasks)
+              else context.queue.push(task('时间跳跃', humanGrowthPool(context), 'humanTime'))
+            }
+          }
         }
       }
     }
@@ -486,7 +590,9 @@ function applyResult(state: MachineState, option: WheelOption, probability: numb
       break
     case 'faction':
       setFaction(context, text)
-      context.flags[`faction:${Number(active.meta?.stage ?? 6)}`] = true
+      for (const stage of [6, 12, 18]) {
+        if (stage <= Number(active.meta?.stage ?? 6)) context.flags[`faction:${stage}`] = true
+      }
       break
     case 'humanTime': {
       const years = firstNumber(active.pool, 2)
@@ -604,6 +710,14 @@ function applyResult(state: MachineState, option: WheelOption, probability: numb
       break
     case 'story':
       context.flags[`result:${active.pool}`] = text
+      if (active.pool === SHREK_MENTOR_ENTRY_POOL_NAME) {
+        context.flags.shrekMentor = /^是/.test(text)
+        if (context.flags.shrekMentor) {
+          const role = /本就在史莱克/.test(text) ? '史莱克学院大赛导师' : '史莱克学院客卿导师'
+          context.flags.shrekMentorRole = role
+          addAffiliation(context, role)
+        }
+      }
       if (active.pool.startsWith('是否进入杀戮之都') && /^是/.test(text)) {
         context.queue.unshift(task('杀戮之都', '是否获得杀神领域', 'domain'))
       }

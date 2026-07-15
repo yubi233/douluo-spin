@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { FIREARM_STORY_POOL_NAME } from '@/domain/canonAdditions'
+import {
+  FACTION_STORY_DEFINITIONS,
+  FIREARM_STORY_POOL_NAME,
+  SHREK_MENTOR_ENTRY_POOL_NAME,
+  SHREK_MENTOR_REUNION_POOL_NAME,
+  SHREK_MENTOR_TOURNAMENT_POOL_NAME,
+} from '@/domain/canonAdditions'
+import { findPool } from '@/domain/catalog'
 import { candidateDistribution, previewOptions } from '@/domain/engine'
 import { createInitialState, drawActiveTask, machineStates, transition } from '@/domain/machine'
 import type { MachineState, RollTask, WheelPool } from '@/domain/types'
@@ -113,6 +120,31 @@ describe('finite state machine', () => {
     expect(previewOptions(combatPool, combatTask, context).map((option) => option.weight)).toEqual([20, 10, 10])
   })
 
+  it('never falls back to an incompatible structured faction outcome', () => {
+    const context = createInitialState().context
+    context.age = 18
+    context.level = 49
+    context.gender = '女'
+    const factionTask: RollTask = {
+      id: 'strict-faction-story',
+      tag: '势力专属剧情',
+      pool: '严格筛选测试',
+      handler: 'story',
+      meta: { factionStoryStage: 'elite' },
+    }
+    const factionPool: WheelPool = {
+      id: 'strict-faction-story',
+      name: '严格筛选测试',
+      tags: [],
+      options: [
+        { id: 'elite', name: '50级事件', requirements: { minAge: 18, minLevel: 50, storyStages: ['elite'] } },
+        { id: 'male', name: '男性精英事件', requirements: { minAge: 18, minLevel: 50, genders: ['男'], storyStages: ['elite'] } },
+      ],
+    }
+
+    expect(candidateDistribution(factionPool, factionTask, context)).toEqual([])
+  })
+
   it('routes a successful growth event to the firearm-exclusive story pool', () => {
     const state = startHuman() as MachineState
     state.value = 'humanAdventure'
@@ -134,6 +166,69 @@ describe('finite state machine', () => {
     expect(resolved.context.queue[0]).toMatchObject({
       pool: FIREARM_STORY_POOL_NAME,
       handler: 'growth',
+    })
+  })
+
+  it('schedules a faction-exclusive pool with age, level, and gender-filtered outcomes', () => {
+    const state = startHuman() as MachineState
+    state.value = 'humanAdventure'
+    state.context.queue = []
+    state.context.age = 15
+    state.context.tangAge = 0
+    state.context.level = 30
+    state.context.gender = '女'
+    state.context.faction = '武魂殿重点培养学员'
+    state.context.branch = 2
+    state.context.rings = Array.from({ length: 3 }, (_, index) => ({ index: index + 1, years: 1000, description: '测试魂环' }))
+    state.context.flags = { 'faction:6': true, 'faction:12': true, 'faction:18': true, slaughter: true }
+
+    const rolling = transition(state, { type: 'ROLL' }).state
+    expect(rolling.context.activeTask?.pool).toBe('势力专属剧情：武魂殿')
+    expect(rolling.context.activeTask?.meta?.factionStoryStage).toBe('youth')
+
+    const options = previewOptions(findPool('势力专属剧情：武魂殿')!, rolling.context.activeTask!, rolling.context)
+    expect(options.map((option) => option.name)).toHaveLength(2)
+    expect(options.every((option) => option.name.includes('成长期·12-17岁'))).toBe(true)
+    expect(options.some((option) => option.name.includes('男性路线'))).toBe(false)
+    expect(options.some((option) => option.name.includes('女性路线'))).toBe(true)
+
+    const selected = options.find((option) => option.name.includes('女性路线'))!
+    const resolved = transition(rolling, { type: 'RESOLVE', option: selected, probability: 0.25 }).state
+    expect(resolved.context.flags['factionStory:wuhun:youth']).toBe(true)
+
+    const next = transition(resolved, { type: 'ROLL' }).state
+    expect(next.context.activeTask?.pool).not.toBe('势力专属剧情：武魂殿')
+  })
+
+  it('maps selected factions to their exclusive story route before generic progression', () => {
+    const state = startHuman() as MachineState
+    state.value = 'humanAdventure'
+    state.context.age = 18
+    state.context.tangAge = 0
+    state.context.level = 52
+    state.context.gender = '男'
+    state.context.rings = Array.from({ length: 5 }, (_, index) => ({ index: index + 1, years: 1000, description: '测试魂环' }))
+    state.context.queue = [{
+      id: 'choose-qibao',
+      tag: '选择势力',
+      pool: '加入的势力（18岁限定）',
+      handler: 'faction',
+      meta: { stage: 18 },
+    }]
+
+    const rolling = transition(state, { type: 'ROLL' }).state
+    const resolved = transition(rolling, {
+      type: 'RESOLVE',
+      option: { id: 'qibao', name: '七宝琉璃宗招揽，选择成为其供奉' },
+      probability: 0.1,
+    }).state
+
+    const qibao = FACTION_STORY_DEFINITIONS.find((definition) => definition.id === 'qibao')!
+    expect(resolved.context.flags.factionId).toBe('qibao')
+    expect(resolved.context.queue[0]).toMatchObject({
+      pool: qibao.poolName,
+      handler: 'story',
+      meta: { factionId: 'qibao', factionStoryStage: 'adult' },
     })
   })
 
@@ -186,5 +281,209 @@ describe('finite state machine', () => {
     const rolling = transition(state, { type: 'ROLL' }).state
     expect(rolling.context.activeTask?.pool).toContain('剧情14:是否参与天斗宫变')
     expect(rolling.context.queue.some((item) => item.pool.includes('剧情15:唐三重建唐门'))).toBe(true)
+  })
+
+  it('routes characters aged twenty-five or older through Shrek mentor story pools', () => {
+    const entryState = startHuman() as MachineState
+    entryState.value = 'humanAdventure'
+    entryState.context.queue = []
+    entryState.context.age = 80
+    entryState.context.tangAge = 12
+    entryState.context.branch = 3
+    entryState.context.flags = { 'faction:6': true, 'faction:12': true, 'faction:18': true, slaughter: true }
+
+    const entryRoll = transition(entryState, { type: 'ROLL' }).state
+    expect(entryRoll.context.activeTask?.pool).toBe(SHREK_MENTOR_ENTRY_POOL_NAME)
+    const accepted = transition(entryRoll, {
+      type: 'RESOLVE',
+      option: { id: 'mentor', name: '是，接受弗兰德邀请，成为史莱克学院客卿导师（40+级限定）' },
+      probability: 0.5,
+    }).state
+    expect(accepted.context.flags.shrekMentor).toBe(true)
+
+    accepted.value = 'humanAdventure'
+    accepted.context.queue = []
+    accepted.context.age = 82
+    accepted.context.tangAge = 14
+    const tournamentRoll = transition(accepted, { type: 'ROLL' }).state
+    expect(tournamentRoll.context.activeTask?.pool).toBe(SHREK_MENTOR_TOURNAMENT_POOL_NAME)
+  })
+
+  it('uses the mentor route when a character will age out before the tournament', () => {
+    const state = startHuman() as MachineState
+    state.value = 'humanAdventure'
+    state.context.queue = []
+    state.context.age = 24
+    state.context.tangAge = 12
+    state.context.branch = 3
+    state.context.flags = { 'faction:6': true, 'faction:12': true, 'faction:18': true, slaughter: true }
+
+    const rolling = transition(state, { type: 'ROLL' }).state
+    expect(rolling.context.activeTask?.pool).toBe(SHREK_MENTOR_ENTRY_POOL_NAME)
+  })
+
+  it('keeps existing Shrek teachers on the teacher-side mentor entry', () => {
+    const state = startHuman() as MachineState
+    state.value = 'humanAdventure'
+    state.context.queue = []
+    state.context.age = 80
+    state.context.tangAge = 12
+    state.context.faction = '史莱克学院任职教师'
+    state.context.branch = 1
+    state.context.flags = {
+      'faction:6': true,
+      'faction:12': true,
+      'faction:18': true,
+      factionHistory: '史莱克学院任职教师',
+      slaughter: true,
+    }
+
+    const rolling = transition(state, { type: 'ROLL' }).state
+    const options = previewOptions(findPool(SHREK_MENTOR_ENTRY_POOL_NAME)!, rolling.context.activeTask!, rolling.context)
+    expect(options.map((option) => option.name)).toEqual(['是，你本就在史莱克任教，转任学院大赛导师'])
+  })
+
+  it('does not backfill expired story milestones after changing factions', () => {
+    const state = startHuman() as MachineState
+    state.value = 'humanAdventure'
+    state.context.age = 18
+    state.context.tangAge = 18
+    state.context.faction = '史莱克学院'
+    state.context.branch = 1
+    state.context.flags = {
+      factionHistory: '诺丁初级魂师学院｜史莱克学院',
+      slaughter: true,
+      'story:1@12': true,
+      'story:1@14': true,
+    }
+    state.context.queue = [{
+      id: 'adult-faction-change',
+      tag: '选择势力',
+      pool: '加入的势力（18岁限定）',
+      handler: 'faction',
+      meta: { stage: 18 },
+    }]
+
+    const rolling = transition(state, { type: 'ROLL' }).state
+    const resolved = transition(rolling, {
+      type: 'RESOLVE',
+      option: { id: 'wuhun', name: '武魂殿任职主教（进入剧情分支二）' },
+      probability: 0.1,
+    }).state
+
+    expect(resolved.context.branch).toBe(2)
+    expect(resolved.context.flags['story:2@14']).toBe(true)
+    expect(resolved.context.queue[0]).toMatchObject({
+      tag: '势力专属剧情',
+      pool: '势力专属剧情：武魂殿',
+      meta: { factionId: 'wuhun', factionStoryStage: 'adult' },
+    })
+    expect(resolved.context.queue.some((item) => item.pool.startsWith('剧情'))).toBe(false)
+    expect(resolved.context.flags.factionHistory).toBe('诺丁初级魂师学院｜史莱克学院｜武魂殿任职主教')
+  })
+
+  it('preserves the mentor entry when an older character joins before the tournament', () => {
+    const state = startHuman() as MachineState
+    state.value = 'humanAdventure'
+    state.context.age = 50
+    state.context.tangAge = 14
+    state.context.queue = [{
+      id: 'late-adult-faction',
+      tag: '选择势力',
+      pool: '加入的势力（18岁限定）',
+      handler: 'faction',
+      meta: { stage: 18 },
+    }]
+
+    const rolling = transition(state, { type: 'ROLL' }).state
+    const resolved = transition(rolling, {
+      type: 'RESOLVE',
+      option: { id: 'wanderer', name: '选择独自流浪' },
+      probability: 0.1,
+    }).state
+
+    expect(resolved.context.queue[0]?.pool).toBe(SHREK_MENTOR_ENTRY_POOL_NAME)
+  })
+
+  it('filters faction roles by their level requirements', () => {
+    const context = createInitialState().context
+    const adultTask: RollTask = {
+      id: 'adult-faction-options',
+      tag: '选择势力',
+      pool: '加入的势力（18岁限定）',
+      handler: 'faction',
+    }
+
+    context.level = 29
+    const lowLevelNames = previewOptions(findPool(adultTask.pool)!, adultTask, context).map((option) => option.name)
+    expect(lowLevelNames.some((name) => /副团长|主教|供奉|任职教师|武魂殿长老/.test(name))).toBe(false)
+
+    context.level = 89
+    const highLevelNames = previewOptions(findPool(adultTask.pool)!, adultTask, context).map((option) => option.name)
+    expect(highLevelNames.some((name) => /任职教师|主教|供奉/.test(name))).toBe(true)
+    expect(highLevelNames.some((name) => /武魂殿长老/.test(name))).toBe(false)
+
+    context.level = 90
+    expect(previewOptions(findPool(adultTask.pool)!, adultTask, context).some((option) => /武魂殿长老/.test(option.name))).toBe(true)
+
+    const youthTask: RollTask = {
+      id: 'youth-faction-options',
+      tag: '选择势力',
+      pool: '加入的势力（12岁限定）',
+      handler: 'faction',
+    }
+    context.level = 19
+    expect(previewOptions(findPool(youthTask.pool)!, youthTask, context).some((option) => /20\+级限定/.test(option.name))).toBe(false)
+  })
+
+  it('keeps mentor identity through the seven-monster reunion milestone', () => {
+    const state = startHuman() as MachineState
+    state.value = 'humanAdventure'
+    state.context.queue = []
+    state.context.age = 32
+    state.context.tangAge = 20
+    state.context.branch = 3
+    state.context.flags = {
+      'faction:6': true,
+      'faction:12': true,
+      'faction:18': true,
+      'story:3@12': true,
+      'story:3@14': true,
+      shrekMentor: true,
+      slaughter: true,
+    }
+
+    const reunionRoll = transition(state, { type: 'ROLL' }).state
+    expect(reunionRoll.context.activeTask?.pool).toBe(SHREK_MENTOR_REUNION_POOL_NAME)
+    const resolved = transition(reunionRoll, {
+      type: 'RESOLVE',
+      option: { id: 'review', name: '你以客卿导师身份复盘七怪配合，没有占用八怪成员位置' },
+      probability: 0.25,
+    }).state
+    expect(resolved.context.queue.some((item) => item.pool.includes('剧情7:是否参与天斗宫变'))).toBe(true)
+  })
+
+  it('does not backfill lower-age faction wheels after an adult faction choice', () => {
+    const state = startHuman() as MachineState
+    state.value = 'humanAdventure'
+    state.context.age = 80
+    state.context.tangAge = 6
+    state.context.queue = [{
+      id: 'adult-faction',
+      tag: '选择势力',
+      pool: '加入的势力（18岁限定）',
+      handler: 'faction',
+      meta: { stage: 18 },
+    }]
+
+    const rolling = transition(state, { type: 'ROLL' }).state
+    const resolved = transition(rolling, {
+      type: 'RESOLVE',
+      option: { id: 'mercenary', name: '加入中级佣兵团当任副团长' },
+      probability: 0.1,
+    }).state
+
+    expect(resolved.context.flags).toMatchObject({ 'faction:6': true, 'faction:12': true, 'faction:18': true })
+    expect(resolved.context.queue.some((item) => item.pool === '加入的势力（12岁限定）')).toBe(false)
   })
 })

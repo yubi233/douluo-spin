@@ -17,6 +17,11 @@ const appearanceValue = computed(() => props.context.beast
 const progressValue = computed(() => props.context.beast
   ? props.context.beast.laws.join('、') || '暂无法则'
   : `${props.context.rings.length}枚魂环 · ${props.context.soulBones.length}块魂骨`)
+const factionValue = computed(() => {
+  const history = props.context.flags.factionHistory
+  if (typeof history === 'string' && history) return history.split('｜').join(' · ')
+  return props.context.faction || props.context.beast?.area || '自由'
+})
 const timeLabel = computed(() => {
   const age = props.context.tangAge
   if (age == null) return '未确定'
@@ -65,7 +70,7 @@ const ringDetails = computed(() => props.context.rings.map((ring) => ({
       <div><dt>时间坐标</dt><dd>{{ timeLabel }}</dd></div>
       <div><dt>年龄与性别</dt><dd>{{ context.age == null ? '未确定' : `${context.age}岁` }} · {{ context.gender || '未确定' }}</dd></div>
       <div><dt>{{ context.beast ? '魂兽类型' : '颜值' }}</dt><dd>{{ appearanceValue }}</dd></div>
-      <div><dt>阵营与区域</dt><dd>{{ context.faction || context.beast?.area || '自由' }}</dd></div>
+      <div><dt>阵营与区域</dt><dd>{{ factionValue }}</dd></div>
       <div><dt>核心状态</dt><dd>{{ context.alive ? context.godTrial ? '神考中' : '存活' : '已陨落' }}</dd></div>
       <div><dt>{{ context.beast ? '法则掌握' : '魂环进度' }}</dt><dd>{{ progressValue }}</dd></div>
     </dl>

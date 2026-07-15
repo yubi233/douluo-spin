@@ -240,6 +240,9 @@ function exportSave() {
 
 function exportChronicle() {
   const context = machine.value.context
+  const factionHistory = typeof context.flags.factionHistory === 'string'
+    ? context.flags.factionHistory.split('｜').join(' · ')
+    : context.faction
   const lines = [
     '《斗罗大陆 · 命运轮盘人物传记》',
     '',
@@ -247,7 +250,7 @@ function exportChronicle() {
     `路线：${routeLabel.value}`,
     `终局：${context.ending || '尚未完结'}`,
     `等级：${context.beast ? `${context.beast.cultivation}年修为` : `${context.level}级`}`,
-    `阵营：${context.faction || context.beast?.area || '自由'}`,
+    `阵营：${factionHistory || context.beast?.area || '自由'}`,
     '',
     '【命运纪事】',
     ...context.logs.map((entry) => `${entry.time}｜${entry.title}｜${entry.text}`),

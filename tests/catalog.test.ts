@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { FIREARM_STORY_POOL_NAME } from '@/domain/canonAdditions'
+import {
+  FACTION_STORY_DEFINITIONS,
+  FIREARM_STORY_POOL_NAME,
+  SHREK_MENTOR_ENTRY_POOL_NAME,
+  SHREK_MENTOR_REUNION_POOL_NAME,
+  SHREK_MENTOR_TOURNAMENT_POOL_NAME,
+} from '@/domain/canonAdditions'
 import { enabledOptions, findPool, poolsForTag, recategorizationCandidates, wheelData } from '@/domain/catalog'
 import { advanceWheelRotation, normalizeDegrees, targetRotationForSegment } from '@/utils/wheelGeometry'
 
@@ -15,6 +21,11 @@ describe('wheel catalog', () => {
     expect(pool?.name).toBe('基础设定3:你的性别是？')
     expect(enabledOptions(pool!)).not.toHaveLength(0)
     expect(poolsForTag('魂兽雷劫池')).toHaveLength(11)
+  })
+
+  it('reduces the effective Tang San age-six entry weight to twenty', () => {
+    const option = findPool('基础设定8:穿越时期')?.options.find((candidate) => candidate.name === '唐三6岁')
+    expect(option?.weight).toBe(20)
   })
 
   it('adds virtual beast martial soul category pools without changing source data', () => {
@@ -57,6 +68,24 @@ describe('wheel catalog', () => {
     const pool = findPool(FIREARM_STORY_POOL_NAME)
     expect(pool?.options).toHaveLength(8)
     expect(pool?.options.some((option) => option.name.includes('越级击杀'))).toBe(true)
+  })
+
+  it('exposes senior Shrek mentor story pools without student combat outcomes', () => {
+    expect(findPool(SHREK_MENTOR_ENTRY_POOL_NAME)?.options.some((option) => option.name.includes('客卿导师'))).toBe(true)
+    const tournament = findPool(SHREK_MENTOR_TOURNAMENT_POOL_NAME)
+    expect(tournament?.options.every((option) => !/你一打|你单挑|成为学院核心团队成员/.test(option.name))).toBe(true)
+    expect(findPool(SHREK_MENTOR_REUNION_POOL_NAME)?.options.every((option) => !/成为八怪成员|与唐三组队2v2/.test(option.name))).toBe(true)
+  })
+
+  it('exposes one structured exclusive-story pool for every supported faction', () => {
+    expect(FACTION_STORY_DEFINITIONS).toHaveLength(8)
+    for (const definition of FACTION_STORY_DEFINITIONS) {
+      const pool = findPool(definition.poolName)
+      expect(pool?.options).toHaveLength(15)
+      expect(pool?.options.every((option) => option.requirements?.minAge != null && option.requirements.storyStages?.length)).toBe(true)
+      expect(pool?.options.some((option) => option.requirements?.genders?.includes('男'))).toBe(true)
+      expect(pool?.options.some((option) => option.requirements?.genders?.includes('女'))).toBe(true)
+    }
   })
 
   it('adds crossover ocular abilities to the body martial-soul pool', () => {

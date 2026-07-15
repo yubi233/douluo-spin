@@ -4,9 +4,16 @@ import {
   CANONICAL_POOL_ADDITIONS,
   CROSSOVER_BEAST_MARTIAL_SOULS,
   CROSSOVER_BODY_MARTIAL_SOULS,
+  FACTION_STORY_DEFINITIONS,
   FIREARM_MARTIAL_SOULS,
   FIREARM_STORY_OPTIONS,
   FIREARM_STORY_POOL_NAME,
+  SHREK_MENTOR_ENTRY_OPTIONS,
+  SHREK_MENTOR_ENTRY_POOL_NAME,
+  SHREK_MENTOR_REUNION_OPTIONS,
+  SHREK_MENTOR_REUNION_POOL_NAME,
+  SHREK_MENTOR_TOURNAMENT_OPTIONS,
+  SHREK_MENTOR_TOURNAMENT_POOL_NAME,
 } from './canonAdditions'
 import {
   BEAST_MARTIAL_SOUL_CATEGORIES,
@@ -27,7 +34,9 @@ const catalogDecisions = createCatalogDecisions()
 const beastMartialSoulPools = createBeastMartialSoulPools()
 const toolMartialSoulPools = createToolMartialSoulPools()
 const firearmStoryPools = createFirearmStoryPools()
-const virtualPools = [...beastMartialSoulPools, ...toolMartialSoulPools, ...firearmStoryPools]
+const seniorStoryPools = createSeniorStoryPools()
+const factionStoryPools = createFactionStoryPools()
+const virtualPools = [...beastMartialSoulPools, ...toolMartialSoulPools, ...firearmStoryPools, ...seniorStoryPools, ...factionStoryPools]
 const catalogPools = [...catalogDecisions, ...virtualPools]
 const poolsByName = new Map(catalogPools.map((pool) => [pool.name, pool]))
 
@@ -47,24 +56,30 @@ export function findPool(name: string): WheelPool | undefined {
 
 function createCatalogDecisions(): WheelPool[] {
   return wheelData.decisions.map((pool) => {
+    const correctedPool = pool.name === '基础设定8:穿越时期'
+      ? {
+          ...pool,
+          options: pool.options.map((option) => option.name === '唐三6岁' ? { ...option, weight: 20 } : option),
+        }
+      : pool
     const additions: Array<{ name: string; weight?: number }> = [
-      ...(CANONICAL_POOL_ADDITIONS[pool.name] ?? []).map((name) => ({ name })),
-      ...(ANIME_EXPANDED_MARTIAL_SOULS[pool.name] ?? []).map((name) => ({ name })),
-      ...(pool.name === '兽武魂' ? CROSSOVER_BEAST_MARTIAL_SOULS.map((name) => ({ name })) : []),
-      ...(pool.name === '本体武魂' ? CROSSOVER_BODY_MARTIAL_SOULS.map((name) => ({ name })) : []),
-      ...(pool.name === '器武魂' ? FIREARM_MARTIAL_SOULS : []),
+      ...(CANONICAL_POOL_ADDITIONS[correctedPool.name] ?? []).map((name) => ({ name })),
+      ...(ANIME_EXPANDED_MARTIAL_SOULS[correctedPool.name] ?? []).map((name) => ({ name })),
+      ...(correctedPool.name === '兽武魂' ? CROSSOVER_BEAST_MARTIAL_SOULS.map((name) => ({ name })) : []),
+      ...(correctedPool.name === '本体武魂' ? CROSSOVER_BODY_MARTIAL_SOULS.map((name) => ({ name })) : []),
+      ...(correctedPool.name === '器武魂' ? FIREARM_MARTIAL_SOULS : []),
     ]
-    if (!additions?.length) return pool
+    if (!additions.length) return correctedPool
 
-    const existingNames = new Set(pool.options.map((option) => option.name))
+    const existingNames = new Set(correctedPool.options.map((option) => option.name))
     const options = additions
       .filter(({ name }) => !existingNames.has(name))
       .map(({ name, weight }) => ({
-        id: `canon-${encodeURIComponent(pool.name)}-${encodeURIComponent(name)}`,
+        id: `canon-${encodeURIComponent(correctedPool.name)}-${encodeURIComponent(name)}`,
         name,
         ...(weight == null ? {} : { weight }),
       }))
-    return options.length ? { ...pool, options: [...pool.options, ...options] } : pool
+    return options.length ? { ...correctedPool, options: [...correctedPool.options, ...options] } : correctedPool
   })
 }
 
@@ -150,6 +165,53 @@ function createFirearmStoryPools(): WheelPool[] {
       ...option,
     })),
   }]
+}
+
+function createSeniorStoryPools(): WheelPool[] {
+  const source = catalogDecisions.find((pool) => pool.name === '剧情1:是否参与入学剧情（史莱克学院限定）（唐三12岁限定）')
+  if (!source) return []
+
+  return [
+    {
+      id: 'virtual-shrek-mentor-entry',
+      name: SHREK_MENTOR_ENTRY_POOL_NAME,
+      description: '超过学院大赛参赛年龄的角色，以客卿导师而非学员身份介入史莱克剧情。',
+      tags: source.tags,
+      options: SHREK_MENTOR_ENTRY_OPTIONS.map((option, index) => ({ id: `shrek-mentor-entry-${index + 1}`, ...option })),
+    },
+    {
+      id: 'virtual-shrek-mentor-tournament',
+      name: SHREK_MENTOR_TOURNAMENT_POOL_NAME,
+      description: '导师只负责教学、带队和保护学员，不占用学院大赛参赛名额。',
+      tags: source.tags,
+      options: SHREK_MENTOR_TOURNAMENT_OPTIONS.map((option, index) => ({ id: `shrek-mentor-tournament-${index + 1}`, ...option })),
+    },
+    {
+      id: 'virtual-shrek-mentor-reunion',
+      name: SHREK_MENTOR_REUNION_POOL_NAME,
+      description: '七怪重聚阶段沿用导师身份，不重新回到学员或八怪成员位置。',
+      tags: source.tags,
+      options: SHREK_MENTOR_REUNION_OPTIONS.map((option, index) => ({ id: `shrek-mentor-reunion-${index + 1}`, ...option })),
+    },
+  ]
+}
+
+function createFactionStoryPools(): WheelPool[] {
+  const source = catalogDecisions.find((pool) => pool.name === '人物背景or加入的势力（6岁限定）')
+  if (!source) return []
+
+  return FACTION_STORY_DEFINITIONS.map((definition) => ({
+    id: `virtual-faction-story-${definition.id}`,
+    name: definition.poolName,
+    description: definition.description,
+    tags: source.tags,
+    options: definition.options.map((option, index) => ({
+      id: `faction-story-${definition.id}-${index + 1}`,
+      name: option.name,
+      weight: option.weight,
+      requirements: option.requirements,
+    })),
+  }))
 }
 
 export function optionWeight(option: WheelOption): number {

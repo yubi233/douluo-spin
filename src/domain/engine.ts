@@ -31,12 +31,46 @@ function isOverlevelKillOutcome(text: string) {
   return /越级|反杀|斩杀|击杀|单挑.*(?:战胜|获胜)|1v\d|一人.*(?:斩杀|战胜|击杀)/.test(text)
 }
 
+function explicitMinimumLevel(text: string): number | null {
+  if (!/限定|否则重抽|要求(?:先天魂力)?\s*\d/.test(text)) return null
+  const match = text.match(/(\d+)\s*\+\s*级/) ?? text.match(/要求(?:先天魂力)?\s*(\d+)\s*级以上/)
+  return match ? Number(match[1]) : null
+}
+
+function roleMinimumLevel(text: string): number | null {
+  if (/武魂殿.*长老/.test(text)) return 90
+  if (/七宝琉璃宗.*供奉/.test(text)) return 70
+  if (/武魂殿.*主教/.test(text)) return 40
+  if (/客卿导师|实战与战术导师/.test(text)) return 40
+  if (/任职教师/.test(text)) return 30
+  if (/副团长/.test(text)) return 30
+  return null
+}
+
 function candidateWeight(option: WheelOption, task: RollTask, context: GameContext) {
   const baseWeight = optionWeight(option)
   const isCombat = task.handler === 'humanEncounter' || task.handler === 'beastEncounter' || task.handler === 'story'
   return isCombat && isFirearmMartialSoul(context) && isOverlevelKillOutcome(option.name)
     ? baseWeight * 2
     : baseWeight
+}
+
+function meetsStructuredRequirements(option: WheelOption, task: RollTask, context: GameContext): boolean {
+  const requirements = option.requirements
+  if (!requirements) return true
+
+  const age = context.age ?? -1
+  if (requirements.minAge != null && age < requirements.minAge) return false
+  if (requirements.maxAge != null && age > requirements.maxAge) return false
+  if (requirements.minLevel != null && context.level < requirements.minLevel) return false
+  if (requirements.maxLevel != null && context.level > requirements.maxLevel) return false
+  if (requirements.genders?.length && !requirements.genders.some((gender) => context.gender.includes(gender))) return false
+
+  const storyStage = task.meta?.factionStoryStage
+  if (requirements.storyStages?.length && (typeof storyStage !== 'string' || !requirements.storyStages.includes(storyStage))) {
+    return false
+  }
+  return true
 }
 
 export function isEligible(option: WheelOption, task: RollTask, context: GameContext): boolean {
@@ -49,6 +83,7 @@ export function isEligible(option: WheelOption, task: RollTask, context: GameCon
     ...context.martialSouls,
   ].join('、')
 
+  if (!meetsStructuredRequirements(option, task, context)) return false
   if (/男性限定|要求男性/.test(text) && !context.gender.includes('男')) return false
   if (/女性限定|要求女性/.test(text) && !context.gender.includes('女')) return false
   if (/要求有神考|需要神考/.test(text) && !context.godTrial) return false
@@ -66,6 +101,8 @@ export function isEligible(option: WheelOption, task: RollTask, context: GameCon
   }
   if (/极致武魂限定/.test(text) && !context.martialSoulTypes.includes('极致武魂')) return false
   if (/海魂兽/.test(text) && /限定|要求/.test(text) && context.beast?.type !== '海魂兽') return false
+  const minimumLevel = explicitMinimumLevel(text) ?? roleMinimumLevel(text)
+  if (minimumLevel != null && context.level < minimumLevel) return false
   if (task.meta?.only && !String(task.meta.only).split('|').some((value) => text.includes(value))) return false
   return true
 }
@@ -73,7 +110,11 @@ export function isEligible(option: WheelOption, task: RollTask, context: GameCon
 export function candidateDistribution(pool: WheelPool, task: RollTask, context: GameContext): CandidateDistribution[] {
   const enabled = enabledOptions(pool).filter((option) => optionWeight(option) > 0)
   const eligible = enabled.filter((option) => isEligible(option, task, context))
-  const candidates = eligible.length > 0 ? eligible : enabled
+  const candidates = eligible.length > 0
+    ? eligible
+    : enabled.some((option) => option.requirements)
+      ? []
+      : enabled
   if (candidates.length === 0) return []
 
   const total = candidates.reduce((sum, option) => sum + candidateWeight(option, task, context), 0)
