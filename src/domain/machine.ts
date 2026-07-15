@@ -15,7 +15,7 @@ import {
   beastMartialSoulPoolName,
   toolMartialSoulPoolName,
 } from './martialSoulCategories'
-import { hashSeed } from './random'
+import { hashSeed, nextRandom } from './random'
 import type {
   ChronicleEntry,
   GameContext,
@@ -453,6 +453,21 @@ function prepareNext(state: MachineState): MachineState {
       const reward = nextGodReward(context)
       if (reward) context.queue.push(reward)
       else {
+        if (context.level >= 99 && !context.godTrial && (Number(context.flags._noGodCount) || 0) >= 5) {
+          context.flags._noGodCount = 0
+          context.queue.push(task('神考抽取池', '自创神位剧情', 'godTier', { tier: '二级' }))
+          return state
+        }
+        if (context.level >= 99 && !context.godTrial && !context.flags._god99Triggered) {
+          context.flags._god99Triggered = true
+          const rng = nextRandom(context.rng)
+          context.rng = rng.state
+          if (rng.value < 0.5) {
+            context.flags._noGodCount = 0
+            context.queue.push(task('神考抽取池', '99级神考触发', 'godTier'))
+            return state
+          }
+        }
         const faction = nextFactionTask(context)
         if (faction) context.queue.push(faction)
         else {
@@ -577,6 +592,16 @@ function applyResult(state: MachineState, option: WheelOption, probability: numb
       break
     case 'growth':
       if (/完整领域|进入领域.*池/.test(text)) context.queue.unshift(task('完整领域抽取池', '完整领域池子', 'domain'))
+      if (/获得神考/.test(text)) {
+        const godPool = context.level >= 99 ? '99级神考触发' : '神考池子'
+        context.queue.unshift(task('神考抽取池', godPool, 'godTier'))
+        context.flags._noGodCount = 0
+      }
+      if (/极致进化/.test(text) && !context.martialSoulTypes.includes('极致武魂')) {
+        addUnique(context.martialSoulTypes, '极致武魂')
+      }
+      if (context.level >= 99 && !context.godTrial && context.flags._god99Triggered)
+        context.flags._noGodCount = (Number(context.flags._noGodCount) || 0) + 1
       break
     case 'age':
       context.age = firstNumber(text, 6)
@@ -613,15 +638,28 @@ function applyResult(state: MachineState, option: WheelOption, probability: numb
       addUnique(context.soulBones, text)
       break
     case 'godTier': {
-      const tier = /神王/.test(text) ? '神王' : /一级/.test(text) ? '一级' : /二级/.test(text) ? '二级' : '三级'
+      const isCustom = /自创神位/.test(text)
+      const tier = isCustom ? (String(active.meta?.tier) || '二级')
+        : /神王/.test(text) ? '神王' : /一级/.test(text) ? '一级' : /二级/.test(text) ? '二级' : '三级'
       const total = tier === '三级' ? 7 : tier === '二级' ? 8 : 9
-      context.godTrial = { tier, deity: '', completed: 0, total }
-      const pool = tier === '神王' ? '神王考核抽取池（神王神位一共9考）' : `${tier}神考抽取池（${tier}神一共${total}考）`
-      context.queue.unshift(task('神考抽取池', pool, 'godDeity'))
+
+      if (isCustom) {
+        context.flags._pendingCustomGod = tier
+        context.flags._noGodCount = 0
+      } else {
+        context.godTrial = { tier, deity: '', completed: 0, total }
+        const pool = tier === '神王' ? '神王考核抽取池（神王神位一共9考）' : `${tier}神考抽取池（${tier}神一共${total}考）`
+        context.queue.unshift(task('神考抽取池', pool, 'godDeity'))
+        context.flags._noGodCount = 0
+      }
       break
     }
     case 'godDeity':
-      if (context.godTrial) context.godTrial.deity = text.replace(/神位考核|神位|考核/g, '').trim()
+      if (/自创神位/.test(text)) {
+        if (context.godTrial) context.flags._pendingCustomGod = context.godTrial.tier
+      } else if (context.godTrial) {
+        context.godTrial.deity = text.replace(/神位考核|神位|考核/g, '').trim()
+      }
       break
     case 'godReward':
       if (context.godTrial) {

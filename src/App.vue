@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { FastForward, Gauge, Monitor, Pause, Pencil, Play, RotateCcw, Settings2, Smartphone, Sparkles } from 'lucide-vue-next'
 import CharacterPanel from '@/components/CharacterPanel.vue'
 import ChroniclePanel from '@/components/ChroniclePanel.vue'
@@ -18,6 +18,8 @@ const importStatus = ref('')
 const mobileTab = ref<MobileTab>('stage')
 const editorOpen = ref(false)
 const layoutMode = ref<'desktop' | 'mobile'>(typeof window !== 'undefined' && window.innerWidth <= 760 ? 'mobile' : 'desktop')
+const customGodName = ref('')
+const showCustomGodDialog = ref(false)
 
 const currentTask = computed(() => store.displayTask.value)
 const currentOptions = computed(() => store.wheelOptions.value.length > 0
@@ -81,6 +83,21 @@ function clearOverrides() {
 function setLayoutMode(mode: 'desktop' | 'mobile') {
   layoutMode.value = mode
 }
+
+function submitCustomGodName() {
+  const name = customGodName.value.trim()
+  if (!name) return
+  store.resolveCustomGod(name)
+  customGodName.value = ''
+  showCustomGodDialog.value = false
+}
+
+watch(() => store.needsCustomGodName.value, (val) => {
+  if (val) {
+    customGodName.value = ''
+    showCustomGodDialog.value = true
+  }
+})
 </script>
 
 <template>
@@ -172,4 +189,25 @@ function setLayoutMode(mode: 'desktop' | 'mobile') {
   <StartDialog :open="store.isStartOpen.value || !store.isStarted.value" :cancellable="store.isStarted.value" @start="store.start" @cancel="store.cancelStart" />
   <WheelEditorDialog :open="editorOpen" :pool="store.activePool.value" :task="currentTask" :context="store.context.value" :original-option-ids="originalPool?.options.map((option) => option.id) ?? []" :modified="editorModified" @close="editorOpen = false" @apply="applyEditor" @reset="resetEditor" />
   <div v-if="store.machine.value.value === 'ending'" class="ending-banner" role="status"><div><span>{{ store.context.value.alive ? '命运终章' : '命运断绝' }}</span><strong>{{ store.context.value.ending }}</strong></div><button class="button primary" @click="store.openStart"><Sparkles :size="17" />再来一局</button></div>
+
+  <Teleport to="body">
+    <div v-if="showCustomGodDialog" class="modal-backdrop custom-god-dialog" @click.self="() => {}">
+      <div class="dialog">
+        <h2>自创神位</h2>
+        <p>五次春秋更迭，你踏遍斗罗大陆的每一个角落——星斗大森林的深处、海神岛的潮汐之间、武魂殿的圣殿之下、杀戮之都的无尽血海。然而无论你如何追寻，神位的感召始终与你无缘。仰望星空，你心中生出一股冲天豪气——若天道不授神位于我，我便逆天而行，燃出一条属于自己的成神之路。</p>
+        <form @submit.prevent="submitCustomGodName">
+          <label class="god-name-label">
+            <span>请为你的神位命名</span>
+            <div class="god-name-input-wrap">
+              <input v-model="customGodName" type="text" maxlength="6" placeholder="如：剑、战狼、星辰" autofocus />
+              <span class="god-name-suffix">神</span>
+            </div>
+          </label>
+          <footer class="dialog-actions">
+            <button type="submit" class="button primary" :disabled="!customGodName.trim()">确定</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  </Teleport>
 </template>

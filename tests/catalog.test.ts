@@ -11,9 +11,9 @@ import { advanceWheelRotation, normalizeDegrees, targetRotationForSegment } from
 
 describe('wheel catalog', () => {
   it('preserves the complete embedded source data', () => {
-    expect(wheelData.decisions).toHaveLength(273)
+    expect(wheelData.decisions).toHaveLength(275)
     expect(wheelData.tags).toHaveLength(25)
-    expect(wheelData.decisions.reduce((sum, pool) => sum + pool.options.length, 0)).toBe(2456)
+    expect(wheelData.decisions.reduce((sum, pool) => sum + pool.options.length, 0)).toBe(2468)
   })
 
   it('indexes pools by exact name and tag', () => {

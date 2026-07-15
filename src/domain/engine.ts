@@ -101,6 +101,44 @@ export function isEligible(option: WheelOption, task: RollTask, context: GameCon
   }
   if (/极致武魂限定/.test(text) && !context.martialSoulTypes.includes('极致武魂')) return false
   if (/海魂兽/.test(text) && /限定|要求/.test(text) && context.beast?.type !== '海魂兽') return false
+  if (/兽武魂限定/.test(text) && !context.martialSoulTypes.includes('兽武魂')) return false
+  if (/器武魂限定/.test(text) && !context.martialSoulTypes.includes('器武魂')) return false
+
+  const martialSoulNames = context.martialSouls.join('、')
+  const attributeChecks: Array<[RegExp, RegExp]> = [
+    [/火属性武魂限定/, /火|炎|焰|烈|赤|焚|灼|阳/],
+    [/水属性武魂限定/, /水|海|潮|浪|波|涛|冰|雪/],
+    [/雷属性武魂限定/, /雷|电|霆/],
+    [/冰属性武魂限定/, /冰|雪|寒|霜|冻/],
+    [/风属性武魂限定/, /风|飘|气/],
+    [/光属性武魂限定/, /光|日|圣|明/],
+    [/暗属性武魂限定/, /暗|黑|魔|影|幽冥|邪|死|罗刹/],
+    [/生命属性武魂限定/, /生命|木|花|草|药|树/],
+    [/毁灭属性武魂限定/, /毁灭|破|灭|崩/],
+    [/剑类武魂限定/, /剑/],
+    [/刀类武魂限定/, /刀/],
+    [/枪类武魂限定/, /枪|矛|戟/],
+    [/弓类武魂限定/, /弓/],
+    [/龙族武魂限定/, /龙/],
+  ]
+  for (const [pattern, matcher] of attributeChecks) {
+    if (pattern.test(text) && !matcher.test(martialSoulNames)) return false
+  }
+
+  if (/S级以上容貌限定/.test(text) && !/[SX]/.test(context.appearance)) return false
+
+  const badCountMatch = text.match(/负面剧情触发大于(\d+)次限定/)
+  if (badCountMatch) {
+    const required = Number(badCountMatch[1])
+    if ((Number(context.flags._badCount) || 0) <= required) return false
+  }
+
+  const combatCountMatch = text.match(/战斗剧情触发大于(\d+)次限定/)
+  if (combatCountMatch) {
+    const required = Number(combatCountMatch[1])
+    if ((Number(context.flags._combatCount) || 0) <= required) return false
+  }
+
   const minimumLevel = explicitMinimumLevel(text) ?? roleMinimumLevel(text)
   if (minimumLevel != null && context.level < minimumLevel) return false
   if (task.meta?.only && !String(task.meta.only).split('|').some((value) => text.includes(value))) return false

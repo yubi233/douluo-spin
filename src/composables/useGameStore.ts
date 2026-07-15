@@ -293,6 +293,22 @@ function setSpinDuration(value: number) {
   persist()
 }
 
+const needsCustomGodName = computed(() => !!machine.value.context.flags._pendingCustomGod)
+
+function resolveCustomGod(name: string) {
+  const ctx = machine.value.context
+  const tier = String(ctx.flags._pendingCustomGod || '二级')
+  const total = tier === '三级' ? 7 : tier === '二级' ? 8 : 9
+  ctx.godTrial = { tier, deity: name + '神', completed: 0, total }
+  delete ctx.flags._pendingCustomGod
+  const next = structuredClone(machine.value)
+  next.context.godTrial = ctx.godTrial
+  delete next.context.flags._pendingCustomGod
+  machine.value = next
+  persist()
+  refreshWheel()
+}
+
 const context = computed(() => machine.value.context)
 const isStarted = computed(() => Boolean(context.value.seed))
 const isStartOpen = computed(() => machine.value.value === 'routeSelection')
@@ -346,6 +362,8 @@ export function useGameStore() {
     wheelSpinNonce: readonly(wheelSpinNonce),
     wheelResetNonce: readonly(wheelResetNonce),
     overrideCount: overrides.count,
+    needsCustomGodName,
+    resolveCustomGod,
     openStart,
     cancelStart,
     start,
