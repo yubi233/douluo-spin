@@ -1,5 +1,11 @@
 import { findPool, poolsForTag } from './catalog'
 import { drawOption } from './engine'
+import {
+  BEAST_MARTIAL_SOUL_CATEGORY_POOL,
+  TOOL_MARTIAL_SOUL_CATEGORY_POOL,
+  beastMartialSoulPoolName,
+  toolMartialSoulPoolName,
+} from './martialSoulCategories'
 import { hashSeed } from './random'
 import type {
   ChronicleEntry,
@@ -37,8 +43,8 @@ const MARTIAL_POOLS: Record<string, string> = {
   变异武魂: '变异武魂',
   本体武魂: '本体武魂',
   极致武魂: '极致武魂',
-  兽武魂: '兽武魂',
-  器武魂: '器武魂',
+  兽武魂: BEAST_MARTIAL_SOUL_CATEGORY_POOL,
+  器武魂: TOOL_MARTIAL_SOUL_CATEGORY_POOL,
 }
 
 const BEAST_SPECIES_POOLS: Record<string, string> = {
@@ -429,7 +435,14 @@ function applyResult(state: MachineState, option: WheelOption, probability: numb
       const type = text.replace(/（.*$/, '').trim()
       addUnique(context.martialSoulTypes, type)
       const pool = MARTIAL_POOLS[type]
-      if (pool) context.queue.unshift(task('武魂池子', pool, 'martialSoul'))
+      if (pool) context.queue.unshift(task('武魂池子', pool, /兽武魂|器武魂/.test(type) ? 'martialSoulCategory' : 'martialSoul'))
+      break
+    }
+    case 'martialSoulCategory': {
+      const category = text.replace(/（.*$/, '').trim()
+      const isToolCategory = active.pool === TOOL_MARTIAL_SOUL_CATEGORY_POOL
+      context.flags[isToolCategory ? 'toolMartialSoulCategory' : 'beastMartialSoulCategory'] = category
+      context.queue.unshift(task('武魂池子', isToolCategory ? toolMartialSoulPoolName(category) : beastMartialSoulPoolName(category), 'martialSoul'))
       break
     }
     case 'martialSoul':

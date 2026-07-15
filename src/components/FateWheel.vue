@@ -19,6 +19,7 @@ const canvas = ref<HTMLCanvasElement | null>(null)
 const rotation = ref(0)
 const reducedMotion = ref(false)
 const resetInProgress = ref(false)
+const inspected = ref<{ index: number; x: number; y: number } | null>(null)
 let observer: ResizeObserver | null = null
 let resetFrame: number | null = null
 const minLabelAngle = 8 * (Math.PI / 180)
@@ -26,6 +27,13 @@ const minLabelAngle = 8 * (Math.PI / 180)
 const visibleOptions = computed(() => props.options.length > 0
   ? props.options
   : ['斗罗大陆', '命运', '武魂', '魂兽', '神考', '雷劫'].map((name, index) => ({ id: String(index), name })))
+const inspectedOption = computed(() => inspected.value ? visibleOptions.value[inspected.value.index] : null)
+const inspectedProbability = computed(() => {
+  const option = inspectedOption.value
+  if (!option) return 0
+  const totalWeight = visibleOptions.value.reduce((sum, candidate) => sum + optionWeight(candidate), 0)
+  return totalWeight > 0 ? optionWeight(option) / totalWeight : 0
+})
 
 function cleanLabel(value: string) {
   return value.replace(/（.*?）/g, '')
@@ -78,6 +86,13 @@ function draw() {
     context.closePath()
     context.fillStyle = palette[index % palette.length] ?? '#3e475e'
     context.fill()
+    if (inspected.value?.index === index) {
+      context.fillStyle = '#e5ca7044'
+      context.fill()
+      context.strokeStyle = '#fff1a8'
+      context.lineWidth = 4 * window.devicePixelRatio
+      context.stroke()
+    }
     context.strokeStyle = '#d8c47a55'
     context.lineWidth = Math.max(1, window.devicePixelRatio)
     context.stroke()
@@ -114,8 +129,52 @@ function draw() {
   context.stroke()
 }
 
-watch(visibleOptions, () => nextTick(draw), { deep: false })
+function optionIndexAt(event: MouseEvent) {
+  const element = canvas.value
+  if (!element) return -1
+  const width = element.clientWidth || element.width
+  const height = element.clientHeight || element.height
+  const x = event.offsetX - width / 2
+  const y = event.offsetY - height / 2
+  const distance = Math.hypot(x, y)
+  if (distance > Math.min(width, height) / 2 || distance < 40) return -1
+
+  const totalWeight = visibleOptions.value.reduce((sum, option) => sum + optionWeight(option), 0)
+  if (totalWeight <= 0) return -1
+  const visualAngle = Math.atan2(y, x)
+  const contentAngle = visualAngle - (rotation.value * Math.PI) / 180
+  const offset = ((contentAngle + Math.PI / 2) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2)
+  let cursor = 0
+  for (let index = 0; index < visibleOptions.value.length; index += 1) {
+    cursor += (optionWeight(visibleOptions.value[index]!) / totalWeight) * Math.PI * 2
+    if (offset <= cursor) return index
+  }
+  return visibleOptions.value.length - 1
+}
+
+function inspect(event: MouseEvent) {
+  const index = optionIndexAt(event)
+  if (index < 0) {
+    inspected.value = null
+  } else {
+    const element = canvas.value
+    const width = element?.clientWidth || 1
+    const height = element?.clientHeight || 1
+    inspected.value = {
+      index,
+      x: Math.min(76, Math.max(24, (event.offsetX / width) * 100)),
+      y: Math.min(78, Math.max(22, (event.offsetY / height) * 100)),
+    }
+  }
+  void nextTick(draw)
+}
+
+watch(visibleOptions, () => {
+  inspected.value = null
+  void nextTick(draw)
+}, { deep: false })
 watch(() => props.spinNonce, () => {
+  inspected.value = null
   const options = visibleOptions.value
   if (props.selectedIndex < 0 || options.length === 0) return
   const totalWeight = options.reduce((sum, option) => sum + optionWeight(option), 0)
@@ -164,7 +223,16 @@ onBeforeUnmount(() => {
       ref="canvas"
       class="wheel-canvas"
       :style="{ transform: `rotate(${rotation}deg)`, transitionDuration: `${resetInProgress ? 0 : reducedMotion ? Math.min(duration, 100) : duration}ms` }"
+      @click="inspect"
     />
+    <div
+      v-if="inspected && inspectedOption"
+      class="wheel-tooltip"
+      :style="{ left: `${inspected.x}%`, top: `${inspected.y}%` }"
+    >
+      <strong>{{ inspectedOption.name }}</strong>
+      <span>概率 {{ (inspectedProbability * 100).toFixed(2) }}% · 权重 {{ optionWeight(inspectedOption) }}</span>
+    </div>
     <button class="wheel-trigger" :disabled="disabled" :aria-busy="disabled" :aria-label="awaitingAdvance ? '进入下一项' : '转动命运轮盘'" @click="$emit('spin')">
       <span>{{ awaitingAdvance ? '继续' : '转动' }}</span>
       <small>{{ awaitingAdvance ? 'NEXT' : 'SPIN' }}</small>

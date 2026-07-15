@@ -55,6 +55,45 @@ describe('finite state machine', () => {
     expect(first.nextRng).toBe(second.nextRng)
   })
 
+  it('routes beast martial souls through a category wheel before the concrete soul', () => {
+    let state = startHuman('beast-martial-category')
+    state = transition(state, { type: 'ROLL' }).state
+    state = transition(state, { type: 'RESOLVE', option: { id: 'male', name: '男' }, probability: 0.5 }).state
+    state = transition(state, { type: 'ROLL' }).state
+    state = transition(state, { type: 'RESOLVE', option: { id: 'appearance', name: 'A级' }, probability: 0.1 }).state
+    state = transition(state, { type: 'ROLL' }).state
+    state = transition(state, { type: 'RESOLVE', option: { id: 'beast', name: '兽武魂' }, probability: 0.35 }).state
+
+    expect(state.context.martialSoulTypes).toContain('兽武魂')
+    expect(state.context.queue[0]?.pool).toBe('兽武魂分类')
+    expect(state.context.queue[0]?.handler).toBe('martialSoulCategory')
+
+    state = transition(state, { type: 'ROLL' }).state
+    state = transition(state, { type: 'RESOLVE', option: { id: 'dragon', name: '龙族' }, probability: 0.4 }).state
+    expect(state.context.queue[0]?.pool).toBe('兽武魂：龙族')
+    expect(state.context.queue[0]?.handler).toBe('martialSoul')
+  })
+
+  it('routes tool martial souls through a category wheel before the concrete soul', () => {
+    let state = startHuman('tool-martial-category')
+    state = transition(state, { type: 'ROLL' }).state
+    state = transition(state, { type: 'RESOLVE', option: { id: 'male', name: '男' }, probability: 0.5 }).state
+    state = transition(state, { type: 'ROLL' }).state
+    state = transition(state, { type: 'RESOLVE', option: { id: 'appearance', name: 'A级' }, probability: 0.1 }).state
+    state = transition(state, { type: 'ROLL' }).state
+    state = transition(state, { type: 'RESOLVE', option: { id: 'tool', name: '器武魂' }, probability: 0.35 }).state
+
+    expect(state.context.martialSoulTypes).toContain('器武魂')
+    expect(state.context.queue[0]?.pool).toBe('器武魂分类')
+    expect(state.context.queue[0]?.handler).toBe('martialSoulCategory')
+
+    state = transition(state, { type: 'ROLL' }).state
+    state = transition(state, { type: 'RESOLVE', option: { id: 'sword', name: '剑类' }, probability: 0.4 }).state
+    expect(state.context.flags.toolMartialSoulCategory).toBe('剑类')
+    expect(state.context.queue[0]?.pool).toBe('器武魂：剑类')
+    expect(state.context.queue[0]?.handler).toBe('martialSoul')
+  })
+
   it('starts every supported entry route without changing the state-machine contract', () => {
     for (const route of ['random', 'human', 'beast'] as const) {
       const result = transition(createInitialState(), { type: 'START', route, seed: `route-${route}` })

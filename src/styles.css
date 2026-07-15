@@ -60,6 +60,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-v
 .wheel-trigger { position: absolute; z-index: 2; inset: 50% auto auto 50%; transform: translate(-50%, -50%); width: 104px; height: 104px; display: grid; place-content: center; gap: 2px; border-radius: 50%; border: 5px solid #202326; outline: 2px solid var(--gold); background: var(--gold); color: #19150c; cursor: pointer; font-weight: 900; }
 .wheel-trigger:disabled { opacity: .74; cursor: not-allowed; }
 .wheel-trigger span { font-size: 17px; }.wheel-trigger small { font-size: 9px; }
+.wheel-tooltip { position: absolute; z-index: 5; width: min(230px, 72%); transform: translate(-50%, -100%); border: 1px solid #d8bc69aa; border-radius: var(--radius); padding: 8px 9px; color: var(--text); background: #111416f2; box-shadow: 0 10px 26px #000b; pointer-events: none; }
+.wheel-tooltip strong { display: block; font-size: 12px; line-height: 1.35; overflow-wrap: anywhere; }.wheel-tooltip span { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
 
 .result-panel { margin: 0 14px; min-height: 108px; padding: 14px 15px; border: 1px solid var(--line-strong); border-left: 3px solid var(--teal); border-radius: var(--radius); background: var(--surface-soft); }
 .result-panel > span { color: var(--gold); font-size: 10px; }.result-panel p { margin: 7px 0; font-size: 14px; line-height: 1.65; overflow-wrap: anywhere; }.result-panel small { color: var(--muted); font-size: 10px; }

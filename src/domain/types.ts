@@ -49,6 +49,7 @@ export type TaskHandler =
   | 'gender'
   | 'appearance'
   | 'martialType'
+  | 'martialSoulCategory'
   | 'martialSoul'
   | 'specialChance'
   | 'specialTalent'
