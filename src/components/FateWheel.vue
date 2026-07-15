@@ -21,13 +21,32 @@ const reducedMotion = ref(false)
 const resetInProgress = ref(false)
 let observer: ResizeObserver | null = null
 let resetFrame: number | null = null
+const minLabelAngle = 8 * (Math.PI / 180)
 
 const visibleOptions = computed(() => props.options.length > 0
   ? props.options
   : ['斗罗大陆', '命运', '武魂', '魂兽', '神考', '雷劫'].map((name, index) => ({ id: String(index), name })))
 
+function cleanLabel(value: string) {
+  return value.replace(/（.*?）/g, '')
+}
+
+function fitLabel(context: CanvasRenderingContext2D, value: string, maxWidth: number) {
+  const clean = cleanLabel(value)
+  if (context.measureText(clean).width <= maxWidth) return clean
+
+  const suffix = '…'
+  let fitted = ''
+  for (const char of clean) {
+    const next = `${fitted}${char}`
+    if (context.measureText(`${next}${suffix}`).width > maxWidth) break
+    fitted = next
+  }
+  return fitted ? `${fitted}${suffix}` : ''
+}
+
 function shorten(value: string, max = 11) {
-  const clean = value.replace(/（.*?）/g, '')
+  const clean = cleanLabel(value)
   return clean.length > max ? `${clean.slice(0, max - 1)}…` : clean
 }
 
@@ -64,14 +83,25 @@ function draw() {
     context.stroke()
 
     if (options.length <= 28) {
+      const fontSize = Math.max(10, Math.min(15, 260 / options.length)) * window.devicePixelRatio
+      const labelRadius = radius - 24 * window.devicePixelRatio
+      const innerPadding = 68 * window.devicePixelRatio
+      const maxLabelWidth = Math.max(0, labelRadius - innerPadding)
+      const arcLength = angle * labelRadius
+      if (angle < minLabelAngle || arcLength < fontSize * 1.35 || maxLabelWidth < 24 * window.devicePixelRatio) {
+        startAngle += angle
+        return
+      }
+
       context.save()
       context.translate(center, center)
       context.rotate(start + angle / 2)
       context.textAlign = 'right'
       context.textBaseline = 'middle'
       context.fillStyle = '#f8f5e9'
-      context.font = `${Math.max(10, Math.min(15, 260 / options.length)) * window.devicePixelRatio}px system-ui`
-      context.fillText(shorten(option.name), radius - 24 * window.devicePixelRatio, 0)
+      context.font = `${fontSize}px system-ui`
+      const label = fitLabel(context, shorten(option.name), maxLabelWidth)
+      if (label) context.fillText(label, labelRadius, 0)
       context.restore()
     }
     startAngle += angle
