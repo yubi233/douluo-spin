@@ -147,8 +147,7 @@ function optionIndexAt(event: MouseEvent) {
 
   const totalWeight = visibleOptions.value.reduce((sum, option) => sum + optionWeight(option), 0)
   if (totalWeight <= 0) return -1
-  const visualAngle = Math.atan2(y, x)
-  const contentAngle = visualAngle - (rotation.value * Math.PI) / 180
+  const contentAngle = Math.atan2(y, x)
   const offset = ((contentAngle + Math.PI / 2) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2)
   let cursor = 0
   for (let index = 0; index < visibleOptions.value.length; index += 1) {
@@ -164,12 +163,13 @@ function inspect(event: MouseEvent) {
     inspected.value = null
   } else {
     const element = canvas.value
-    const width = element?.clientWidth || 1
-    const height = element?.clientHeight || 1
+    const shellRect = element?.parentElement?.getBoundingClientRect()
+    const width = shellRect?.width || 1
+    const height = shellRect?.height || 1
     inspected.value = {
       index,
-      x: Math.min(76, Math.max(24, (event.offsetX / width) * 100)),
-      y: Math.min(78, Math.max(22, (event.offsetY / height) * 100)),
+      x: Math.min(76, Math.max(24, ((event.clientX - (shellRect?.left ?? 0)) / width) * 100)),
+      y: Math.min(78, Math.max(22, ((event.clientY - (shellRect?.top ?? 0)) / height) * 100)),
     }
   }
   void nextTick(draw)

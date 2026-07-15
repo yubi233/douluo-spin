@@ -25,6 +25,7 @@ export const TOOL_MARTIAL_SOUL_CATEGORIES = [
   '剑类',
   '刀镰类',
   '枪矛戟类',
+  '枪械类',
   '斧类',
   '锤类',
   '棍棒类',
@@ -53,13 +54,13 @@ export function classifyBeastMartialSoul(option: WheelOption): BeastMartialSoulC
   const name = option.name
   if (/地龙|霸王龙|迅猛龙|翼龙|蛇颈龙|剑龙|甲龙|白甲地龙|山龙王/.test(name)) return '亚龙族'
   if (/龙|青龙/.test(name)) return '龙族'
-  if (/虎|狮|豹|猫/.test(name)) return '猫科'
-  if (/狼|狐|獒/.test(name)) return '犬狼狐'
-  if (/凤凰|燕|天鹅|翼龙|狮鹫/.test(name)) return '鸟禽飞行'
-  if (/蛇|龟|玄武|鳄|蛇颈龙|甲龙/.test(name)) return '爬行水生'
-  if (/蚁|蝎|蚕|蛛|蜘蛛/.test(name)) return '虫蛛节肢'
-  if (/熊|猩猩|猴|猿/.test(name)) return '熊猿猴'
-  if (/犀|猛犸|牛|马|猪|鹿/.test(name)) return '蹄角大型兽'
+  if (/虎|狮|豹|猫|又旅/.test(name)) return '猫科'
+  if (/狼|狐|獒|犀犬/.test(name)) return '犬狼狐'
+  if (/凤凰|燕|天鹅|翼龙|狮鹫|天使|鹰|鸾/.test(name)) return '鸟禽飞行'
+  if (/蛇|龟|玄武|鳄|蛇颈龙|甲龙|矶抚/.test(name)) return '爬行水生'
+  if (/蚁|蝎|蚕|蛛|蜘蛛|蝶|重明/.test(name)) return '虫蛛节肢'
+  if (/熊|猩猩|猴|猿|孙悟空/.test(name)) return '熊猿猴'
+  if (/犀|猛犸|牛|马|猪|鹿|穆王/.test(name)) return '蹄角大型兽'
   if (/兔|蟾/.test(name)) return '小型奇兽'
   return '其他奇兽'
 }
@@ -68,6 +69,7 @@ export function classifyToolMartialSoul(option: WheelOption): ToolMartialSoulCat
   const name = option.name
   if (/剑/.test(name)) return '剑类'
   if (/刀|镰|斩月/.test(name)) return '刀镰类'
+  if (/狙击枪|沙漠之鹰|AK47|步枪|RPG|导弹|焚化枪|喷射器/.test(name)) return '枪械类'
   if (/枪|矛|画戟/.test(name)) return '枪矛戟类'
   if (/斧/.test(name)) return '斧类'
   if (/锤/.test(name)) return '锤类'

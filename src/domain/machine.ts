@@ -1,4 +1,5 @@
 import { findPool, poolsForTag } from './catalog'
+import { FIREARM_MARTIAL_SOUL_NAMES, FIREARM_STORY_POOL_NAME } from './canonAdditions'
 import { drawOption } from './engine'
 import {
   BEAST_MARTIAL_SOUL_CATEGORY_POOL,
@@ -135,6 +136,10 @@ function clone(state: MachineState): MachineState {
 function addUnique(values: string[], value: string) {
   const cleaned = value.replace(/（.*$/, '').trim()
   if (cleaned && !values.includes(cleaned)) values.push(cleaned)
+}
+
+function hasFirearmMartialSoul(context: GameContext): boolean {
+  return context.martialSouls.some((martialSoul) => FIREARM_MARTIAL_SOUL_NAMES.has(martialSoul))
 }
 
 function timeLabel(context: GameContext): string {
@@ -461,7 +466,10 @@ function applyResult(state: MachineState, option: WheelOption, probability: numb
       if (/神明转世/.test(text)) context.queue.unshift(task('神考抽取池', '神考池子', 'godTier'))
       break
     case 'growthChance':
-      if (/^是|获得/.test(text)) context.queue.unshift(task('特殊成长经历', '特殊成长经历', 'growth'))
+      if (/^是|获得/.test(text)) {
+        const pool = hasFirearmMartialSoul(context) ? FIREARM_STORY_POOL_NAME : '特殊成长经历'
+        context.queue.unshift(task('特殊成长经历', pool, 'growth'))
+      }
       break
     case 'growth':
       if (/完整领域|进入领域.*池/.test(text)) context.queue.unshift(task('完整领域抽取池', '完整领域池子', 'domain'))

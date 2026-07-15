@@ -1,5 +1,14 @@
 import rawData from '@/data/wheels.json'
 import {
+  ANIME_EXPANDED_MARTIAL_SOULS,
+  CANONICAL_POOL_ADDITIONS,
+  CROSSOVER_BEAST_MARTIAL_SOULS,
+  CROSSOVER_BODY_MARTIAL_SOULS,
+  FIREARM_MARTIAL_SOULS,
+  FIREARM_STORY_OPTIONS,
+  FIREARM_STORY_POOL_NAME,
+} from './canonAdditions'
+import {
   BEAST_MARTIAL_SOUL_CATEGORIES,
   BEAST_MARTIAL_SOUL_CATEGORY_POOL,
   TOOL_MARTIAL_SOUL_CATEGORIES,
@@ -14,15 +23,18 @@ import type { WheelData, WheelOption, WheelPool } from './types'
 export const wheelData = rawData as WheelData
 
 const tagsById = new Map(wheelData.tags.map((tag) => [tag.id, tag]))
+const catalogDecisions = createCatalogDecisions()
 const beastMartialSoulPools = createBeastMartialSoulPools()
 const toolMartialSoulPools = createToolMartialSoulPools()
-const virtualPools = [...beastMartialSoulPools, ...toolMartialSoulPools]
-const poolsByName = new Map([...wheelData.decisions, ...virtualPools].map((pool) => [pool.name, pool]))
+const firearmStoryPools = createFirearmStoryPools()
+const virtualPools = [...beastMartialSoulPools, ...toolMartialSoulPools, ...firearmStoryPools]
+const catalogPools = [...catalogDecisions, ...virtualPools]
+const poolsByName = new Map(catalogPools.map((pool) => [pool.name, pool]))
 
 export const tagNames = wheelData.tags.map((tag) => tag.name)
 
 export function poolsForTag(tagName: string): WheelPool[] {
-  return [...wheelData.decisions, ...virtualPools].filter((pool) =>
+  return catalogPools.filter((pool) =>
     pool.tags.some((id) => tagsById.get(id)?.name === tagName),
   )
 }
@@ -30,11 +42,34 @@ export function poolsForTag(tagName: string): WheelPool[] {
 export function findPool(name: string): WheelPool | undefined {
   const exact = poolsByName.get(name)
   if (exact) return exact
-  return [...wheelData.decisions, ...virtualPools].find((pool) => pool.name.includes(name))
+  return catalogPools.find((pool) => pool.name.includes(name))
+}
+
+function createCatalogDecisions(): WheelPool[] {
+  return wheelData.decisions.map((pool) => {
+    const additions: Array<{ name: string; weight?: number }> = [
+      ...(CANONICAL_POOL_ADDITIONS[pool.name] ?? []).map((name) => ({ name })),
+      ...(ANIME_EXPANDED_MARTIAL_SOULS[pool.name] ?? []).map((name) => ({ name })),
+      ...(pool.name === '兽武魂' ? CROSSOVER_BEAST_MARTIAL_SOULS.map((name) => ({ name })) : []),
+      ...(pool.name === '本体武魂' ? CROSSOVER_BODY_MARTIAL_SOULS.map((name) => ({ name })) : []),
+      ...(pool.name === '器武魂' ? FIREARM_MARTIAL_SOULS : []),
+    ]
+    if (!additions?.length) return pool
+
+    const existingNames = new Set(pool.options.map((option) => option.name))
+    const options = additions
+      .filter(({ name }) => !existingNames.has(name))
+      .map(({ name, weight }) => ({
+        id: `canon-${encodeURIComponent(pool.name)}-${encodeURIComponent(name)}`,
+        name,
+        ...(weight == null ? {} : { weight }),
+      }))
+    return options.length ? { ...pool, options: [...pool.options, ...options] } : pool
+  })
 }
 
 function createBeastMartialSoulPools(): WheelPool[] {
-  const source = (rawData as WheelData).decisions.find((pool) => pool.name === '兽武魂')
+  const source = catalogDecisions.find((pool) => pool.name === '兽武魂')
   if (!source) return []
 
   const groups = new Map<string, WheelOption[]>()
@@ -68,7 +103,7 @@ function createBeastMartialSoulPools(): WheelPool[] {
 }
 
 function createToolMartialSoulPools(): WheelPool[] {
-  const source = (rawData as WheelData).decisions.find((pool) => pool.name === '器武魂')
+  const source = catalogDecisions.find((pool) => pool.name === '器武魂')
   if (!source) return []
 
   const groups = new Map<string, WheelOption[]>()
@@ -101,6 +136,22 @@ function createToolMartialSoulPools(): WheelPool[] {
   ]
 }
 
+function createFirearmStoryPools(): WheelPool[] {
+  const source = catalogDecisions.find((pool) => pool.name === '特殊成长经历')
+  if (!source) return []
+
+  return [{
+    id: 'virtual-firearm-story',
+    name: FIREARM_STORY_POOL_NAME,
+    description: '仅枪械类武魂可触发的特殊成长剧情，侧重越级击杀、火力压制与魂导改造。',
+    tags: source.tags,
+    options: FIREARM_STORY_OPTIONS.map((option, index) => ({
+      id: `firearm-story-${index + 1}`,
+      ...option,
+    })),
+  }]
+}
+
 export function optionWeight(option: WheelOption): number {
   const weight = Number(option.weight)
   return Number.isFinite(weight) && weight >= 0 ? weight : 1
@@ -126,7 +177,7 @@ export function getTagName(pool: WheelPool): string {
 }
 
 export function recategorizationCandidates(limit = 12) {
-  return wheelData.decisions
+  return catalogDecisions
     .map((pool) => ({ pool, options: enabledOptions(pool).length, tag: getTagName(pool) }))
     .filter(({ options }) => options >= 20)
     .sort((left, right) => right.options - left.options)

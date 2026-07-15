@@ -1,4 +1,5 @@
 import { enabledOptions, optionWeight } from './catalog'
+import { FIREARM_MARTIAL_SOUL_NAMES } from './canonAdditions'
 import { nextRandom } from './random'
 import type { GameContext, RollTask, WheelOption, WheelPool } from './types'
 
@@ -19,6 +20,23 @@ export interface CandidateDistribution {
 
 function containsAny(text: string, values: string[]) {
   return values.some((value) => text.includes(value))
+}
+
+function isFirearmMartialSoul(context: GameContext) {
+  return context.martialSouls.some((name) => FIREARM_MARTIAL_SOUL_NAMES.has(name))
+}
+
+function isOverlevelKillOutcome(text: string) {
+  if (/你被|被[^，。]*(?:击杀|斩杀|杀死|击败)|落败|死亡/.test(text)) return false
+  return /越级|反杀|斩杀|击杀|单挑.*(?:战胜|获胜)|1v\d|一人.*(?:斩杀|战胜|击杀)/.test(text)
+}
+
+function candidateWeight(option: WheelOption, task: RollTask, context: GameContext) {
+  const baseWeight = optionWeight(option)
+  const isCombat = task.handler === 'humanEncounter' || task.handler === 'beastEncounter' || task.handler === 'story'
+  return isCombat && isFirearmMartialSoul(context) && isOverlevelKillOutcome(option.name)
+    ? baseWeight * 2
+    : baseWeight
 }
 
 export function isEligible(option: WheelOption, task: RollTask, context: GameContext): boolean {
@@ -58,10 +76,10 @@ export function candidateDistribution(pool: WheelPool, task: RollTask, context: 
   const candidates = eligible.length > 0 ? eligible : enabled
   if (candidates.length === 0) return []
 
-  const total = candidates.reduce((sum, option) => sum + optionWeight(option), 0)
+  const total = candidates.reduce((sum, option) => sum + candidateWeight(option, task, context), 0)
   let startAngle = 0
   return candidates.map((option) => {
-    const weight = optionWeight(option)
+    const weight = candidateWeight(option, task, context)
     const probability = weight / total
     const endAngle = startAngle + probability * Math.PI * 2
     const candidate = { option, weight, probability, startAngle, endAngle }
@@ -94,5 +112,5 @@ export function drawOption(pool: WheelPool, task: RollTask, context: GameContext
 }
 
 export function previewOptions(pool: WheelPool, task: RollTask, context: GameContext): WheelOption[] {
-  return candidateDistribution(pool, task, context).map((candidate) => candidate.option)
+  return candidateDistribution(pool, task, context).map((candidate) => ({ ...candidate.option, weight: candidate.weight }))
 }

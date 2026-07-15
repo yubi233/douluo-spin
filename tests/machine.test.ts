@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import { FIREARM_STORY_POOL_NAME } from '@/domain/canonAdditions'
+import { candidateDistribution, previewOptions } from '@/domain/engine'
 import { createInitialState, drawActiveTask, machineStates, transition } from '@/domain/machine'
-import type { MachineState, RollTask } from '@/domain/types'
+import type { MachineState, RollTask, WheelPool } from '@/domain/types'
 
 function startHuman(seed = 'fixed-seed') {
   const result = transition(createInitialState(), { type: 'START', route: 'human', seed })
@@ -92,6 +94,47 @@ describe('finite state machine', () => {
     expect(state.context.flags.toolMartialSoulCategory).toBe('剑类')
     expect(state.context.queue[0]?.pool).toBe('器武魂：剑类')
     expect(state.context.queue[0]?.handler).toBe('martialSoul')
+  })
+
+  it('doubles only active overlevel kill outcomes for firearm martial souls', () => {
+    const context = createInitialState().context
+    context.martialSouls = ['98k狙击枪']
+    const combatTask: RollTask = { id: 'firearm-task', tag: 'test', pool: 'firearm', handler: 'story' }
+    const combatPool: WheelPool = {
+      id: 'firearm', name: 'firearm', tags: [], options: [
+        { id: 'kill', name: '你越级斩杀魂圣', weight: 10 },
+        { id: 'normal', name: '你获得补给', weight: 10 },
+        { id: 'death', name: '你被魂圣击杀', weight: 10 },
+      ],
+    }
+
+    const distribution = candidateDistribution(combatPool, combatTask, context)
+    expect(distribution.map((candidate) => candidate.weight)).toEqual([20, 10, 10])
+    expect(previewOptions(combatPool, combatTask, context).map((option) => option.weight)).toEqual([20, 10, 10])
+  })
+
+  it('routes a successful growth event to the firearm-exclusive story pool', () => {
+    const state = startHuman() as MachineState
+    state.value = 'humanAdventure'
+    state.context.martialSouls = ['98k狙击枪']
+    state.context.queue = [{
+      id: 'growth-chance',
+      tag: '特殊成长经历',
+      pool: '是否获得特殊成长经历（每次经过一次时间跳跃，可抽取该池）',
+      handler: 'growthChance',
+    }]
+
+    const rolling = transition(state, { type: 'ROLL' }).state
+    const resolved = transition(rolling, {
+      type: 'RESOLVE',
+      option: { id: 'yes', name: '是' },
+      probability: 0.5,
+    }).state
+
+    expect(resolved.context.queue[0]).toMatchObject({
+      pool: FIREARM_STORY_POOL_NAME,
+      handler: 'growth',
+    })
   })
 
   it('starts every supported entry route without changing the state-machine contract', () => {
