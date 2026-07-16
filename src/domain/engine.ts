@@ -64,7 +64,7 @@ function candidateWeight(option: WheelOption, task: RollTask, context: GameConte
 
   if (task.handler === 'story') {
     const power = calculateCombatPower(context)
-    multiplier *= combatPowerMultiplier(option.name, power)
+    multiplier *= combatPowerMultiplier(option.name, power, context.level)
   }
 
   return baseWeight * multiplier
@@ -150,13 +150,62 @@ export function calculateCombatPower(context: GameContext): number {
   return Math.round(power)
 }
 
-function combatPowerMultiplier(text: string, power: number): number {
+export function estimateOpponentLevel(text: string): number {
+  const levelMatch = text.match(/对战(\d+)级/)
+  if (levelMatch?.[1]) return parseInt(levelMatch[1])
+
+  const reqMatch = text.match(/要求(\d+)\+级/)
+  if (reqMatch?.[1]) return parseInt(reqMatch[1])
+
+  const named: Array<[RegExp, number]> = [
+    [/天使神?/, 100], [/罗刹神?/, 100], [/海神/, 100],
+    [/比比东/, 95], [/唐三.*[^ ]/, 95], [/唐昊/, 97], [/唐啸/, 97],
+    [/千仞雪/, 85], [/金鳄斗罗/, 98], [/雄狮斗罗/, 97], [/光翎斗罗/, 97],
+    [/剑斗罗/, 96], [/菊斗罗/, 95], [/鬼斗罗/, 95],
+    [/赵无极/, 78], [/弗兰德/, 78],
+    [/呼延震/, 89],
+    [/帝天/, 99], [/熊君/, 96], [/深海魔鲸王/, 98],
+    [/冰帝/, 93],
+  ]
+  for (const [regex, level] of named) {
+    if (regex.test(text)) return level
+  }
+
+  if (/封号斗罗/.test(text)) return 92
+  if (/魂斗罗/.test(text)) return 75
+  if (/魂圣/.test(text)) return 70
+  if (/魂帝/.test(text)) return 60
+  if (/魂王/.test(text)) return 50
+  if (/魂宗/.test(text)) return 40
+
+  if (/史莱克六怪|幽冥白虎/.test(text)) return 80
+  if (/马红俊|宁荣荣|奥斯卡|戴沐白/.test(text)) return 75
+
+  if (/魂兽|凶兽/.test(text)) return 85
+  if (/十万年魂兽/.test(text)) return 93
+
+  return 0
+}
+
+function combatPowerMultiplier(text: string, playerPower: number, playerLevel: number): number {
   const isVictory = /无伤战胜|轻松战胜|秒杀|斩杀|获胜|胜出|单刷|拿下|带领.*获胜|一人.*斩杀|击败|战胜|平推|反杀|轻伤战胜|无伤/.test(text)
-  if (isVictory) return 1 + Math.min(power / 100, 5)
-
   const isDefeat = /战死|被击杀|重伤|落败|战败|被秒杀|被围攻|拖后腿|失败|翻车|被.*(?:杀|吞|秒|斩|重创)|被吃|战败身死/.test(text)
-  if (isDefeat) return Math.max(0.05, 1 - Math.min(power / 120, 0.95))
 
+  if (!isVictory && !isDefeat) return 1
+
+  const opponentLevel = estimateOpponentLevel(text)
+  const opponentPower = opponentLevel > 0 ? Math.round(opponentLevel * opponentLevel / 20) : 0
+
+  if (opponentPower <= 0) {
+    if (isVictory) return 1 + Math.min(playerPower / 100, 5)
+    if (isDefeat) return Math.max(0.05, 1 - Math.min(playerPower / 120, 0.95))
+    return 1
+  }
+
+  const ratio = playerPower / Math.max(1, opponentPower)
+
+  if (isVictory) return Math.max(0.1, Math.min(10, ratio * 2))
+  if (isDefeat) return Math.max(0.05, Math.min(10, 1 / Math.max(0.1, ratio) * 2))
   return 1
 }
 

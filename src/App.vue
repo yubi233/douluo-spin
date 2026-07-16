@@ -10,7 +10,7 @@ import PoolBrowser from '@/components/PoolBrowser.vue'
 import StartDialog from '@/components/StartDialog.vue'
 import WheelEditorDialog from '@/components/WheelEditorDialog.vue'
 import { findPool } from '@/domain/catalog'
-import { calculateCombatPower } from '@/domain/engine'
+import { calculateCombatPower, estimateOpponentLevel } from '@/domain/engine'
 import { useGameStore } from '@/composables/useGameStore'
 
 const store = useGameStore()
@@ -54,9 +54,26 @@ const combatMultiplier = computed(() => {
   if (handler !== 'story') return null
   const power = combatPowerValue.value
   if (power <= 0) return null
-  const victoryMult = (1 + Math.min(power / 100, 5)).toFixed(2)
-  const defeatMult = Math.max(0.05, 1 - Math.min(power / 120, 0.95)).toFixed(3)
-  return { victory: victoryMult, defeat: defeatMult }
+  const pool = store.activePool.value
+  if (!pool) return null
+  const opts = currentOptions.value
+  const opponentLevels = new Set<number>()
+  for (const opt of opts) {
+    const ol = estimateOpponentLevel(opt.name)
+    if (ol > 0) opponentLevels.add(ol)
+  }
+  const avgOpponentLevel = opponentLevels.size > 0
+    ? Math.round([...opponentLevels].reduce((a, b) => a + b, 0) / opponentLevels.size)
+    : 0
+  const opponentPower = avgOpponentLevel > 0 ? Math.round(avgOpponentLevel * avgOpponentLevel / 20) : 0
+  const ratio = opponentPower > 0 ? (power / opponentPower).toFixed(2) : '-'
+  const victoryMult = opponentPower > 0
+    ? Math.max(0.1, Math.min(10, (power / opponentPower) * 2)).toFixed(2)
+    : (1 + Math.min(power / 100, 5)).toFixed(2)
+  const defeatMult = opponentPower > 0
+    ? Math.max(0.05, Math.min(10, 1 / Math.max(0.1, power / opponentPower) * 2)).toFixed(3)
+    : Math.max(0.05, 1 - Math.min(power / 120, 0.95)).toFixed(3)
+  return { opponentLevel: avgOpponentLevel, opponentPower, ratio, victory: victoryMult, defeat: defeatMult }
 })
 
 async function handleImport(event: Event) {
@@ -168,7 +185,8 @@ watch(() => store.needsCustomGodName.value, (val) => {
               <span>本次命运</span><p>{{ store.displayResult.value }}</p>
               <small v-if="store.context.value.lastPool">{{ store.context.value.lastPool }} · 第 {{ store.context.value.step }} 次投掷<template v-if="store.context.value.lastProbability != null"> · 概率 {{ (store.context.value.lastProbability * 100).toFixed(2) }}%</template></small>
               <small v-if="combatMultiplier" class="combat-coeff">
-                战力 {{ combatPowerValue }} · 胜率乘 {{ combatMultiplier.victory }}x · 败率乘 {{ combatMultiplier.defeat }}x
+                战力 {{ combatPowerValue }}<template v-if="combatMultiplier.opponentLevel > 0"> · 对手 {{ combatMultiplier.opponentLevel }}级(战力{{ combatMultiplier.opponentPower }}) · 战力比 {{ combatMultiplier.ratio }}x</template>
+                 · 胜率乘 {{ combatMultiplier.victory }}x · 败率乘 {{ combatMultiplier.defeat }}x
               </small>
             </div>
             <section class="recent-log"><header><span>最近经历</span><small>{{ recentLogs.length }} 条</small></header><p v-for="entry in recentLogs" :key="entry.id"><strong>{{ entry.title }}</strong>{{ entry.text }}</p><p v-if="!recentLogs.length" class="empty">转动命运轮盘后，这里会显示最近经历。</p></section>

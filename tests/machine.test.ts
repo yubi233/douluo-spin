@@ -116,8 +116,8 @@ describe('finite state machine', () => {
     }
 
     const distribution = candidateDistribution(combatPool, combatTask, context)
-    expect(distribution.map((candidate) => candidate.weight)).toEqual([21.6, 10, 9.333333333333334])
-    expect(previewOptions(combatPool, combatTask, context).map((option) => option.weight)).toEqual([21.6, 10, 9.333333333333334])
+    expect(distribution.map((candidate) => candidate.weight)).toEqual([2, 10, 100])
+    expect(previewOptions(combatPool, combatTask, context).map((option) => option.weight)).toEqual([2, 10, 100])
   })
 
   it('never falls back to an incompatible structured faction outcome', () => {
