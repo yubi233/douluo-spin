@@ -214,15 +214,26 @@ function factionStoryOption(
   }
 }
 
-function factionStoryBeats(...beats: FactionStoryBeat[]): FactionStoryOption[] {
+function factionSuffix(stage: FactionStoryStage, factionTitle: string): string {
+  switch (stage) {
+    case 'junior': return `，获得【${factionTitle}新秀】称号`
+    case 'youth': return '，等级+1'
+    case 'adult': return '，等级+1'
+    case 'elite': return `，等级+1，获得【${factionTitle}精英】称号`
+    case 'leader': return `，等级+2，获得【${factionTitle}领袖】称号`
+  }
+}
+
+function factionStoryBeats(factionTitle: string, ...beats: FactionStoryBeat[]): FactionStoryOption[] {
   return beats.flatMap(([stage, general, male, female]) => {
+    const suffix = factionSuffix(stage, factionTitle)
     const generalWeight = stage === 'leader' ? 28 : stage === 'elite' ? 32 : 36
     const genderWeight = stage === 'leader' ? 14 : stage === 'elite' ? 16 : 18
     const label = FACTION_STORY_STAGE_LABELS[stage]
     return [
-      factionStoryOption(stage, `【${label}】${general}`, generalWeight),
-      factionStoryOption(stage, `【男性路线·${label}】${male}`, genderWeight, '男'),
-      factionStoryOption(stage, `【女性路线·${label}】${female}`, genderWeight, '女'),
+      factionStoryOption(stage, `【${label}】${general}${suffix}`, generalWeight),
+      factionStoryOption(stage, `【男性路线·${label}】${male}${suffix}`, genderWeight, '男'),
+      factionStoryOption(stage, `【女性路线·${label}】${female}${suffix}`, genderWeight, '女'),
     ]
   })
 }
@@ -234,7 +245,7 @@ export const FACTION_STORY_DEFINITIONS: readonly FactionStoryDefinition[] = [
     aliases: ['史莱克'],
     poolName: '势力专属剧情：史莱克学院',
     description: '围绕怪物学院的训练、团队磨合、执教和高阶护校职责展开。',
-    options: factionStoryBeats(
+    options: factionStoryBeats('史莱克',
       ['junior', '你在晨练场完成魂力控制考核，得到一份针对武魂短板的训练记录', '你和男学员组成临时双人组，在负重跑中学会分担魂力消耗', '你和女学员互换辅助与主攻位置，找到更适合自己的出手节奏'],
       ['youth', '学院把你编入跨系小队，你在实战课中承担一次关键补位', '你在男学员的擂台挑战中守住最后一轮，获得进阶训练资格', '你在女学员主导的配合测验中拆解对手节奏，赢得队友信任'],
       ['adult', '你协助学院整理学员魂环风险档案，开始承担正式教学或护校事务', '你带男学员完成夜间山路拉练，用一次撤退判断避免队伍受伤', '你带女学员完成协同救援演练，以清晰指令稳住失控魂力'],
@@ -248,7 +259,7 @@ export const FACTION_STORY_DEFINITIONS: readonly FactionStoryDefinition[] = [
     aliases: ['武魂殿'],
     poolName: '势力专属剧情：武魂殿',
     description: '围绕分殿培养、任务执行、辖区秩序与高阶决策展开。',
-    options: factionStoryBeats(
+    options: factionStoryBeats('武魂殿',
       ['junior', '分殿安排你复核觉醒记录，你发现一名平民孩子的武魂潜力被低估', '你与男学员完成队列和基础魂技配合，学会服从任务节奏', '你与女学员轮流担任记录员，在细节里找出一次考核偏差'],
       ['youth', '你进入精英训练小组，需要在纪律与同伴之间做一次取舍', '你在男学员排名赛中拒绝违规补刀，保住自己的任务评价', '你在女学员负责的追踪课上找回失联目标，得到教官认可'],
       ['adult', '你被派往地方分殿处理魂师纠纷，第一次独立写下处置意见', '你带男队员完成夜巡，把一场冲突控制在动手之前', '你带女队员清查伪造补贴记录，为平民魂师追回资源'],
@@ -262,7 +273,7 @@ export const FACTION_STORY_DEFINITIONS: readonly FactionStoryDefinition[] = [
     aliases: ['诺丁', '天斗', '索托', '蓝霸', '五元素', '初级学院'],
     poolName: '势力专属剧情：天斗学院体系',
     description: '适用于天斗、蓝霸、五元素、诺丁、索托等学院路线。',
-    options: factionStoryBeats(
+    options: factionStoryBeats('天斗',
       ['junior', '学院安排你参加基础联考，你靠稳定魂力控制通过第一次分班', '你和男同学一起修复训练器材，学会在逞强前先确认安全', '你和女同学共同完成药草辨认课，帮小队避开一次错误用药'],
       ['youth', '你参加学院交流赛，以一次主动换位挽回被压制的小队', '你在男学员强攻课中收住最后一击，反而赢得导师评价', '你在女学员协作课中串联两名陌生队友，完成关键反制'],
       ['adult', '你开始负责一门基础课程，把自己的修炼失误写进学员守则', '你带男学员完成野外课堂，及时终止冒进的猎魂计划', '你带女学员完成急救演练，让队伍在高压下保持分工'],
@@ -276,7 +287,7 @@ export const FACTION_STORY_DEFINITIONS: readonly FactionStoryDefinition[] = [
     aliases: ['星罗'],
     poolName: '势力专属剧情：星罗学院体系',
     description: '围绕星罗学院的淘汰、边境纪律与皇室体系展开。',
-    options: factionStoryBeats(
+    options: factionStoryBeats('星罗',
       ['junior', '你在边境训练营学习辨认军令，第一次明白迟疑也会拖累同伴', '你和男学员轮换背负补给，在体力见底前完成规定路程', '你和女学员完成隐蔽接力，用安静配合躲开巡查老师'],
       ['youth', '学院淘汰赛提前开始，你在保住队友与争取名次间做出选择', '你在男学员对抗里顶住挑衅，用规则拿回被扣的分数', '你在女学员伏击课中反向追踪对手，扭转了局面'],
       ['adult', '你协助边境学院维持秩序，第一次处理不服从命令的队员', '你带男队员进行夜间换防，在误报中稳住全队', '你带女队员护送补给，用分散行动避开截击'],
@@ -290,7 +301,7 @@ export const FACTION_STORY_DEFINITIONS: readonly FactionStoryDefinition[] = [
     aliases: ['七宝琉璃宗'],
     poolName: '势力专属剧情：七宝琉璃宗',
     description: '围绕宗门辅助、护卫、商路与议事责任展开。',
-    options: factionStoryBeats(
+    options: factionStoryBeats('七宝琉璃',
       ['junior', '宗门让你整理药材和魂导账册，你从一处错漏中保住整批补给', '你与男弟子轮流护送器材，学会用站位而非蛮力解决争执', '你与女弟子完成辅助演练，第一次把魂力精准送到队友身上'],
       ['youth', '你随宗门商队出行，必须在护卫和货物之间排定优先级', '你在男弟子护卫试炼中主动断后，守住队伍撤离路线', '你在女弟子辅助试炼中补上关键增幅，让队友完成翻盘'],
       ['adult', '宗门将一段商路交给你巡查，你查出有人借名截留魂师补贴', '你带男护卫处理商路冲突，以克制避免事态升级', '你带女弟子谈下补给协作，让前线不再断药'],
@@ -304,7 +315,7 @@ export const FACTION_STORY_DEFINITIONS: readonly FactionStoryDefinition[] = [
     aliases: ['佣兵团'],
     poolName: '势力专属剧情：佣兵团',
     description: '围绕委托、野外生存、队伍信誉与带队责任展开。',
-    options: factionStoryBeats(
+    options: factionStoryBeats('佣兵',
       ['junior', '佣兵团只让你做后勤，你却靠地图标记帮队伍避开一处险地', '你与男学徒轮流清点补给，学会在出发前承认准备不足', '你与女学徒练习包扎和辨毒，为一次意外受伤提前做好准备'],
       ['youth', '你接到第一份正式委托，在报酬与队友安全之间拒绝冒险路线', '你在男佣兵比试中放弃赌命打法，仍靠耐心完成目标', '你在女佣兵负责的搜救中保持冷静，找到被困委托人'],
       ['adult', '你开始带一支小队接任务，第一次为队员误判承担赔偿', '你带男佣兵穿过沼泽，及时叫停危险的强行突破', '你带女佣兵护送商队，以耐心谈判避开无谓冲突'],
@@ -318,7 +329,7 @@ export const FACTION_STORY_DEFINITIONS: readonly FactionStoryDefinition[] = [
     aliases: ['海神岛'],
     poolName: '势力专属剧情：海神岛',
     description: '围绕海域训练、岛防、潮汐考验与守护责任展开。',
-    options: factionStoryBeats(
+    options: factionStoryBeats('海神',
       ['junior', '你在浅潮区练习感知水流，提前发现一名同伴被暗流卷走', '你和男学员轮流守望礁石，在潮声里练习传递简短指令', '你和女学员完成潮汐采样，找出一处不该靠近的危险水域'],
       ['youth', '岛内试炼要求你护住队友补给，不能只追求个人速度', '你在男学员潜水课中留出余力，救回体力透支的同伴', '你在女学员潮汐阵课中补全缺口，让队伍平安返岸'],
       ['adult', '你协助巡查岛外航线，第一次独立判断何时该封闭港口', '你带男岛民演练海难救援，按顺序救出全部伤员', '你带女岛民整理避风点物资，确保撤离时不会断粮'],
@@ -332,7 +343,7 @@ export const FACTION_STORY_DEFINITIONS: readonly FactionStoryDefinition[] = [
     aliases: ['宗门'],
     poolName: '势力专属剧情：宗门',
     description: '适用于宗门子弟路线，围绕族规、历练、执事与宗门利益展开。',
-    options: factionStoryBeats(
+    options: factionStoryBeats('宗门',
       ['junior', '族中长辈让你抄录武魂谱，你从旧注中找到一条适合自己的训练法', '你和男弟子轮流守住练功场，把一次争执变成正式切磋', '你和女弟子整理药浴配方，避免一名族人因剂量错误受伤'],
       ['youth', '首次外出历练时，你发现同门隐瞒伤势，必须调整全队路线', '你在男弟子比试中收住杀招，用结果赢得对方承认', '你在女弟子协作试炼中补上防线，让队友完成任务'],
       ['adult', '宗门让你暂代外务执事，你查清一笔被人做过手脚的资源账', '你带男弟子护送族人出行，用克制避免一场宗门冲突', '你带女弟子处理外务交接，用清单堵住对方推诿'],
