@@ -158,12 +158,32 @@ export function estimateOpponentLevel(text: string): number {
   if (reqMatch?.[1]) return parseInt(reqMatch[1])
 
   const named: Array<[RegExp, number]> = [
-    [/天使神?/, 100], [/罗刹神?/, 100], [/海神/, 100],
-    [/比比东/, 95], [/唐三.*[^ ]/, 95], [/唐昊/, 97], [/唐啸/, 97],
-    [/千仞雪/, 85], [/金鳄斗罗/, 98], [/雄狮斗罗/, 97], [/光翎斗罗/, 97],
-    [/剑斗罗/, 96], [/菊斗罗/, 95], [/鬼斗罗/, 95],
-    [/赵无极/, 78], [/弗兰德/, 78],
-    [/呼延震/, 89],
+    // 神级对手 (嘉陵关/神战时期)
+    [/罗刹神?/, 102], [/天使神?/, 102], [/海神/, 102],
+    [/修罗神/, 103],
+
+    // 武魂殿顶级 (嘉陵关时期)
+    [/比比东/, 98], [/千仞雪/, 96],
+    [/金鳄斗罗|\d+级金鳄/, 98],
+
+    // 天斗/昊天 (嘉陵关时期)
+    [/唐三.*/, 93], [/唐昊/, 97], [/唐啸/, 97],
+    [/剑斗罗/, 96], [/骨斗罗/, 95],
+
+    // 武魂殿封号斗罗
+    [/雄狮斗罗|\d+级雄狮/, 97],
+    [/光翎斗罗|\d+级光翎/, 97],
+    [/菊斗罗/, 95], [/鬼斗罗/, 95],
+
+    // 嘉陵关战场
+    [/呼延震/, 89], [/赵无极/, 78], [/弗兰德/, 78],
+
+    // 史莱克七怪 (嘉陵关时期)
+    [/戴沐白/, 86], [/马红俊/, 85], [/宁荣荣/, 82],
+    [/奥斯卡/, 83], [/朱竹清/, 85], [/幽冥白虎/, 88],
+    [/小舞/, 60], [/史莱克六怪/, 85],
+
+    // 超级魂兽
     [/帝天/, 99], [/熊君/, 96], [/深海魔鲸王/, 98],
     [/冰帝/, 93],
   ]
@@ -171,17 +191,11 @@ export function estimateOpponentLevel(text: string): number {
     if (regex.test(text)) return level
   }
 
-  if (/封号斗罗/.test(text)) return 92
-  if (/魂斗罗/.test(text)) return 75
-  if (/魂圣/.test(text)) return 70
-  if (/魂帝/.test(text)) return 60
+  if (/封号斗罗/.test(text)) return 93
+  if (/魂圣/.test(text)) return 75
+  if (/魂帝/.test(text)) return 65
   if (/魂王/.test(text)) return 50
   if (/魂宗/.test(text)) return 40
-
-  if (/史莱克六怪|幽冥白虎/.test(text)) return 80
-  if (/马红俊|宁荣荣|奥斯卡|戴沐白/.test(text)) return 75
-
-  if (/魂兽|凶兽/.test(text)) return 85
   if (/十万年魂兽/.test(text)) return 93
 
   return 0
