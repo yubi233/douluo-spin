@@ -1,7 +1,7 @@
 import type { GameContext, Route, SoulRing } from './types'
 import { getMartialSoulTier } from './martialSoulTiers'
 
-const TIER_LABELS: Record<number, string> = { 1: '废', 2: '一般', 3: '优秀', 4: '顶级', 5: '极品', 6: '神级' }
+const TIER_LABELS: Record<number, string> = { 1: '废武魂', 2: '一般武魂', 3: '优秀武魂', 4: '顶级武魂', 5: '极品武魂', 6: '神级武魂' }
 
 const ROUTE_LABELS: Record<NonNullable<Route>, string> = {
   human: '人类魂师',
@@ -49,7 +49,7 @@ export function formatBiography(context: GameContext): string {
         `武魂类型：${valueOrNone(context.martialSoulTypes)}`,
         `主武魂：${context.martialSouls.map((s) => {
           const t = getMartialSoulTier(s)
-          return `${s}【${TIER_LABELS[t] ?? ''}${t}】`
+          return `${s}【${TIER_LABELS[t] ?? ''}】`
         }).join('、') || '无'}`,
       ]
   const abilityLines = isBeast

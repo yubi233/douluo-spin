@@ -11,7 +11,7 @@ const props = defineProps<{
   phaseLabel: string
 }>()
 
-const TIER_LABELS: Record<number, string> = { 1: '废', 2: '一般', 3: '优秀', 4: '顶级', 5: '极品', 6: '神级' }
+const TIER_LABELS: Record<number, string> = { 1: '废武魂', 2: '一般武魂', 3: '优秀武魂', 4: '顶级武魂', 5: '极品武魂', 6: '神级武魂' }
 
 const powerValue = computed(() => props.context.beast?.cultivation ?? props.context.level)
 const powerLabel = computed(() => props.context.beast ? '年限修为' : '魂力等级')
@@ -41,7 +41,7 @@ const soulChips = computed(() => {
   if (props.context.beast) return soulValues.value
   return props.context.martialSouls.map((s) => {
     const tier = getMartialSoulTier(s)
-    return `${s}【${TIER_LABELS[tier] ?? ''}${tier}】`
+    return `${s}【${TIER_LABELS[tier] ?? ''}】`
   })
 })
 const traitValues = computed(() => [...props.context.talents, ...props.context.traits, ...props.context.domains])
@@ -91,7 +91,7 @@ const ringDetails = computed(() => props.context.rings.map((ring) => ({
     </dl>
 
     <div class="chip-section">
-      <h3><Swords :size="15" /> 武魂与血脉 <span v-if="topTier > 0" class="tier-badge">阶位：{{ topTierLabel }}{{ topTier }}</span></h3>
+      <h3><Swords :size="15" /> 武魂与血脉 <span v-if="topTier > 0" class="tier-badge">最高：{{ topTierLabel }}</span></h3>
       <div class="chips"><span v-for="value in soulChips" :key="value" class="chip">{{ value }}</span><span v-if="!soulChips.length" class="empty">暂无</span></div>
     </div>
     <div class="chip-section">
