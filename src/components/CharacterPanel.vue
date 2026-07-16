@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { Shield, Sparkles, Swords } from 'lucide-vue-next'
 import type { GameContext } from '@/domain/types'
 import { calculateCombatPower } from '@/domain/engine'
-import { highestMartialSoulTier, getMartialSoulTier } from '@/domain/martialSoulTiers'
+import { getMartialSoulTier, highestMartialSoulTier } from '@/domain/martialSoulTiers'
 
 const props = defineProps<{
   context: GameContext
@@ -16,6 +16,28 @@ const TIER_LABELS: Record<number, string> = { 1: '废武魂', 2: '一般武魂',
 const powerValue = computed(() => props.context.beast?.cultivation ?? props.context.level)
 const powerLabel = computed(() => props.context.beast ? '年限修为' : '魂力等级')
 const combatPower = computed(() => props.context.beast ? 0 : calculateCombatPower(props.context))
+const combatDetail = computed(() => {
+  if (props.context.beast) return ''
+  const ctx = props.context
+  const levelBase = Math.round(ctx.level * ctx.level / 20)
+  const ringPwr = ctx.rings.reduce((s, r) => {
+    const y = r.years
+    return s + (y < 100 ? Math.round(5 + (y - 10) / 90 * 3) : y < 1000 ? Math.round(9 + (y - 100) / 900 * 2) : y < 10000 ? Math.round(12 + (y - 1000) / 9000 * 3) : y < 100000 ? Math.round(16 + (y - 10000) / 90000 * 4) : y < 1000000 ? Math.round(21 + (y - 100000) / 900000 * 9) : Math.round(31 + Math.min(9, (y - 1000000) / 1000000 * 9)))
+  }, 0)
+  const tierPwr = ctx.martialSouls.reduce((s, ms) => {
+    const t = getMartialSoulTier(ms)
+    const tp: Record<number, number> = { 1: 0, 2: 3, 3: 8, 4: 15, 5: 25, 6: 45 }
+    return s + (tp[t] ?? 0)
+  }, 0)
+  const domainPwr = ctx.domains.length * 15
+  const bonePwr = ctx.soulBones.length * 12
+  const beforeCoeff = levelBase + ringPwr + tierPwr + domainPwr + bonePwr
+  const talentCoeff = Math.min(ctx.talents.length, 10) * 0.005
+  const battleTraitCount = ctx.traits.filter((t) => /[杀战斗力破斩暴狂怒王]/.test(t)).length
+  const traitCoeff = Math.min(battleTraitCount, 10) * 0.005
+  const coeff = 1 + talentCoeff + traitCoeff
+  return `等级${levelBase} + 魂环${ringPwr} + 武魂${tierPwr} + 领域${domainPwr} + 魂骨${bonePwr}  × 系数${coeff.toFixed(3)}`
+})
 const topTier = computed(() => props.context.beast ? 0 : highestMartialSoulTier(props.context))
 const topTierLabel = computed(() => TIER_LABELS[topTier.value] ?? '')
 const appearanceValue = computed(() => props.context.beast
@@ -89,6 +111,7 @@ const ringDetails = computed(() => props.context.rings.map((ring) => ({
       <div><dt>{{ context.beast ? '法则掌握' : '魂环进度' }}</dt><dd>{{ progressValue }}</dd></div>
       <div v-if="!context.beast"><dt>战力值</dt><dd>{{ combatPower }}</dd></div>
     </dl>
+    <p v-if="!context.beast && combatDetail" class="combat-breakdown">{{ combatDetail }}</p>
 
     <div class="chip-section">
       <h3><Swords :size="15" /> 武魂与血脉 <span v-if="topTier > 0" class="tier-badge">最高：{{ topTierLabel }}</span></h3>

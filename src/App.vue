@@ -10,6 +10,7 @@ import PoolBrowser from '@/components/PoolBrowser.vue'
 import StartDialog from '@/components/StartDialog.vue'
 import WheelEditorDialog from '@/components/WheelEditorDialog.vue'
 import { findPool } from '@/domain/catalog'
+import { calculateCombatPower } from '@/domain/engine'
 import { useGameStore } from '@/composables/useGameStore'
 
 const store = useGameStore()
@@ -46,6 +47,17 @@ const resultTone = computed(() => {
   return 'normal'
 })
 const summaryPower = computed(() => store.context.value.beast ? `${store.context.value.beast.cultivation}年` : `${store.context.value.level}级`)
+const combatPowerValue = computed(() => store.context.value.beast ? 0 : calculateCombatPower(store.context.value))
+const combatMultiplier = computed(() => {
+  if (!store.displayTask.value || store.context.value.beast) return null
+  const handler = store.displayTask.value.handler
+  if (handler !== 'story') return null
+  const power = combatPowerValue.value
+  if (power <= 0) return null
+  const victoryMult = (1 + Math.min(power / 100, 5)).toFixed(2)
+  const defeatMult = Math.max(0.05, 1 - Math.min(power / 120, 0.95)).toFixed(3)
+  return { victory: victoryMult, defeat: defeatMult }
+})
 
 async function handleImport(event: Event) {
   const input = event.target as HTMLInputElement
@@ -155,6 +167,9 @@ watch(() => store.needsCustomGodName.value, (val) => {
             <div class="result-panel" :data-tone="resultTone">
               <span>本次命运</span><p>{{ store.displayResult.value }}</p>
               <small v-if="store.context.value.lastPool">{{ store.context.value.lastPool }} · 第 {{ store.context.value.step }} 次投掷<template v-if="store.context.value.lastProbability != null"> · 概率 {{ (store.context.value.lastProbability * 100).toFixed(2) }}%</template></small>
+              <small v-if="combatMultiplier" class="combat-coeff">
+                战力 {{ combatPowerValue }} · 胜率乘 {{ combatMultiplier.victory }}x · 败率乘 {{ combatMultiplier.defeat }}x
+              </small>
             </div>
             <section class="recent-log"><header><span>最近经历</span><small>{{ recentLogs.length }} 条</small></header><p v-for="entry in recentLogs" :key="entry.id"><strong>{{ entry.title }}</strong>{{ entry.text }}</p><p v-if="!recentLogs.length" class="empty">转动命运轮盘后，这里会显示最近经历。</p></section>
           </div>
