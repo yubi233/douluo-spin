@@ -2,6 +2,8 @@
 import { computed } from 'vue'
 import { Shield, Sparkles, Swords } from 'lucide-vue-next'
 import type { GameContext } from '@/domain/types'
+import { calculateCombatPower } from '@/domain/engine'
+import { highestMartialSoulTier } from '@/domain/martialSoulTiers'
 
 const props = defineProps<{
   context: GameContext
@@ -9,8 +11,13 @@ const props = defineProps<{
   phaseLabel: string
 }>()
 
+const TIER_LABELS: Record<number, string> = { 1: '废', 2: '一般', 3: '优秀', 4: '顶级', 5: '极品', 6: '神级' }
+
 const powerValue = computed(() => props.context.beast?.cultivation ?? props.context.level)
 const powerLabel = computed(() => props.context.beast ? '年限修为' : '魂力等级')
+const combatPower = computed(() => props.context.beast ? 0 : calculateCombatPower(props.context))
+const topTier = computed(() => props.context.beast ? 0 : highestMartialSoulTier(props.context))
+const topTierLabel = computed(() => TIER_LABELS[topTier.value] ?? '')
 const appearanceValue = computed(() => props.context.beast
   ? props.context.beast.type || '未确定'
   : props.context.appearance || '未确定')
@@ -73,10 +80,11 @@ const ringDetails = computed(() => props.context.rings.map((ring) => ({
       <div><dt>阵营与区域</dt><dd>{{ factionValue }}</dd></div>
       <div><dt>核心状态</dt><dd>{{ context.alive ? context.godTrial ? '神考中' : '存活' : '已陨落' }}</dd></div>
       <div><dt>{{ context.beast ? '法则掌握' : '魂环进度' }}</dt><dd>{{ progressValue }}</dd></div>
+      <div v-if="!context.beast"><dt>战力值</dt><dd>{{ combatPower }}</dd></div>
     </dl>
 
     <div class="chip-section">
-      <h3><Swords :size="15" /> 武魂与血脉</h3>
+      <h3><Swords :size="15" /> 武魂与血脉 <span v-if="topTier > 0" class="tier-badge">阶位：{{ topTierLabel }}{{ topTier }}</span></h3>
       <div class="chips"><span v-for="value in soulValues" :key="value" class="chip">{{ value }}</span><span v-if="!soulValues.length" class="empty">暂无</span></div>
     </div>
     <div class="chip-section">
