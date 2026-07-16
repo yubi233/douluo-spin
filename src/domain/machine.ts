@@ -16,6 +16,7 @@ import {
   toolMartialSoulPoolName,
 } from './martialSoulCategories'
 import { hashSeed, nextRandom } from './random'
+import { highestMartialSoulTier } from './martialSoulTiers'
 import type {
   ChronicleEntry,
   GameContext,
@@ -87,6 +88,8 @@ const STORY_TAGS: Record<1 | 2 | 3, string> = {
   3: '《斗罗大陆》剧情第三分支',
 }
 
+const SOUL_BONE_PARTS = ['头骨', '左臂骨', '左腿骨', '右臂骨', '躯干骨', '右腿骨', '外附魂骨']
+
 let taskSequence = 0
 
 function task(tag: string, pool: string, handler: TaskHandler, meta?: RollTask['meta']): RollTask {
@@ -148,6 +151,15 @@ function addUnique(values: string[], value: string) {
 
 function hasFirearmMartialSoul(context: GameContext): boolean {
   return context.martialSouls.some((martialSoul) => FIREARM_MARTIAL_SOUL_NAMES.has(martialSoul))
+}
+
+function specialGrowthTask(context: GameContext): RollTask {
+  const pool = hasFirearmMartialSoul(context) ? FIREARM_STORY_POOL_NAME : '特殊成长经历'
+  return task('特殊成长经历', pool, 'growth')
+}
+
+function hasAvailableSoulBone(context: GameContext): boolean {
+  return SOUL_BONE_PARTS.some((part) => !context.soulBones.some((bone) => bone.includes(part)))
 }
 
 function timeLabel(context: GameContext): string {
@@ -264,7 +276,7 @@ function setFaction(context: GameContext, text: string) {
 function queueInitialHumanContext(context: GameContext) {
   const age = context.age ?? 6
   const levelPool = age === 6
-    ? context.martialSoulTypes.includes('极致武魂')
+    ? context.martialSoulTypes.includes('极致武魂') || highestMartialSoulTier(context) >= 6
       ? '极致武魂先天魂力（6岁限定）'
       : '先天魂力（6岁限定）'
     : `故事开始时的魂力等级（${age}岁限定）`
@@ -422,6 +434,7 @@ function beastEncounterPool(cultivation: number): string {
 }
 
 function tribulationPool(threshold: number): string | null {
+  if (threshold >= 1_000_000) return '百万年神劫池，突破成功则成就魂兽神位'
   const map: Record<number, string> = {
     100000: '万年魂兽突破十万年雷劫池',
     200000: '十万年魂兽突破二十万年雷劫池',
@@ -432,7 +445,6 @@ function tribulationPool(threshold: number): string | null {
     700000: '六十万年魂兽突破七十万年雷劫池',
     800000: '七十万年魂兽突破八十万年雷劫池',
     900000: '八十万年魂兽突破九十万年雷劫池',
-    1000000: '百万年神劫池，突破成功则成就魂兽神位',
   }
   return map[threshold] ?? null
 }
@@ -450,6 +462,12 @@ function prepareNext(state: MachineState): MachineState {
     const ring = nextRingTask(context)
     if (ring) context.queue.push(ring)
     else {
+      const pendingDomainDraws = Number(context.flags._pendingDomainDraws) || 0
+      if (context.level >= 90 && pendingDomainDraws > 0) {
+        context.flags._pendingDomainDraws = pendingDomainDraws - 1
+        context.queue.push(task('完整领域抽取池', '完整领域池子', 'domain'))
+        return state
+      }
       const reward = nextGodReward(context)
       if (reward) context.queue.push(reward)
       else {
@@ -495,6 +513,7 @@ function prepareNext(state: MachineState): MachineState {
   }
 
   if (state.value === 'beastAdventure' && context.beast) {
+    if ((context.tangAge ?? 0) >= 26) return finishState(state, '你走过斗罗大陆主线年代，命运进入新的时代。')
     const pending = context.beast.pendingTribulation
     if (pending) {
       const pool = tribulationPool(pending)
@@ -522,11 +541,11 @@ function resultTone(text: string): ChronicleEntry['tone'] {
 
 function applyCommon(context: GameContext, text: string) {
   for (const match of text.matchAll(/【([^】]+)】/g)) if (match[1]) addUnique(context.traits, match[1])
-  if (/获得.*领域|领悟.*领域/.test(text)) {
+  if (/获得.*领域|领悟.*领域/.test(text) && !/获得(?:完整)?领域|领域雏形/.test(text)) {
     const domain = text.match(/【([^】]*领域[^】]*)】/)?.[1] ?? text.match(/([\u4e00-\u9fa5]{2,8}领域)/)?.[1]
     if (domain) addUnique(context.domains, domain)
   }
-  if (/魂骨/.test(text) && /获得|拿下|献祭/.test(text)) addUnique(context.soulBones, text)
+  if (/魂骨/.test(text) && /获得|拿下|献祭/.test(text) && !/抽取池/.test(text)) addUnique(context.soulBones, text)
   const levelChange = text.match(/等级\s*([+-])\s*(\d+)/)
   if (levelChange) {
     const amount = Number(levelChange[2]) * (levelChange[1] === '+' ? 1 : -1)
@@ -586,12 +605,21 @@ function applyResult(state: MachineState, option: WheelOption, probability: numb
       break
     case 'growthChance':
       if (/^是|获得/.test(text)) {
-        const pool = hasFirearmMartialSoul(context) ? FIREARM_STORY_POOL_NAME : '特殊成长经历'
-        context.queue.unshift(task('特殊成长经历', pool, 'growth'))
+        context.queue.unshift(specialGrowthTask(context))
       }
       break
     case 'growth':
-      if (/完整领域|进入领域.*池/.test(text)) context.queue.unshift(task('完整领域抽取池', '完整领域池子', 'domain'))
+      if (/领域雏形/.test(text)) {
+        addUnique(context.traits, '领域雏形')
+        context.flags._pendingDomainDraws = (Number(context.flags._pendingDomainDraws) || 0) + 1
+      } else if (/获得完整领域|进入领域.*池/.test(text)) {
+        context.queue.unshift(task('完整领域抽取池', '完整领域池子', 'domain'))
+      }
+      if (/魂骨抽取池/.test(text) && hasAvailableSoulBone(context)) {
+        context.queue.unshift(task('魂骨抽取池', '魂骨抽取池（已拥有部位则重抽）', 'bone', {
+          years: context.rings[context.rings.length - 1]?.years ?? 0,
+        }))
+      }
       if (/获得神考/.test(text)) {
         const godPool = context.level >= 99 ? '99级神考触发' : '神考池子'
         context.queue.unshift(task('神考抽取池', godPool, 'godTier'))
@@ -599,6 +627,10 @@ function applyResult(state: MachineState, option: WheelOption, probability: numb
       }
       if (/极致进化/.test(text) && !context.martialSoulTypes.includes('极致武魂')) {
         addUnique(context.martialSoulTypes, '极致武魂')
+      }
+      if (/草鞋.*双枪|穿上草鞋/.test(text)) {
+        addUnique(context.martialSouls, '双枪')
+        addUnique(context.martialSoulTypes, '器武魂')
       }
       if (context.level >= 99 && !context.godTrial && context.flags._god99Triggered)
         context.flags._noGodCount = (Number(context.flags._noGodCount) || 0) + 1
@@ -629,13 +661,21 @@ function applyResult(state: MachineState, option: WheelOption, probability: numb
     case 'ring': {
       const years = parseCultivation(text)
       context.rings.push({ index: Number(active.meta?.index ?? context.rings.length + 1), years, description: text })
+      if (/魂骨抽(?:取|奖)池/.test(active.pool) && hasAvailableSoulBone(context)) {
+        context.queue.unshift(task('魂骨抽取池', '魂骨抽取池（已拥有部位则重抽）', 'bone', { years }))
+      }
       break
     }
     case 'domain':
-      addUnique(context.domains, text)
+      if (active.pool === '是否获得杀神领域') {
+        if (/^是/.test(text)) addUnique(context.domains, '杀神领域')
+        else if (/获得一次特殊成长经历/.test(text)) context.queue.unshift(specialGrowthTask(context))
+      } else {
+        addUnique(context.domains, text)
+      }
       break
     case 'bone':
-      addUnique(context.soulBones, text)
+      addUnique(context.soulBones, `${Number(active.meta?.years) > 0 ? `${active.meta?.years}年` : ''}${text}`)
       break
     case 'godTier': {
       const isCustom = /自创神位/.test(text)

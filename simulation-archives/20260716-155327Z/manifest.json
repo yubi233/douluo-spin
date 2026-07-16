@@ -1,0 +1,24 @@
+{
+  "format": "douluo-spin-long-simulation-batch",
+  "formatVersion": 2,
+  "startedAt": "2026-07-16T15:53:27.935Z",
+  "batchSize": 3,
+  "sampling": "weighted (real-user simulation)",
+  "requestedSamples": 10,
+  "completedSamples": 10,
+  "passedSamples": 9,
+  "stats": {
+    "avgHumanLevel": "61.4",
+    "avgBeastYears": "45654"
+  },
+  "issueByCode": {
+    "appearance-unchanged": [
+      {
+        "code": "appearance-unchanged",
+        "message": "30级以上容貌从未变化",
+        "sample": 2,
+        "route": "human"
+      }
+    ]
+  }
+}

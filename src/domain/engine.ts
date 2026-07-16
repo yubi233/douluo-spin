@@ -1,5 +1,6 @@
 import { enabledOptions, optionWeight } from './catalog'
 import { FIREARM_MARTIAL_SOUL_NAMES } from './canonAdditions'
+import { highestMartialSoulTier, getMartialSoulTier } from './martialSoulTiers'
 import { nextRandom } from './random'
 import type { GameContext, RollTask, WheelOption, WheelPool } from './types'
 
@@ -50,9 +51,113 @@ function roleMinimumLevel(text: string): number | null {
 function candidateWeight(option: WheelOption, task: RollTask, context: GameContext) {
   const baseWeight = optionWeight(option)
   const isCombat = task.handler === 'humanEncounter' || task.handler === 'beastEncounter' || task.handler === 'story'
-  return isCombat && isFirearmMartialSoul(context) && isOverlevelKillOutcome(option.name)
-    ? baseWeight * 2
-    : baseWeight
+  if (!isCombat) {
+    if (task.handler === 'initialPower') return baseWeight * innatePowerMultiplier(option.name, context)
+    return baseWeight
+  }
+
+  let multiplier = 1
+
+  if (isFirearmMartialSoul(context) && isOverlevelKillOutcome(option.name)) {
+    multiplier = Math.max(multiplier, 2)
+  }
+
+  if (task.handler === 'story') {
+    const power = calculateCombatPower(context)
+    multiplier *= combatPowerMultiplier(option.name, power)
+  }
+
+  return baseWeight * multiplier
+}
+
+function innatePowerMultiplier(name: string, context: GameContext): number {
+  const tier = highestMartialSoulTier(context)
+  if (tier >= 6) return 1  // tier 6 uses special pool, no bias needed
+
+  let level: number
+  if (/先天二十级|二十级/.test(name)) level = 20
+  else if (/先天满魂力/.test(name)) level = 10
+  else {
+    const match = name.match(/(\d+)级/)
+    if (!match || !match[1]) return 1
+    level = parseInt(match[1])
+  }
+
+  const targets: Record<number, number> = { 1: 1, 2: 3, 3: 5, 4: 7, 5: 9 }
+  const target = targets[tier] ?? 5
+  const sigma = 1.8
+  const diff = level - target
+
+  return Math.exp(-(diff * diff) / (2 * sigma * sigma)) * 8
+}
+
+function ringPower(years: number): number {
+  if (years <= 0) return 0
+  if (years < 100) return Math.round(5 + (years - 10) / 90 * 3)
+  if (years < 1000) return Math.round(9 + (years - 100) / 900 * 2)
+  if (years < 10000) return Math.round(12 + (years - 1000) / 9000 * 3)
+  if (years < 100000) return Math.round(16 + (years - 10000) / 90000 * 4)
+  if (years < 1000000) return Math.round(21 + (years - 100000) / 900000 * 9)
+  return Math.round(31 + Math.min(9, (years - 1000000) / 1000000 * 9))
+}
+
+const TIER_POWER: Record<number, number> = { 1: 0, 2: 3, 3: 8, 4: 15, 5: 25, 6: 45 }
+
+function parseSoulBoneYears(text: string): number {
+  const match = text.match(/(\d+)万/)
+  if (match && match[1]) return parseInt(match[1]) * 10000
+  const match2 = text.match(/(\d{4,})年/)
+  if (match2 && match2[1]) return parseInt(match2[1])
+  return 10000
+}
+
+function bonePower(text: string): number {
+  const years = parseSoulBoneYears(text)
+  if (years <= 0) return 5
+  if (years < 10000) return Math.round(5 + (years - 1000) / 9000 * 3)
+  if (years < 50000) return Math.round(8 + (years - 10000) / 40000 * 4)
+  if (years < 100000) return Math.round(12 + (years - 50000) / 50000 * 4)
+  return Math.round(16 + Math.min(4, (years - 100000) / 400000 * 4))
+}
+
+export function calculateCombatPower(context: GameContext): number {
+  let power = 0
+
+  power += context.level * context.level / 20
+
+  for (const ring of context.rings) power += ringPower(ring.years)
+
+  for (const name of context.martialSouls) {
+    const tier = getMartialSoulTier(name)
+    power += TIER_POWER[tier] ?? 0
+  }
+
+  power += context.domains.length * 15
+
+  for (const bone of context.soulBones) power += bonePower(bone)
+
+  const talentCount = Math.min(context.talents.length, 10)
+  const talentCoeff = talentCount * 0.005
+
+  let battleTraitCount = 0
+  for (const trait of context.traits) {
+    if (/[杀战斗力破斩暴狂怒王]/.test(trait)) battleTraitCount += 1
+  }
+  const traitCoeff = Math.min(battleTraitCount, 10) * 0.005
+
+  power *= (1 + talentCoeff + traitCoeff)
+
+  return Math.round(power)
+}
+
+function combatPowerMultiplier(text: string, power: number): number {
+  const isVictory = /无伤战胜|轻松战胜|秒杀|斩杀|获胜|胜出|单刷|拿下|带领.*获胜|一人.*斩杀|击败|战胜|平推|反杀|轻伤战胜|无伤/.test(text)
+  if (isVictory) return 1 + Math.min(power / 100, 5)
+
+  const isDefeat = /战死|被击杀|重伤|落败|战败|被秒杀|被围攻|拖后腿|失败|翻车|被.*(?:杀|吞|秒|斩|重创)|被吃|战败身死/.test(text)
+  if (isDefeat) return Math.max(0.05, 1 - Math.min(power / 120, 0.95))
+
+  return 1
 }
 
 function meetsStructuredRequirements(option: WheelOption, task: RollTask, context: GameContext): boolean {
@@ -73,6 +178,10 @@ function meetsStructuredRequirements(option: WheelOption, task: RollTask, contex
   return true
 }
 
+function hasEligibilityConstraint(option: WheelOption): boolean {
+  return Boolean(option.requirements) || /限定|要求|无法重复获得|已拥有则重抽|负面剧情触发|战斗剧情触发/.test(option.name)
+}
+
 export function isEligible(option: WheelOption, task: RollTask, context: GameContext): boolean {
   const text = option.name
   const allTraits = [
@@ -88,6 +197,9 @@ export function isEligible(option: WheelOption, task: RollTask, context: GameCon
   if (/女性限定|要求女性/.test(text) && !context.gender.includes('女')) return false
   if (/要求有神考|需要神考/.test(text) && !context.godTrial) return false
   if (/要求.*领域/.test(text) && context.domains.length === 0) return false
+  const namedDomain = text.match(/([\u4e00-\u9fa5]{2,}领域)限定/)?.[1]
+  if (namedDomain && !context.domains.includes(namedDomain)) return false
+  if (/已拥有部位则重抽/.test(task.pool) && context.soulBones.some((bone) => bone.includes(text))) return false
   if (/要求拥有【([^】]+)】/.test(text)) {
     const required = text.match(/要求拥有【([^】]+)】/)?.[1]
     if (required && !allTraits.includes(required)) return false
@@ -150,7 +262,7 @@ export function candidateDistribution(pool: WheelPool, task: RollTask, context: 
   const eligible = enabled.filter((option) => isEligible(option, task, context))
   const candidates = eligible.length > 0
     ? eligible
-    : enabled.some((option) => option.requirements)
+    : /已拥有部位则重抽/.test(task.pool) || enabled.some(hasEligibilityConstraint)
       ? []
       : enabled
   if (candidates.length === 0) return []
@@ -185,6 +297,21 @@ export function drawOption(pool: WheelPool, task: RollTask, context: GameContext
   return {
     option: selected.option,
     probability: selected.probability,
+    nextRng: random.state,
+    eligibleCount: candidates.length,
+  }
+}
+
+export function drawUniformOption(pool: WheelPool, task: RollTask, context: GameContext): DrawResult {
+  const candidates = candidateDistribution(pool, task, context)
+  if (candidates.length === 0) throw new Error(`转盘“${pool.name}”没有可用选项`)
+
+  const random = nextRandom(context.rng)
+  const index = Math.min(candidates.length - 1, Math.floor(random.value * candidates.length))
+  const selected = candidates[index]!
+  return {
+    option: selected.option,
+    probability: 1 / candidates.length,
     nextRng: random.state,
     eligibleCount: candidates.length,
   }

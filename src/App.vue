@@ -168,7 +168,7 @@ watch(() => store.needsCustomGodName.value, (val) => {
 
       <aside class="sidebar">
         <CharacterPanel :class="{ 'mobile-hidden': mobileTab !== 'character' }" :context="store.context.value" :route-label="store.routeLabel.value" :phase-label="store.phaseLabel.value" />
-        <ChroniclePanel :class="{ 'mobile-hidden': mobileTab !== 'chronicle' }" :entries="store.displayLogs.value" @export="store.exportChronicle" />
+        <ChroniclePanel :class="{ 'mobile-hidden': mobileTab !== 'chronicle' }" :entries="store.displayLogs.value" :copy-status="store.copyStatus.value" @export="store.exportChronicle" @copy="store.copyChronicle" />
       </aside>
     </main>
 

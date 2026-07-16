@@ -1,0 +1,64 @@
+{
+  "format": "douluo-spin-long-simulation-batch",
+  "formatVersion": 2,
+  "startedAt": "2026-07-16T15:48:38.954Z",
+  "sampling": "weighted (real-user simulation)",
+  "requestedSamples": 4,
+  "completedSamples": 4,
+  "passedSamples": 4,
+  "stats": {
+    "avgHumanLevel": "59.0",
+    "avgBeastYears": "36130"
+  },
+  "issueByCode": {},
+  "runs": [
+    {
+      "sample": 1,
+      "route": "human",
+      "seed": "mrnoopm3-1norp8a0o3rnma-sample-001",
+      "rolls": 69,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "001-human-mrnoopm3-1norp8a0o3rnma-sample-001.txt",
+      "archive": "001-human-mrnoopm3-1norp8a0o3rnma-sample-001.json"
+    },
+    {
+      "sample": 2,
+      "route": "human",
+      "seed": "mrnoopm3-1norp8a0o3rnma-sample-002",
+      "rolls": 41,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "002-human-mrnoopm3-1norp8a0o3rnma-sample-002.txt",
+      "archive": "002-human-mrnoopm3-1norp8a0o3rnma-sample-002.json"
+    },
+    {
+      "sample": 3,
+      "route": "beast",
+      "seed": "mrnoopm3-1norp8a0o3rnma-sample-003",
+      "rolls": 32,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "003-beast-mrnoopm3-1norp8a0o3rnma-sample-003.txt",
+      "archive": "003-beast-mrnoopm3-1norp8a0o3rnma-sample-003.json"
+    },
+    {
+      "sample": 4,
+      "route": "beast",
+      "seed": "mrnoopm3-1norp8a0o3rnma-sample-004",
+      "rolls": 36,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "004-beast-mrnoopm3-1norp8a0o3rnma-sample-004.txt",
+      "archive": "004-beast-mrnoopm3-1norp8a0o3rnma-sample-004.json"
+    }
+  ]
+}

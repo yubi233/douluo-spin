@@ -1,0 +1,232 @@
+{
+  "format": "douluo-spin-long-simulation",
+  "formatVersion": 1,
+  "generatedAt": "2026-07-16T08:59:17.839Z",
+  "seed": "mrna2a1i-0c50oh106mc0kc-sample-12",
+  "requestedRolls": 500,
+  "executedRolls": 8,
+  "completed": true,
+  "samplingMode": "uniform",
+  "audit": {
+    "passed": true,
+    "issues": []
+  },
+  "biography": "《斗罗大陆 · 命运轮盘人物传记》\n\n【命运档案】\n命运种子：mrna2a1i-0c50oh106mc0kc-sample-12\n姓名：命运旅者\n路线：魂兽\n时间坐标：唐三出生前 90 年\n实际年龄：未确定\n当前境界：50000年修为\n命运状态：遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）\n阵营履历：星斗大森林\n\n【人物身份】\n魂兽类型：猫科魂兽\n本体种族：狮虎兽\n生存区域：星斗大森林\n\n【能力与机缘】\n血脉：狮虎兽\n法则：无\n魂骨：无\n神考：无\n\n【魂环明细】\n- 暂无魂环记录\n\n【命运纪事】\n时间未定｜命运启封｜种子：mrna2a1i-0c50oh106mc0kc-sample-12\n唐三出生前 100 年｜基础设定1:魂兽穿越时期｜唐三出生前100年\n唐三出生前 100 年｜基础设定2:魂兽性别｜雄性\n唐三出生前 100 年｜基础设定3:你是什么级别的魂兽｜千年魂兽\n唐三出生前 100 年｜基础设定4:你是什么类型的魂兽｜猫科魂兽\n唐三出生前 100 年｜猫科类魂兽初始池子｜狮虎兽\n唐三出生前 100 年｜基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）｜星斗大森林\n唐三出生前 90 年｜10年后，你的成长（万年魂兽限定，达到十万年以后无法再抽取，需经历十万年雷劫）｜年限修为+40000年\n唐三出生前 90 年｜万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）｜遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）\n唐三出生前 90 年｜命运断绝｜遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+  "trace": [
+    {
+      "roll": 1,
+      "pool": "基础设定1:魂兽穿越时期",
+      "optionId": "7c11fe",
+      "option": "唐三出生前100年",
+      "probability": 0.09090909090909091,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定2:魂兽性别"
+    },
+    {
+      "roll": 2,
+      "pool": "基础设定2:魂兽性别",
+      "optionId": "9e26c7",
+      "option": "雄性",
+      "probability": 0.3333333333333333,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定3:你是什么级别的魂兽"
+    },
+    {
+      "roll": 3,
+      "pool": "基础设定3:你是什么级别的魂兽",
+      "optionId": "9a3490",
+      "option": "千年魂兽",
+      "probability": 0.2,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定4:你是什么类型的魂兽"
+    },
+    {
+      "roll": 4,
+      "pool": "基础设定4:你是什么类型的魂兽",
+      "optionId": "9ef4cb",
+      "option": "猫科魂兽",
+      "probability": 0.07142857142857142,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "猫科类魂兽初始池子"
+    },
+    {
+      "roll": 5,
+      "pool": "猫科类魂兽初始池子",
+      "optionId": "f92409",
+      "option": "狮虎兽",
+      "probability": 0.058823529411764705,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）"
+    },
+    {
+      "roll": 6,
+      "pool": "基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）",
+      "optionId": "3fed26",
+      "option": "星斗大森林",
+      "probability": 0.14285714285714285,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": null
+    },
+    {
+      "roll": 7,
+      "pool": "10年后，你的成长（万年魂兽限定，达到十万年以后无法再抽取，需经历十万年雷劫）",
+      "optionId": "b4e622",
+      "option": "年限修为+40000年",
+      "probability": 0.09090909090909091,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）"
+    },
+    {
+      "roll": 8,
+      "pool": "万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）",
+      "optionId": "5e8ad0",
+      "option": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+      "probability": 0.0625,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": null
+    }
+  ],
+  "state": {
+    "value": "ending",
+    "context": {
+      "seed": "mrna2a1i-0c50oh106mc0kc-sample-12",
+      "rng": 1700594889,
+      "route": "beast",
+      "name": "命运旅者",
+      "step": 8,
+      "age": null,
+      "tangAge": -90,
+      "gender": "雄性",
+      "appearance": "",
+      "level": 0,
+      "maxLevel": 99,
+      "faction": "",
+      "branch": null,
+      "martialSoulTypes": [],
+      "martialSouls": [],
+      "talents": [],
+      "traits": [],
+      "domains": [],
+      "rings": [],
+      "soulBones": [],
+      "beast": {
+        "cultivation": 50000,
+        "species": "狮虎兽",
+        "type": "猫科魂兽",
+        "area": "星斗大森林",
+        "bloodlines": [
+          "狮虎兽"
+        ],
+        "laws": [],
+        "pendingTribulation": null
+      },
+      "godTrial": null,
+      "queue": [],
+      "activeTask": null,
+      "lastPool": "万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）",
+      "lastOptionId": "5e8ad0",
+      "lastResult": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+      "lastProbability": 0.0625,
+      "logs": [
+        {
+          "id": "0-0-1784192357839",
+          "step": 0,
+          "title": "命运启封",
+          "text": "种子：mrna2a1i-0c50oh106mc0kc-sample-12",
+          "tone": "major",
+          "time": "时间未定"
+        },
+        {
+          "id": "1-1-1784192357839",
+          "step": 1,
+          "title": "基础设定1:魂兽穿越时期",
+          "text": "唐三出生前100年",
+          "tone": "normal",
+          "time": "唐三出生前 100 年"
+        },
+        {
+          "id": "2-2-1784192357839",
+          "step": 2,
+          "title": "基础设定2:魂兽性别",
+          "text": "雄性",
+          "tone": "normal",
+          "time": "唐三出生前 100 年"
+        },
+        {
+          "id": "3-3-1784192357839",
+          "step": 3,
+          "title": "基础设定3:你是什么级别的魂兽",
+          "text": "千年魂兽",
+          "tone": "normal",
+          "time": "唐三出生前 100 年"
+        },
+        {
+          "id": "4-4-1784192357839",
+          "step": 4,
+          "title": "基础设定4:你是什么类型的魂兽",
+          "text": "猫科魂兽",
+          "tone": "normal",
+          "time": "唐三出生前 100 年"
+        },
+        {
+          "id": "5-5-1784192357839",
+          "step": 5,
+          "title": "猫科类魂兽初始池子",
+          "text": "狮虎兽",
+          "tone": "normal",
+          "time": "唐三出生前 100 年"
+        },
+        {
+          "id": "6-6-1784192357839",
+          "step": 6,
+          "title": "基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）",
+          "text": "星斗大森林",
+          "tone": "normal",
+          "time": "唐三出生前 100 年"
+        },
+        {
+          "id": "7-7-1784192357839",
+          "step": 7,
+          "title": "10年后，你的成长（万年魂兽限定，达到十万年以后无法再抽取，需经历十万年雷劫）",
+          "text": "年限修为+40000年",
+          "tone": "normal",
+          "time": "唐三出生前 90 年"
+        },
+        {
+          "id": "8-8-1784192357839",
+          "step": 8,
+          "title": "万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）",
+          "text": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+          "tone": "normal",
+          "time": "唐三出生前 90 年"
+        },
+        {
+          "id": "8-9-1784192357839",
+          "step": 8,
+          "title": "命运断绝",
+          "text": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+          "tone": "bad",
+          "time": "唐三出生前 90 年"
+        }
+      ],
+      "flags": {
+        "beastPeriod": "唐三出生前100年"
+      },
+      "alive": false,
+      "ending": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+      "resumeState": null,
+      "settings": {
+        "softenText": false,
+        "spinDuration": 900
+      }
+    }
+  }
+}

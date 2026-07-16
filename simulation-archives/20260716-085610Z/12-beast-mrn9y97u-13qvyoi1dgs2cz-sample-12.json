@@ -1,0 +1,250 @@
+{
+  "format": "douluo-spin-long-simulation",
+  "formatVersion": 1,
+  "generatedAt": "2026-07-16T08:56:10.090Z",
+  "seed": "mrn9y97u-13qvyoi1dgs2cz-sample-12",
+  "requestedRolls": 500,
+  "executedRolls": 9,
+  "completed": true,
+  "samplingMode": "uniform",
+  "audit": {
+    "passed": true,
+    "issues": []
+  },
+  "biography": "《斗罗大陆 · 命运轮盘人物传记》\n\n【命运档案】\n命运种子：mrn9y97u-13qvyoi1dgs2cz-sample-12\n姓名：命运旅者\n路线：魂兽\n时间坐标：唐三出生前 19990 年\n实际年龄：未确定\n当前境界：180000年修为\n命运状态：遇到了深海魔鲸王，你被吞噬得一干二净（海魂兽专属，非海魂兽重抽）\n阵营履历：杀戮之都\n\n【人物身份】\n魂兽类型：猴子类\n本体种族：长臂猿\n生存区域：杀戮之都\n\n【能力与机缘】\n血脉：长臂猿\n法则：无\n魂骨：无\n神考：无\n\n【魂环明细】\n- 暂无魂环记录\n\n【命运纪事】\n时间未定｜命运启封｜种子：mrn9y97u-13qvyoi1dgs2cz-sample-12\n唐三出生前 20000 年｜基础设定1:魂兽穿越时期｜唐三出生前20000年（天使创建武魂殿收集大陆信仰成神时期，抽到此时间段无法抽取海魂兽初始池）\n唐三出生前 20000 年｜基础设定2:魂兽性别｜雌性\n唐三出生前 20000 年｜基础设定3:你是什么级别的魂兽｜万年魂兽\n唐三出生前 20000 年｜基础设定4:你是什么类型的魂兽｜猴子类\n唐三出生前 20000 年｜猿猴类魂兽初始池子｜长臂猿\n唐三出生前 20000 年｜基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）｜杀戮之都\n唐三出生前 20000 年｜基础设定6:十万年魂兽路线分歧点（初始十万年魂兽或万年魂兽成功经历十万年雷劫后可选该池）｜继续修炼\n唐三出生前 19990 年｜10年后，你的成长（十万年魂兽限定，达到百万年无法再抽取，需突破神劫成神）（每提升十万年，进入雷劫突破池，才可继续提升）｜年限修为+80000年\n唐三出生前 19990 年｜十万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）｜遇到了深海魔鲸王，你被吞噬得一干二净（海魂兽专属，非海魂兽重抽）\n唐三出生前 19990 年｜命运断绝｜遇到了深海魔鲸王，你被吞噬得一干二净（海魂兽专属，非海魂兽重抽）",
+  "trace": [
+    {
+      "roll": 1,
+      "pool": "基础设定1:魂兽穿越时期",
+      "optionId": "444aa1",
+      "option": "唐三出生前20000年（天使创建武魂殿收集大陆信仰成神时期，抽到此时间段无法抽取海魂兽初始池）",
+      "probability": 0.09090909090909091,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定2:魂兽性别"
+    },
+    {
+      "roll": 2,
+      "pool": "基础设定2:魂兽性别",
+      "optionId": "e47b9d",
+      "option": "雌性",
+      "probability": 0.3333333333333333,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定3:你是什么级别的魂兽"
+    },
+    {
+      "roll": 3,
+      "pool": "基础设定3:你是什么级别的魂兽",
+      "optionId": "ca394b",
+      "option": "万年魂兽",
+      "probability": 0.2,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定4:你是什么类型的魂兽"
+    },
+    {
+      "roll": 4,
+      "pool": "基础设定4:你是什么类型的魂兽",
+      "optionId": "7d9893",
+      "option": "猴子类",
+      "probability": 0.07142857142857142,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "猿猴类魂兽初始池子"
+    },
+    {
+      "roll": 5,
+      "pool": "猿猴类魂兽初始池子",
+      "optionId": "ce01bd",
+      "option": "长臂猿",
+      "probability": 0.058823529411764705,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）"
+    },
+    {
+      "roll": 6,
+      "pool": "基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）",
+      "optionId": "33ea45",
+      "option": "杀戮之都",
+      "probability": 0.14285714285714285,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定6:十万年魂兽路线分歧点（初始十万年魂兽或万年魂兽成功经历十万年雷劫后可选该池）"
+    },
+    {
+      "roll": 7,
+      "pool": "基础设定6:十万年魂兽路线分歧点（初始十万年魂兽或万年魂兽成功经历十万年雷劫后可选该池）",
+      "optionId": "cb3025",
+      "option": "继续修炼",
+      "probability": 0.5,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": null
+    },
+    {
+      "roll": 8,
+      "pool": "10年后，你的成长（十万年魂兽限定，达到百万年无法再抽取，需突破神劫成神）（每提升十万年，进入雷劫突破池，才可继续提升）",
+      "optionId": "3bf001",
+      "option": "年限修为+80000年",
+      "probability": 0.07142857142857142,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "十万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）"
+    },
+    {
+      "roll": 9,
+      "pool": "十万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）",
+      "optionId": "a0970f",
+      "option": "遇到了深海魔鲸王，你被吞噬得一干二净（海魂兽专属，非海魂兽重抽）",
+      "probability": 0.07142857142857142,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": null
+    }
+  ],
+  "state": {
+    "value": "ending",
+    "context": {
+      "seed": "mrn9y97u-13qvyoi1dgs2cz-sample-12",
+      "rng": 1957561361,
+      "route": "beast",
+      "name": "命运旅者",
+      "step": 9,
+      "age": null,
+      "tangAge": -19990,
+      "gender": "雌性",
+      "appearance": "",
+      "level": 0,
+      "maxLevel": 99,
+      "faction": "",
+      "branch": null,
+      "martialSoulTypes": [],
+      "martialSouls": [],
+      "talents": [],
+      "traits": [],
+      "domains": [],
+      "rings": [],
+      "soulBones": [],
+      "beast": {
+        "cultivation": 180000,
+        "species": "长臂猿",
+        "type": "猴子类",
+        "area": "杀戮之都",
+        "bloodlines": [
+          "长臂猿"
+        ],
+        "laws": [],
+        "pendingTribulation": null
+      },
+      "godTrial": null,
+      "queue": [],
+      "activeTask": null,
+      "lastPool": "十万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）",
+      "lastOptionId": "a0970f",
+      "lastResult": "遇到了深海魔鲸王，你被吞噬得一干二净（海魂兽专属，非海魂兽重抽）",
+      "lastProbability": 0.07142857142857142,
+      "logs": [
+        {
+          "id": "0-0-1784192170089",
+          "step": 0,
+          "title": "命运启封",
+          "text": "种子：mrn9y97u-13qvyoi1dgs2cz-sample-12",
+          "tone": "major",
+          "time": "时间未定"
+        },
+        {
+          "id": "1-1-1784192170089",
+          "step": 1,
+          "title": "基础设定1:魂兽穿越时期",
+          "text": "唐三出生前20000年（天使创建武魂殿收集大陆信仰成神时期，抽到此时间段无法抽取海魂兽初始池）",
+          "tone": "normal",
+          "time": "唐三出生前 20000 年"
+        },
+        {
+          "id": "2-2-1784192170089",
+          "step": 2,
+          "title": "基础设定2:魂兽性别",
+          "text": "雌性",
+          "tone": "normal",
+          "time": "唐三出生前 20000 年"
+        },
+        {
+          "id": "3-3-1784192170089",
+          "step": 3,
+          "title": "基础设定3:你是什么级别的魂兽",
+          "text": "万年魂兽",
+          "tone": "normal",
+          "time": "唐三出生前 20000 年"
+        },
+        {
+          "id": "4-4-1784192170089",
+          "step": 4,
+          "title": "基础设定4:你是什么类型的魂兽",
+          "text": "猴子类",
+          "tone": "normal",
+          "time": "唐三出生前 20000 年"
+        },
+        {
+          "id": "5-5-1784192170090",
+          "step": 5,
+          "title": "猿猴类魂兽初始池子",
+          "text": "长臂猿",
+          "tone": "normal",
+          "time": "唐三出生前 20000 年"
+        },
+        {
+          "id": "6-6-1784192170090",
+          "step": 6,
+          "title": "基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）",
+          "text": "杀戮之都",
+          "tone": "normal",
+          "time": "唐三出生前 20000 年"
+        },
+        {
+          "id": "7-7-1784192170090",
+          "step": 7,
+          "title": "基础设定6:十万年魂兽路线分歧点（初始十万年魂兽或万年魂兽成功经历十万年雷劫后可选该池）",
+          "text": "继续修炼",
+          "tone": "normal",
+          "time": "唐三出生前 20000 年"
+        },
+        {
+          "id": "8-8-1784192170090",
+          "step": 8,
+          "title": "10年后，你的成长（十万年魂兽限定，达到百万年无法再抽取，需突破神劫成神）（每提升十万年，进入雷劫突破池，才可继续提升）",
+          "text": "年限修为+80000年",
+          "tone": "normal",
+          "time": "唐三出生前 19990 年"
+        },
+        {
+          "id": "9-9-1784192170090",
+          "step": 9,
+          "title": "十万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）",
+          "text": "遇到了深海魔鲸王，你被吞噬得一干二净（海魂兽专属，非海魂兽重抽）",
+          "tone": "normal",
+          "time": "唐三出生前 19990 年"
+        },
+        {
+          "id": "9-10-1784192170090",
+          "step": 9,
+          "title": "命运断绝",
+          "text": "遇到了深海魔鲸王，你被吞噬得一干二净（海魂兽专属，非海魂兽重抽）",
+          "tone": "bad",
+          "time": "唐三出生前 19990 年"
+        }
+      ],
+      "flags": {
+        "beastPeriod": "唐三出生前20000年（天使创建武魂殿收集大陆信仰成神时期，抽到此时间段无法抽取海魂兽初始池）"
+      },
+      "alive": false,
+      "ending": "遇到了深海魔鲸王，你被吞噬得一干二净（海魂兽专属，非海魂兽重抽）",
+      "resumeState": null,
+      "settings": {
+        "softenText": false,
+        "spinDuration": 900
+      }
+    }
+  }
+}

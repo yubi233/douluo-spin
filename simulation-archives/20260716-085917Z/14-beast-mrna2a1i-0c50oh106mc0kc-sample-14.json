@@ -1,0 +1,260 @@
+{
+  "format": "douluo-spin-long-simulation",
+  "formatVersion": 1,
+  "generatedAt": "2026-07-16T08:59:17.851Z",
+  "seed": "mrna2a1i-0c50oh106mc0kc-sample-14",
+  "requestedRolls": 500,
+  "executedRolls": 10,
+  "completed": true,
+  "samplingMode": "uniform",
+  "audit": {
+    "passed": true,
+    "issues": []
+  },
+  "biography": "《斗罗大陆 · 命运轮盘人物传记》\n\n【命运档案】\n命运种子：mrna2a1i-0c50oh106mc0kc-sample-14\n姓名：命运旅者\n路线：魂兽\n时间坐标：唐三出生前 70 年\n实际年龄：未确定\n当前境界：1100000年修为\n命运状态：渡过百万年神劫，成就兽神神位。\n阵营履历：星斗大森林\n\n【人物身份】\n魂兽类型：虫蛹类\n本体种族：地穴魔蛛\n生存区域：星斗大森林\n\n【能力与机缘】\n血脉：地穴魔蛛\n法则：无\n魂骨：无\n神考：无\n\n【魂环明细】\n- 暂无魂环记录\n\n【命运纪事】\n时间未定｜命运启封｜种子：mrna2a1i-0c50oh106mc0kc-sample-14\n唐三出生前 80 年｜基础设定1:魂兽穿越时期｜唐三出生前80年\n唐三出生前 80 年｜基础设定2:魂兽性别｜无性别\n唐三出生前 80 年｜基础设定3:你是什么级别的魂兽｜十万年魂兽\n唐三出生前 80 年｜基础设定4:你是什么类型的魂兽｜虫蛹类\n唐三出生前 80 年｜虫蛹类魂兽初始池子｜地穴魔蛛\n唐三出生前 80 年｜基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）｜星斗大森林\n唐三出生前 80 年｜基础设定6:十万年魂兽路线分歧点（初始十万年魂兽或万年魂兽成功经历十万年雷劫后可选该池）｜继续修炼\n唐三出生前 70 年｜10年后，你的成长（十万年魂兽限定，达到百万年无法再抽取，需突破神劫成神）（每提升十万年，进入雷劫突破池，才可继续提升）｜年限修为+100000年\n唐三出生前 70 年｜30万年-99万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）｜你获得了银龙王赐予的龙鳞，它可以帮你抵挡一次斩龙剑的攻击（龙族专属，无法重复获得，否则重抽）\n唐三出生前 70 年｜命运终章｜渡过百万年神劫，成就兽神神位。",
+  "trace": [
+    {
+      "roll": 1,
+      "pool": "基础设定1:魂兽穿越时期",
+      "optionId": "fc9383",
+      "option": "唐三出生前80年",
+      "probability": 0.09090909090909091,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定2:魂兽性别"
+    },
+    {
+      "roll": 2,
+      "pool": "基础设定2:魂兽性别",
+      "optionId": "a693a5",
+      "option": "无性别",
+      "probability": 0.3333333333333333,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定3:你是什么级别的魂兽"
+    },
+    {
+      "roll": 3,
+      "pool": "基础设定3:你是什么级别的魂兽",
+      "optionId": "a48c6a",
+      "option": "十万年魂兽",
+      "probability": 0.2,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定4:你是什么类型的魂兽"
+    },
+    {
+      "roll": 4,
+      "pool": "基础设定4:你是什么类型的魂兽",
+      "optionId": "e1a176",
+      "option": "虫蛹类",
+      "probability": 0.07142857142857142,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "虫蛹类魂兽初始池子"
+    },
+    {
+      "roll": 5,
+      "pool": "虫蛹类魂兽初始池子",
+      "optionId": "canon-%E8%99%AB%E8%9B%B9%E7%B1%BB%E9%AD%82%E5%85%BD%E5%88%9D%E5%A7%8B%E6%B1%A0%E5%AD%90-%E5%9C%B0%E7%A9%B4%E9%AD%94%E8%9B%9B",
+      "option": "地穴魔蛛",
+      "probability": 0.05263157894736842,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）"
+    },
+    {
+      "roll": 6,
+      "pool": "基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）",
+      "optionId": "3fed26",
+      "option": "星斗大森林",
+      "probability": 0.14285714285714285,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定6:十万年魂兽路线分歧点（初始十万年魂兽或万年魂兽成功经历十万年雷劫后可选该池）"
+    },
+    {
+      "roll": 7,
+      "pool": "基础设定6:十万年魂兽路线分歧点（初始十万年魂兽或万年魂兽成功经历十万年雷劫后可选该池）",
+      "optionId": "cb3025",
+      "option": "继续修炼",
+      "probability": 0.5,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": null
+    },
+    {
+      "roll": 8,
+      "pool": "10年后，你的成长（十万年魂兽限定，达到百万年无法再抽取，需突破神劫成神）（每提升十万年，进入雷劫突破池，才可继续提升）",
+      "optionId": "585127",
+      "option": "年限修为+100000年",
+      "probability": 0.07142857142857142,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "30万年-99万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）"
+    },
+    {
+      "roll": 9,
+      "pool": "30万年-99万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）",
+      "optionId": "dbfd4a",
+      "option": "你获得了银龙王赐予的龙鳞，它可以帮你抵挡一次斩龙剑的攻击（龙族专属，无法重复获得，否则重抽）",
+      "probability": 0.07142857142857142,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "百万年神劫池，突破成功则成就魂兽神位"
+    },
+    {
+      "roll": 10,
+      "pool": "百万年神劫池，突破成功则成就魂兽神位",
+      "optionId": "52101e",
+      "option": "否，突破失败，掉落修为50000年",
+      "probability": 0.125,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": null
+    }
+  ],
+  "state": {
+    "value": "ending",
+    "context": {
+      "seed": "mrna2a1i-0c50oh106mc0kc-sample-14",
+      "rng": 2457356178,
+      "route": "beast",
+      "name": "命运旅者",
+      "step": 10,
+      "age": null,
+      "tangAge": -70,
+      "gender": "无性别",
+      "appearance": "",
+      "level": 0,
+      "maxLevel": 99,
+      "faction": "",
+      "branch": null,
+      "martialSoulTypes": [],
+      "martialSouls": [],
+      "talents": [],
+      "traits": [],
+      "domains": [],
+      "rings": [],
+      "soulBones": [],
+      "beast": {
+        "cultivation": 1100000,
+        "species": "地穴魔蛛",
+        "type": "虫蛹类",
+        "area": "星斗大森林",
+        "bloodlines": [
+          "地穴魔蛛"
+        ],
+        "laws": [],
+        "pendingTribulation": null
+      },
+      "godTrial": null,
+      "queue": [],
+      "activeTask": null,
+      "lastPool": "百万年神劫池，突破成功则成就魂兽神位",
+      "lastOptionId": "52101e",
+      "lastResult": "否，突破失败，掉落修为50000年",
+      "lastProbability": 0.125,
+      "logs": [
+        {
+          "id": "0-0-1784192357851",
+          "step": 0,
+          "title": "命运启封",
+          "text": "种子：mrna2a1i-0c50oh106mc0kc-sample-14",
+          "tone": "major",
+          "time": "时间未定"
+        },
+        {
+          "id": "1-1-1784192357851",
+          "step": 1,
+          "title": "基础设定1:魂兽穿越时期",
+          "text": "唐三出生前80年",
+          "tone": "normal",
+          "time": "唐三出生前 80 年"
+        },
+        {
+          "id": "2-2-1784192357851",
+          "step": 2,
+          "title": "基础设定2:魂兽性别",
+          "text": "无性别",
+          "tone": "normal",
+          "time": "唐三出生前 80 年"
+        },
+        {
+          "id": "3-3-1784192357851",
+          "step": 3,
+          "title": "基础设定3:你是什么级别的魂兽",
+          "text": "十万年魂兽",
+          "tone": "major",
+          "time": "唐三出生前 80 年"
+        },
+        {
+          "id": "4-4-1784192357851",
+          "step": 4,
+          "title": "基础设定4:你是什么类型的魂兽",
+          "text": "虫蛹类",
+          "tone": "normal",
+          "time": "唐三出生前 80 年"
+        },
+        {
+          "id": "5-5-1784192357851",
+          "step": 5,
+          "title": "虫蛹类魂兽初始池子",
+          "text": "地穴魔蛛",
+          "tone": "normal",
+          "time": "唐三出生前 80 年"
+        },
+        {
+          "id": "6-6-1784192357851",
+          "step": 6,
+          "title": "基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）",
+          "text": "星斗大森林",
+          "tone": "normal",
+          "time": "唐三出生前 80 年"
+        },
+        {
+          "id": "7-7-1784192357851",
+          "step": 7,
+          "title": "基础设定6:十万年魂兽路线分歧点（初始十万年魂兽或万年魂兽成功经历十万年雷劫后可选该池）",
+          "text": "继续修炼",
+          "tone": "normal",
+          "time": "唐三出生前 80 年"
+        },
+        {
+          "id": "8-8-1784192357851",
+          "step": 8,
+          "title": "10年后，你的成长（十万年魂兽限定，达到百万年无法再抽取，需突破神劫成神）（每提升十万年，进入雷劫突破池，才可继续提升）",
+          "text": "年限修为+100000年",
+          "tone": "normal",
+          "time": "唐三出生前 70 年"
+        },
+        {
+          "id": "9-9-1784192357851",
+          "step": 9,
+          "title": "30万年-99万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）",
+          "text": "你获得了银龙王赐予的龙鳞，它可以帮你抵挡一次斩龙剑的攻击（龙族专属，无法重复获得，否则重抽）",
+          "tone": "good",
+          "time": "唐三出生前 70 年"
+        },
+        {
+          "id": "10-10-1784192357851",
+          "step": 10,
+          "title": "命运终章",
+          "text": "渡过百万年神劫，成就兽神神位。",
+          "tone": "major",
+          "time": "唐三出生前 70 年"
+        }
+      ],
+      "flags": {
+        "beastPeriod": "唐三出生前80年"
+      },
+      "alive": true,
+      "ending": "渡过百万年神劫，成就兽神神位。",
+      "resumeState": null,
+      "settings": {
+        "softenText": false,
+        "spinDuration": 900
+      }
+    }
+  }
+}

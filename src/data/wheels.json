@@ -16810,6 +16810,14 @@
           "id": "81f892",
           "name": "武魂极致进化（将武魂品质提升为极致武魂）（已拥有极致武魂则重抽）",
           "weight": 5
+        },
+        {
+          "id": "e679f0",
+          "name": "穿上草鞋，飞一般的感觉——获得双生武魂【双枪】（90级限定，要求拥有【草鞋】武魂）（已拥有双枪则重抽）",
+          "weight": 8,
+          "requirements": {
+            "minLevel": 90
+          }
         }
       ],
       "tags": [
@@ -17898,6 +17906,31 @@
         {
           "id": "6404e2",
           "name": "噬魂蛛皇"
+        },
+        {
+          "id": "fb5264",
+          "name": "路边的野狗",
+          "enabled": true
+        },
+        {
+          "id": "9e7418",
+          "name": "萨摩耶",
+          "enabled": true
+        },
+        {
+          "id": "bf0bcb",
+          "name": "布偶猫",
+          "enabled": true
+        },
+        {
+          "id": "1256e7",
+          "name": "矮脚猫",
+          "enabled": true
+        },
+        {
+          "id": "5aebdf",
+          "name": "阿拉斯加",
+          "enabled": true
         }
       ],
       "tags": [
@@ -18195,6 +18228,76 @@
         {
           "id": "41ef92",
           "name": "生锈的铁棒"
+        },
+        {
+          "id": "e8592e",
+          "name": "烂木棍",
+          "enabled": true
+        },
+        {
+          "id": "d1651c",
+          "name": "破布",
+          "enabled": true
+        },
+        {
+          "id": "d2fb08",
+          "name": "锈剪刀",
+          "enabled": true
+        },
+        {
+          "id": "3c8f21",
+          "name": "粪叉",
+          "enabled": true
+        },
+        {
+          "id": "42f63b",
+          "name": "扫帚",
+          "enabled": true
+        },
+        {
+          "id": "cf91db",
+          "name": "陶碗",
+          "enabled": true
+        },
+        {
+          "id": "3fa503",
+          "name": "草鞋",
+          "enabled": true
+        },
+        {
+          "id": "fc3b29",
+          "name": "平底锅",
+          "enabled": true
+        },
+        {
+          "id": "205430",
+          "name": "破伤风之刀",
+          "enabled": true
+        },
+        {
+          "id": "807507",
+          "name": "藤蔓",
+          "enabled": true
+        },
+        {
+          "id": "4e054e",
+          "name": "荆棘",
+          "enabled": true
+        },
+        {
+          "id": "4046ca",
+          "name": "仙人掌",
+          "enabled": true
+        },
+        {
+          "id": "5ee1d4",
+          "name": "板砖",
+          "enabled": true
+        },
+        {
+          "id": "005797",
+          "name": "双枪",
+          "enabled": true
         }
       ],
       "tags": [

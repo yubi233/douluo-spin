@@ -7,5 +7,4 @@ dist/
 test-results/
 tests/
 .codex/
-docs/
 e2e/

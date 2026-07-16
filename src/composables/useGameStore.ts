@@ -1,4 +1,5 @@
-import { computed, readonly, shallowRef } from 'vue'
+import { computed, readonly, ref, shallowRef } from 'vue'
+import { formatBiography } from '@/domain/biography'
 import { previewOptions } from '@/domain/engine'
 import { drawActiveTask, createInitialState, transition } from '@/domain/machine'
 import { createSeed } from '@/domain/random'
@@ -240,22 +241,48 @@ function exportSave() {
 
 function exportChronicle() {
   const context = machine.value.context
-  const factionHistory = typeof context.flags.factionHistory === 'string'
-    ? context.flags.factionHistory.split('｜').join(' · ')
-    : context.faction
-  const lines = [
-    '《斗罗大陆 · 命运轮盘人物传记》',
-    '',
-    `命运种子：${context.seed}`,
-    `路线：${routeLabel.value}`,
-    `终局：${context.ending || '尚未完结'}`,
-    `等级：${context.beast ? `${context.beast.cultivation}年修为` : `${context.level}级`}`,
-    `阵营：${factionHistory || context.beast?.area || '自由'}`,
-    '',
-    '【命运纪事】',
-    ...context.logs.map((entry) => `${entry.time}｜${entry.title}｜${entry.text}`),
-  ]
-  downloadText(`斗罗大陆人物传记_${safeFileName(context.seed)}.txt`, lines.join('\n'))
+  downloadText(`斗罗大陆人物传记_${safeFileName(context.seed)}.txt`, formatBiography(context))
+}
+
+const copyStatus = ref<'idle' | 'success' | 'failed'>('idle')
+let copyStatusTimer: number | null = null
+
+async function writeToClipboard(text: string): Promise<boolean> {
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text)
+      return true
+    } catch {
+      // fall through to fallback
+    }
+  }
+  try {
+    const textarea = document.createElement('textarea')
+    textarea.value = text
+    textarea.style.position = 'fixed'
+    textarea.style.opacity = '0'
+    textarea.style.pointerEvents = 'none'
+    document.body.appendChild(textarea)
+    textarea.focus()
+    textarea.select()
+    const success = document.execCommand('copy')
+    document.body.removeChild(textarea)
+    return success
+  } catch {
+    return false
+  }
+}
+
+async function copyChronicle() {
+  const text = formatBiography(machine.value.context)
+  const success = await writeToClipboard(text)
+  copyStatus.value = success ? 'success' : 'failed'
+  if (copyStatusTimer != null) window.clearTimeout(copyStatusTimer)
+  copyStatusTimer = window.setTimeout(() => {
+    copyStatus.value = 'idle'
+    copyStatusTimer = null
+  }, 2000)
+  return success
 }
 
 function applyWheelOverride(pool: WheelPool, options: readonly WheelOption[]): string | null {
@@ -377,6 +404,8 @@ export function useGameStore() {
     importSave,
     exportSave,
     exportChronicle,
+    copyChronicle,
+    copyStatus: readonly(copyStatus),
     applyWheelOverride,
     resetWheelOverride,
     clearWheelOverrides,

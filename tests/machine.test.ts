@@ -116,8 +116,8 @@ describe('finite state machine', () => {
     }
 
     const distribution = candidateDistribution(combatPool, combatTask, context)
-    expect(distribution.map((candidate) => candidate.weight)).toEqual([20, 10, 10])
-    expect(previewOptions(combatPool, combatTask, context).map((option) => option.weight)).toEqual([20, 10, 10])
+    expect(distribution.map((candidate) => candidate.weight)).toEqual([21.6, 10, 9.333333333333334])
+    expect(previewOptions(combatPool, combatTask, context).map((option) => option.weight)).toEqual([21.6, 10, 9.333333333333334])
   })
 
   it('never falls back to an incompatible structured faction outcome', () => {
@@ -167,6 +167,99 @@ describe('finite state machine', () => {
       pool: FIREARM_STORY_POOL_NAME,
       handler: 'growth',
     })
+  })
+
+  it('resolves slaughter-city outcomes without treating a failed reward as a domain', () => {
+    const compensation = startHuman() as MachineState
+    compensation.value = 'humanAdventure'
+    compensation.context.queue = [{
+      id: 'slaughter-compensation',
+      tag: '杀戮之都',
+      pool: '是否获得杀神领域',
+      handler: 'domain',
+    }]
+
+    const compensationRoll = transition(compensation, { type: 'ROLL' }).state
+    const compensationResolved = transition(compensationRoll, {
+      type: 'RESOLVE',
+      option: { id: 'growth-reward', name: '否，获得一次特殊成长经历' },
+      probability: 0.33,
+    }).state
+
+    expect(compensationResolved.context.domains).not.toContain('否，获得一次特殊成长经历')
+    expect(compensationResolved.context.queue[0]).toMatchObject({
+      pool: '特殊成长经历',
+      handler: 'growth',
+    })
+
+    const success = startHuman() as MachineState
+    success.value = 'humanAdventure'
+    success.context.queue = [{
+      id: 'slaughter-domain',
+      tag: '杀戮之都',
+      pool: '是否获得杀神领域',
+      handler: 'domain',
+    }]
+    const successRoll = transition(success, { type: 'ROLL' }).state
+    const successResolved = transition(successRoll, {
+      type: 'RESOLVE',
+      option: { id: 'domain-reward', name: '是，获得领域' },
+      probability: 0.5,
+    }).state
+
+    expect(successResolved.context.domains).toContain('杀神领域')
+    expect(successResolved.context.domains).not.toContain('是，获得领域')
+  })
+
+  it('honors deferred domain and soul-bone follow-up draws from real reward text', () => {
+    const domainSeed = startHuman() as MachineState
+    domainSeed.value = 'humanAdventure'
+    domainSeed.context.level = 57
+    domainSeed.context.queue = [{
+      id: 'domain-seed',
+      tag: '特殊成长经历',
+      pool: '特殊成长经历',
+      handler: 'growth',
+    }]
+    const domainSeedRoll = transition(domainSeed, { type: 'ROLL' }).state
+    const domainSeedResolved = transition(domainSeedRoll, {
+      type: 'RESOLVE',
+      option: { id: 'seed', name: '获得领域雏形（领域雏形在90级后变成完整领域，进入完整领域抽取池）' },
+      probability: 0.1,
+    }).state
+
+    expect(domainSeedResolved.context.traits).toContain('领域雏形')
+    expect(domainSeedResolved.context.domains).not.toContain('获得领域')
+    expect(domainSeedResolved.context.queue.some((item) => item.pool === '完整领域池子')).toBe(false)
+
+    const ring = startHuman() as MachineState
+    ring.value = 'humanAdventure'
+    ring.context.queue = [{
+      id: 'ring-with-bone',
+      tag: '魂环吸收',
+      pool: '魂环吸收（第一魂环）（抽取完魂环后请进入对应的魂骨抽奖池）',
+      handler: 'ring',
+      meta: { index: 1 },
+    }]
+    const ringRoll = transition(ring, { type: 'ROLL' }).state
+    const ringResolved = transition(ringRoll, {
+      type: 'RESOLVE',
+      option: { id: 'ring-result', name: '300年魂环' },
+      probability: 1,
+    }).state
+
+    expect(ringResolved.context.queue[0]).toMatchObject({
+      pool: '魂骨抽取池（已拥有部位则重抽）',
+      handler: 'bone',
+      meta: { years: 300 },
+    })
+    const boneRoll = transition(ringResolved, { type: 'ROLL' }).state
+    const boneResolved = transition(boneRoll, {
+      type: 'RESOLVE',
+      option: { id: 'head', name: '头骨' },
+      probability: 1,
+    }).state
+    expect(boneResolved.context.soulBones).toContain('300年头骨')
   })
 
   it('schedules a faction-exclusive pool with age, level, and gender-filtered outcomes', () => {

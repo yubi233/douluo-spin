@@ -1,0 +1,232 @@
+{
+  "format": "douluo-spin-long-simulation",
+  "formatVersion": 1,
+  "generatedAt": "2026-07-16T08:56:10.050Z",
+  "seed": "mrn9y97u-13qvyoi1dgs2cz-sample-04",
+  "requestedRolls": 500,
+  "executedRolls": 8,
+  "completed": true,
+  "samplingMode": "uniform",
+  "audit": {
+    "passed": true,
+    "issues": []
+  },
+  "biography": "《斗罗大陆 · 命运轮盘人物传记》\n\n【命运档案】\n命运种子：mrn9y97u-13qvyoi1dgs2cz-sample-04\n姓名：命运旅者\n路线：魂兽\n时间坐标：唐三出生前 11990 年\n实际年龄：未确定\n当前境界：12000年修为\n命运状态：遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）\n阵营履历：落日森林\n\n【人物身份】\n魂兽类型：猪类魂兽\n本体种族：太古封豨\n生存区域：落日森林\n\n【能力与机缘】\n血脉：太古封豨\n法则：无\n魂骨：无\n神考：无\n\n【魂环明细】\n- 暂无魂环记录\n\n【命运纪事】\n时间未定｜命运启封｜种子：mrn9y97u-13qvyoi1dgs2cz-sample-04\n唐三出生前 12000 年｜基础设定1:魂兽穿越时期｜唐三出生前12000年（海神创建神位时期，抽到此时间段只能抽海魂兽初始池）\n唐三出生前 12000 年｜基础设定2:魂兽性别｜雄性\n唐三出生前 12000 年｜基础设定3:你是什么级别的魂兽｜千年魂兽\n唐三出生前 12000 年｜基础设定4:你是什么类型的魂兽｜猪类魂兽\n唐三出生前 12000 年｜猪类魂兽｜太古封豨（猪神血脉，自带极致力，血脉融合则叠加）\n唐三出生前 12000 年｜基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）｜落日森林\n唐三出生前 11990 年｜10年后，你的成长（万年魂兽限定，达到十万年以后无法再抽取，需经历十万年雷劫）｜年限修为+2000年\n唐三出生前 11990 年｜万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）｜遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）\n唐三出生前 11990 年｜命运断绝｜遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+  "trace": [
+    {
+      "roll": 1,
+      "pool": "基础设定1:魂兽穿越时期",
+      "optionId": "11a956",
+      "option": "唐三出生前12000年（海神创建神位时期，抽到此时间段只能抽海魂兽初始池）",
+      "probability": 0.09090909090909091,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定2:魂兽性别"
+    },
+    {
+      "roll": 2,
+      "pool": "基础设定2:魂兽性别",
+      "optionId": "9e26c7",
+      "option": "雄性",
+      "probability": 0.3333333333333333,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定3:你是什么级别的魂兽"
+    },
+    {
+      "roll": 3,
+      "pool": "基础设定3:你是什么级别的魂兽",
+      "optionId": "9a3490",
+      "option": "千年魂兽",
+      "probability": 0.2,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定4:你是什么类型的魂兽"
+    },
+    {
+      "roll": 4,
+      "pool": "基础设定4:你是什么类型的魂兽",
+      "optionId": "201537",
+      "option": "猪类魂兽",
+      "probability": 0.07142857142857142,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "猪类魂兽"
+    },
+    {
+      "roll": 5,
+      "pool": "猪类魂兽",
+      "optionId": "b23d59",
+      "option": "太古封豨（猪神血脉，自带极致力，血脉融合则叠加）",
+      "probability": 0.09090909090909091,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）"
+    },
+    {
+      "roll": 6,
+      "pool": "基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）",
+      "optionId": "0c52f0",
+      "option": "落日森林",
+      "probability": 0.14285714285714285,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": null
+    },
+    {
+      "roll": 7,
+      "pool": "10年后，你的成长（万年魂兽限定，达到十万年以后无法再抽取，需经历十万年雷劫）",
+      "optionId": "ba2074",
+      "option": "年限修为+2000年",
+      "probability": 0.09090909090909091,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": "万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）"
+    },
+    {
+      "roll": 8,
+      "pool": "万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）",
+      "optionId": "5e8ad0",
+      "option": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+      "probability": 0.0625,
+      "level": 0,
+      "soulBoneCount": 0,
+      "queuedNextPool": null
+    }
+  ],
+  "state": {
+    "value": "ending",
+    "context": {
+      "seed": "mrn9y97u-13qvyoi1dgs2cz-sample-04",
+      "rng": 3889901403,
+      "route": "beast",
+      "name": "命运旅者",
+      "step": 8,
+      "age": null,
+      "tangAge": -11990,
+      "gender": "雄性",
+      "appearance": "",
+      "level": 0,
+      "maxLevel": 99,
+      "faction": "",
+      "branch": null,
+      "martialSoulTypes": [],
+      "martialSouls": [],
+      "talents": [],
+      "traits": [],
+      "domains": [],
+      "rings": [],
+      "soulBones": [],
+      "beast": {
+        "cultivation": 12000,
+        "species": "太古封豨",
+        "type": "猪类魂兽",
+        "area": "落日森林",
+        "bloodlines": [
+          "太古封豨"
+        ],
+        "laws": [],
+        "pendingTribulation": null
+      },
+      "godTrial": null,
+      "queue": [],
+      "activeTask": null,
+      "lastPool": "万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）",
+      "lastOptionId": "5e8ad0",
+      "lastResult": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+      "lastProbability": 0.0625,
+      "logs": [
+        {
+          "id": "0-0-1784192170050",
+          "step": 0,
+          "title": "命运启封",
+          "text": "种子：mrn9y97u-13qvyoi1dgs2cz-sample-04",
+          "tone": "major",
+          "time": "时间未定"
+        },
+        {
+          "id": "1-1-1784192170050",
+          "step": 1,
+          "title": "基础设定1:魂兽穿越时期",
+          "text": "唐三出生前12000年（海神创建神位时期，抽到此时间段只能抽海魂兽初始池）",
+          "tone": "major",
+          "time": "唐三出生前 12000 年"
+        },
+        {
+          "id": "2-2-1784192170050",
+          "step": 2,
+          "title": "基础设定2:魂兽性别",
+          "text": "雄性",
+          "tone": "normal",
+          "time": "唐三出生前 12000 年"
+        },
+        {
+          "id": "3-3-1784192170050",
+          "step": 3,
+          "title": "基础设定3:你是什么级别的魂兽",
+          "text": "千年魂兽",
+          "tone": "normal",
+          "time": "唐三出生前 12000 年"
+        },
+        {
+          "id": "4-4-1784192170050",
+          "step": 4,
+          "title": "基础设定4:你是什么类型的魂兽",
+          "text": "猪类魂兽",
+          "tone": "normal",
+          "time": "唐三出生前 12000 年"
+        },
+        {
+          "id": "5-5-1784192170050",
+          "step": 5,
+          "title": "猪类魂兽",
+          "text": "太古封豨（猪神血脉，自带极致力，血脉融合则叠加）",
+          "tone": "normal",
+          "time": "唐三出生前 12000 年"
+        },
+        {
+          "id": "6-6-1784192170050",
+          "step": 6,
+          "title": "基础设定5:你的生存区域（海魂兽默认大海无需抽取该池）",
+          "text": "落日森林",
+          "tone": "normal",
+          "time": "唐三出生前 12000 年"
+        },
+        {
+          "id": "7-7-1784192170050",
+          "step": 7,
+          "title": "10年后，你的成长（万年魂兽限定，达到十万年以后无法再抽取，需经历十万年雷劫）",
+          "text": "年限修为+2000年",
+          "tone": "normal",
+          "time": "唐三出生前 11990 年"
+        },
+        {
+          "id": "8-8-1784192170050",
+          "step": 8,
+          "title": "万年魂兽遭遇剧情（每经历1次时间跳跃可抽取该池）",
+          "text": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+          "tone": "normal",
+          "time": "唐三出生前 11990 年"
+        },
+        {
+          "id": "8-9-1784192170050",
+          "step": 8,
+          "title": "命运断绝",
+          "text": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+          "tone": "bad",
+          "time": "唐三出生前 11990 年"
+        }
+      ],
+      "flags": {
+        "beastPeriod": "唐三出生前12000年（海神创建神位时期，抽到此时间段只能抽海魂兽初始池）"
+      },
+      "alive": false,
+      "ending": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+      "resumeState": null,
+      "settings": {
+        "softenText": false,
+        "spinDuration": 900
+      }
+    }
+  }
+}

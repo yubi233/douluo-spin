@@ -1,0 +1,35 @@
+{
+  "format": "douluo-spin-long-simulation-batch",
+  "formatVersion": 1,
+  "startedAt": "2026-07-16T09:00:00.000Z",
+  "sampling": "uniform among eligible options; wheel weights are not used",
+  "requestedSamples": 2,
+  "completedSamples": 2,
+  "passedSamples": 2,
+  "runs": [
+    {
+      "sample": 1,
+      "route": "human",
+      "seed": "long-simulation-smoke-sample-01",
+      "rolls": 39,
+      "completed": true,
+      "ending": "你被罗刹与天使围攻，最终战死（拥有神王神位或者双神位可以重抽）",
+      "auditPassed": true,
+      "issueCount": 0,
+      "biography": "01-human-long-simulation-smoke-sample-01.txt",
+      "archive": "01-human-long-simulation-smoke-sample-01.json"
+    },
+    {
+      "sample": 2,
+      "route": "beast",
+      "seed": "long-simulation-smoke-sample-02",
+      "rolls": 53,
+      "completed": true,
+      "ending": "否，突破失败，失去一个属性（若无属性则当场死亡）",
+      "auditPassed": true,
+      "issueCount": 0,
+      "biography": "02-beast-long-simulation-smoke-sample-02.txt",
+      "archive": "02-beast-long-simulation-smoke-sample-02.json"
+    }
+  ]
+}

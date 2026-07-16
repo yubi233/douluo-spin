@@ -1,0 +1,82 @@
+{
+  "format": "douluo-spin-long-simulation-batch",
+  "formatVersion": 2,
+  "startedAt": "2026-07-16T16:00:08.325Z",
+  "batchSize": 3,
+  "sampling": "weighted (real-user simulation)",
+  "requestedSamples": 6,
+  "completedSamples": 6,
+  "passedSamples": 3,
+  "stats": {
+    "avgHumanLevel": "57.0",
+    "avgBeastYears": "328837"
+  },
+  "issueByCode": {
+    "appearance-unchanged": [
+      {
+        "code": "appearance-unchanged",
+        "message": "30级以上容貌从未变化",
+        "sample": 1,
+        "route": "human"
+      }
+    ],
+    "no-impact-batch": [
+      {
+        "code": "no-impact-batch",
+        "roll": 26,
+        "message": "连续 3 个剧情/战斗事件均无反馈（从第 24 次开始）",
+        "sample": 1,
+        "route": "human"
+      },
+      {
+        "code": "no-impact-batch",
+        "roll": 32,
+        "message": "连续 3 个剧情/战斗事件均无反馈（从第 30 次开始）",
+        "sample": 1,
+        "route": "human"
+      },
+      {
+        "code": "no-impact-batch",
+        "roll": 60,
+        "message": "连续 3 个剧情/战斗事件均无反馈（从第 58 次开始）",
+        "sample": 1,
+        "route": "human"
+      },
+      {
+        "code": "no-impact-batch",
+        "roll": 63,
+        "message": "连续 3 个剧情/战斗事件均无反馈（从第 61 次开始）",
+        "sample": 1,
+        "route": "human"
+      },
+      {
+        "code": "no-impact-batch",
+        "roll": 39,
+        "message": "连续 3 个剧情/战斗事件均无反馈（从第 37 次开始）",
+        "sample": 2,
+        "route": "human"
+      },
+      {
+        "code": "no-impact-batch",
+        "roll": 65,
+        "message": "连续 3 个剧情/战斗事件均无反馈（从第 63 次开始）",
+        "sample": 2,
+        "route": "human"
+      },
+      {
+        "code": "no-impact-batch",
+        "roll": 34,
+        "message": "连续 3 个剧情/战斗事件均无反馈（从第 32 次开始）",
+        "sample": 3,
+        "route": "human"
+      },
+      {
+        "code": "no-impact-batch",
+        "roll": 57,
+        "message": "连续 3 个剧情/战斗事件均无反馈（从第 55 次开始）",
+        "sample": 3,
+        "route": "human"
+      }
+    ]
+  }
+}

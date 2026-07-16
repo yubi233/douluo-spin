@@ -1,0 +1,1339 @@
+{
+  "format": "douluo-spin-long-simulation-batch",
+  "formatVersion": 2,
+  "startedAt": "2026-07-16T15:48:54.613Z",
+  "sampling": "weighted (real-user simulation)",
+  "requestedSamples": 100,
+  "completedSamples": 100,
+  "passedSamples": 90,
+  "stats": {
+    "avgHumanLevel": "70.5",
+    "avgBeastYears": "139954"
+  },
+  "issueByCode": {
+    "stuck-level": [
+      {
+        "code": "stuck-level",
+        "roll": 48,
+        "message": "第 45-48 次投掷内经过 3+ 次时间跳跃但等级未变化。",
+        "sample": 3,
+        "route": "human"
+      },
+      {
+        "code": "stuck-level",
+        "roll": 95,
+        "message": "第 92-95 次投掷内经过 3+ 次时间跳跃但等级未变化。",
+        "sample": 81,
+        "route": "beast"
+      },
+      {
+        "code": "stuck-level",
+        "roll": 113,
+        "message": "第 110-113 次投掷内经过 3+ 次时间跳跃但等级未变化。",
+        "sample": 87,
+        "route": "beast"
+      }
+    ],
+    "god-condition-mismatch": [
+      {
+        "code": "god-condition-mismatch",
+        "message": "武魂阶位 2 不足以匹配 一级 神考",
+        "sample": 11,
+        "route": "human"
+      },
+      {
+        "code": "god-condition-mismatch",
+        "message": "武魂阶位 1 不足以匹配 二级 神考",
+        "sample": 35,
+        "route": "human"
+      },
+      {
+        "code": "god-condition-mismatch",
+        "message": "武魂阶位 2 不足以匹配 一级 神考",
+        "sample": 37,
+        "route": "human"
+      }
+    ],
+    "appearance-unchanged": [
+      {
+        "code": "appearance-unchanged",
+        "message": "30级以上容貌从未变化",
+        "sample": 24,
+        "route": "human"
+      },
+      {
+        "code": "appearance-unchanged",
+        "message": "30级以上容貌从未变化",
+        "sample": 27,
+        "route": "human"
+      },
+      {
+        "code": "appearance-unchanged",
+        "message": "30级以上容貌从未变化",
+        "sample": 40,
+        "route": "human"
+      },
+      {
+        "code": "appearance-unchanged",
+        "message": "30级以上容貌从未变化",
+        "sample": 44,
+        "route": "human"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "sample": 1,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-001",
+      "rolls": 91,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "001-human-mrnop1p1-0pln8351a8tizu-sample-001.txt",
+      "archive": "001-human-mrnop1p1-0pln8351a8tizu-sample-001.json"
+    },
+    {
+      "sample": 2,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-002",
+      "rolls": 66,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "002-human-mrnop1p1-0pln8351a8tizu-sample-002.txt",
+      "archive": "002-human-mrnop1p1-0pln8351a8tizu-sample-002.json"
+    },
+    {
+      "sample": 3,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-003",
+      "rolls": 77,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": false,
+      "issues": [
+        {
+          "code": "stuck-level",
+          "roll": 48,
+          "message": "第 45-48 次投掷内经过 3+ 次时间跳跃但等级未变化。"
+        }
+      ],
+      "biography": "003-human-mrnop1p1-0pln8351a8tizu-sample-003.txt",
+      "archive": "003-human-mrnop1p1-0pln8351a8tizu-sample-003.json"
+    },
+    {
+      "sample": 4,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-004",
+      "rolls": 63,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "004-human-mrnop1p1-0pln8351a8tizu-sample-004.txt",
+      "archive": "004-human-mrnop1p1-0pln8351a8tizu-sample-004.json"
+    },
+    {
+      "sample": 5,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-005",
+      "rolls": 98,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "005-human-mrnop1p1-0pln8351a8tizu-sample-005.txt",
+      "archive": "005-human-mrnop1p1-0pln8351a8tizu-sample-005.json"
+    },
+    {
+      "sample": 6,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-006",
+      "rolls": 67,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "006-human-mrnop1p1-0pln8351a8tizu-sample-006.txt",
+      "archive": "006-human-mrnop1p1-0pln8351a8tizu-sample-006.json"
+    },
+    {
+      "sample": 7,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-007",
+      "rolls": 69,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "007-human-mrnop1p1-0pln8351a8tizu-sample-007.txt",
+      "archive": "007-human-mrnop1p1-0pln8351a8tizu-sample-007.json"
+    },
+    {
+      "sample": 8,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-008",
+      "rolls": 61,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "008-human-mrnop1p1-0pln8351a8tizu-sample-008.txt",
+      "archive": "008-human-mrnop1p1-0pln8351a8tizu-sample-008.json"
+    },
+    {
+      "sample": 9,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-009",
+      "rolls": 82,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "009-human-mrnop1p1-0pln8351a8tizu-sample-009.txt",
+      "archive": "009-human-mrnop1p1-0pln8351a8tizu-sample-009.json"
+    },
+    {
+      "sample": 10,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-010",
+      "rolls": 78,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "010-human-mrnop1p1-0pln8351a8tizu-sample-010.txt",
+      "archive": "010-human-mrnop1p1-0pln8351a8tizu-sample-010.json"
+    },
+    {
+      "sample": 11,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-011",
+      "rolls": 74,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": false,
+      "issues": [
+        {
+          "code": "god-condition-mismatch",
+          "message": "武魂阶位 2 不足以匹配 一级 神考"
+        }
+      ],
+      "biography": "011-human-mrnop1p1-0pln8351a8tizu-sample-011.txt",
+      "archive": "011-human-mrnop1p1-0pln8351a8tizu-sample-011.json"
+    },
+    {
+      "sample": 12,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-012",
+      "rolls": 74,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "012-human-mrnop1p1-0pln8351a8tizu-sample-012.txt",
+      "archive": "012-human-mrnop1p1-0pln8351a8tizu-sample-012.json"
+    },
+    {
+      "sample": 13,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-013",
+      "rolls": 66,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "013-human-mrnop1p1-0pln8351a8tizu-sample-013.txt",
+      "archive": "013-human-mrnop1p1-0pln8351a8tizu-sample-013.json"
+    },
+    {
+      "sample": 14,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-014",
+      "rolls": 58,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "014-human-mrnop1p1-0pln8351a8tizu-sample-014.txt",
+      "archive": "014-human-mrnop1p1-0pln8351a8tizu-sample-014.json"
+    },
+    {
+      "sample": 15,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-015",
+      "rolls": 78,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "015-human-mrnop1p1-0pln8351a8tizu-sample-015.txt",
+      "archive": "015-human-mrnop1p1-0pln8351a8tizu-sample-015.json"
+    },
+    {
+      "sample": 16,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-016",
+      "rolls": 73,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "016-human-mrnop1p1-0pln8351a8tizu-sample-016.txt",
+      "archive": "016-human-mrnop1p1-0pln8351a8tizu-sample-016.json"
+    },
+    {
+      "sample": 17,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-017",
+      "rolls": 60,
+      "completed": true,
+      "ending": "你被唐三斩杀（95+级可以重抽）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "017-human-mrnop1p1-0pln8351a8tizu-sample-017.txt",
+      "archive": "017-human-mrnop1p1-0pln8351a8tizu-sample-017.json"
+    },
+    {
+      "sample": 18,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-018",
+      "rolls": 75,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "018-human-mrnop1p1-0pln8351a8tizu-sample-018.txt",
+      "archive": "018-human-mrnop1p1-0pln8351a8tizu-sample-018.json"
+    },
+    {
+      "sample": 19,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-019",
+      "rolls": 61,
+      "completed": true,
+      "ending": "你被比比东斩杀（99级或者神级可以重抽）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "019-human-mrnop1p1-0pln8351a8tizu-sample-019.txt",
+      "archive": "019-human-mrnop1p1-0pln8351a8tizu-sample-019.json"
+    },
+    {
+      "sample": 20,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-020",
+      "rolls": 63,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "020-human-mrnop1p1-0pln8351a8tizu-sample-020.txt",
+      "archive": "020-human-mrnop1p1-0pln8351a8tizu-sample-020.json"
+    },
+    {
+      "sample": 21,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-021",
+      "rolls": 47,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "021-human-mrnop1p1-0pln8351a8tizu-sample-021.txt",
+      "archive": "021-human-mrnop1p1-0pln8351a8tizu-sample-021.json"
+    },
+    {
+      "sample": 22,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-022",
+      "rolls": 77,
+      "completed": true,
+      "ending": "完成防御之神（无限制）二级神考，百级成神。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "022-human-mrnop1p1-0pln8351a8tizu-sample-022.txt",
+      "archive": "022-human-mrnop1p1-0pln8351a8tizu-sample-022.json"
+    },
+    {
+      "sample": 23,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-023",
+      "rolls": 66,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "023-human-mrnop1p1-0pln8351a8tizu-sample-023.txt",
+      "archive": "023-human-mrnop1p1-0pln8351a8tizu-sample-023.json"
+    },
+    {
+      "sample": 24,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-024",
+      "rolls": 62,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": false,
+      "issues": [
+        {
+          "code": "appearance-unchanged",
+          "message": "30级以上容貌从未变化"
+        }
+      ],
+      "biography": "024-human-mrnop1p1-0pln8351a8tizu-sample-024.txt",
+      "archive": "024-human-mrnop1p1-0pln8351a8tizu-sample-024.json"
+    },
+    {
+      "sample": 25,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-025",
+      "rolls": 58,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "025-human-mrnop1p1-0pln8351a8tizu-sample-025.txt",
+      "archive": "025-human-mrnop1p1-0pln8351a8tizu-sample-025.json"
+    },
+    {
+      "sample": 26,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-026",
+      "rolls": 57,
+      "completed": true,
+      "ending": "你被比比东斩杀（99级或者神级可以重抽）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "026-human-mrnop1p1-0pln8351a8tizu-sample-026.txt",
+      "archive": "026-human-mrnop1p1-0pln8351a8tizu-sample-026.json"
+    },
+    {
+      "sample": 27,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-027",
+      "rolls": 82,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": false,
+      "issues": [
+        {
+          "code": "appearance-unchanged",
+          "message": "30级以上容貌从未变化"
+        }
+      ],
+      "biography": "027-human-mrnop1p1-0pln8351a8tizu-sample-027.txt",
+      "archive": "027-human-mrnop1p1-0pln8351a8tizu-sample-027.json"
+    },
+    {
+      "sample": 28,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-028",
+      "rolls": 79,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "028-human-mrnop1p1-0pln8351a8tizu-sample-028.txt",
+      "archive": "028-human-mrnop1p1-0pln8351a8tizu-sample-028.json"
+    },
+    {
+      "sample": 29,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-029",
+      "rolls": 69,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "029-human-mrnop1p1-0pln8351a8tizu-sample-029.txt",
+      "archive": "029-human-mrnop1p1-0pln8351a8tizu-sample-029.json"
+    },
+    {
+      "sample": 30,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-030",
+      "rolls": 72,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "030-human-mrnop1p1-0pln8351a8tizu-sample-030.txt",
+      "archive": "030-human-mrnop1p1-0pln8351a8tizu-sample-030.json"
+    },
+    {
+      "sample": 31,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-031",
+      "rolls": 68,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "031-human-mrnop1p1-0pln8351a8tizu-sample-031.txt",
+      "archive": "031-human-mrnop1p1-0pln8351a8tizu-sample-031.json"
+    },
+    {
+      "sample": 32,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-032",
+      "rolls": 80,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "032-human-mrnop1p1-0pln8351a8tizu-sample-032.txt",
+      "archive": "032-human-mrnop1p1-0pln8351a8tizu-sample-032.json"
+    },
+    {
+      "sample": 33,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-033",
+      "rolls": 62,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "033-human-mrnop1p1-0pln8351a8tizu-sample-033.txt",
+      "archive": "033-human-mrnop1p1-0pln8351a8tizu-sample-033.json"
+    },
+    {
+      "sample": 34,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-034",
+      "rolls": 78,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "034-human-mrnop1p1-0pln8351a8tizu-sample-034.txt",
+      "archive": "034-human-mrnop1p1-0pln8351a8tizu-sample-034.json"
+    },
+    {
+      "sample": 35,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-035",
+      "rolls": 73,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": false,
+      "issues": [
+        {
+          "code": "god-condition-mismatch",
+          "message": "武魂阶位 1 不足以匹配 二级 神考"
+        }
+      ],
+      "biography": "035-human-mrnop1p1-0pln8351a8tizu-sample-035.txt",
+      "archive": "035-human-mrnop1p1-0pln8351a8tizu-sample-035.json"
+    },
+    {
+      "sample": 36,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-036",
+      "rolls": 89,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "036-human-mrnop1p1-0pln8351a8tizu-sample-036.txt",
+      "archive": "036-human-mrnop1p1-0pln8351a8tizu-sample-036.json"
+    },
+    {
+      "sample": 37,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-037",
+      "rolls": 73,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": false,
+      "issues": [
+        {
+          "code": "god-condition-mismatch",
+          "message": "武魂阶位 2 不足以匹配 一级 神考"
+        }
+      ],
+      "biography": "037-human-mrnop1p1-0pln8351a8tizu-sample-037.txt",
+      "archive": "037-human-mrnop1p1-0pln8351a8tizu-sample-037.json"
+    },
+    {
+      "sample": 38,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-038",
+      "rolls": 86,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "038-human-mrnop1p1-0pln8351a8tizu-sample-038.txt",
+      "archive": "038-human-mrnop1p1-0pln8351a8tizu-sample-038.json"
+    },
+    {
+      "sample": 39,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-039",
+      "rolls": 80,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "039-human-mrnop1p1-0pln8351a8tizu-sample-039.txt",
+      "archive": "039-human-mrnop1p1-0pln8351a8tizu-sample-039.json"
+    },
+    {
+      "sample": 40,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-040",
+      "rolls": 71,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": false,
+      "issues": [
+        {
+          "code": "appearance-unchanged",
+          "message": "30级以上容貌从未变化"
+        }
+      ],
+      "biography": "040-human-mrnop1p1-0pln8351a8tizu-sample-040.txt",
+      "archive": "040-human-mrnop1p1-0pln8351a8tizu-sample-040.json"
+    },
+    {
+      "sample": 41,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-041",
+      "rolls": 67,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "041-human-mrnop1p1-0pln8351a8tizu-sample-041.txt",
+      "archive": "041-human-mrnop1p1-0pln8351a8tizu-sample-041.json"
+    },
+    {
+      "sample": 42,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-042",
+      "rolls": 79,
+      "completed": true,
+      "ending": "你被比比东斩杀（99级或者神级可以重抽）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "042-human-mrnop1p1-0pln8351a8tizu-sample-042.txt",
+      "archive": "042-human-mrnop1p1-0pln8351a8tizu-sample-042.json"
+    },
+    {
+      "sample": 43,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-043",
+      "rolls": 80,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "043-human-mrnop1p1-0pln8351a8tizu-sample-043.txt",
+      "archive": "043-human-mrnop1p1-0pln8351a8tizu-sample-043.json"
+    },
+    {
+      "sample": 44,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-044",
+      "rolls": 66,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": false,
+      "issues": [
+        {
+          "code": "appearance-unchanged",
+          "message": "30级以上容貌从未变化"
+        }
+      ],
+      "biography": "044-human-mrnop1p1-0pln8351a8tizu-sample-044.txt",
+      "archive": "044-human-mrnop1p1-0pln8351a8tizu-sample-044.json"
+    },
+    {
+      "sample": 45,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-045",
+      "rolls": 79,
+      "completed": true,
+      "ending": "你被唐三斩杀（95+级可以重抽）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "045-human-mrnop1p1-0pln8351a8tizu-sample-045.txt",
+      "archive": "045-human-mrnop1p1-0pln8351a8tizu-sample-045.json"
+    },
+    {
+      "sample": 46,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-046",
+      "rolls": 69,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "046-human-mrnop1p1-0pln8351a8tizu-sample-046.txt",
+      "archive": "046-human-mrnop1p1-0pln8351a8tizu-sample-046.json"
+    },
+    {
+      "sample": 47,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-047",
+      "rolls": 62,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "047-human-mrnop1p1-0pln8351a8tizu-sample-047.txt",
+      "archive": "047-human-mrnop1p1-0pln8351a8tizu-sample-047.json"
+    },
+    {
+      "sample": 48,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-048",
+      "rolls": 62,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "048-human-mrnop1p1-0pln8351a8tizu-sample-048.txt",
+      "archive": "048-human-mrnop1p1-0pln8351a8tizu-sample-048.json"
+    },
+    {
+      "sample": 49,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-049",
+      "rolls": 76,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "049-human-mrnop1p1-0pln8351a8tizu-sample-049.txt",
+      "archive": "049-human-mrnop1p1-0pln8351a8tizu-sample-049.json"
+    },
+    {
+      "sample": 50,
+      "route": "human",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-050",
+      "rolls": 87,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "050-human-mrnop1p1-0pln8351a8tizu-sample-050.txt",
+      "archive": "050-human-mrnop1p1-0pln8351a8tizu-sample-050.json"
+    },
+    {
+      "sample": 51,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-051",
+      "rolls": 57,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "051-beast-mrnop1p1-0pln8351a8tizu-sample-051.txt",
+      "archive": "051-beast-mrnop1p1-0pln8351a8tizu-sample-051.json"
+    },
+    {
+      "sample": 52,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-052",
+      "rolls": 36,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "052-beast-mrnop1p1-0pln8351a8tizu-sample-052.txt",
+      "archive": "052-beast-mrnop1p1-0pln8351a8tizu-sample-052.json"
+    },
+    {
+      "sample": 53,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-053",
+      "rolls": 18,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "053-beast-mrnop1p1-0pln8351a8tizu-sample-053.txt",
+      "archive": "053-beast-mrnop1p1-0pln8351a8tizu-sample-053.json"
+    },
+    {
+      "sample": 54,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-054",
+      "rolls": 32,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "054-beast-mrnop1p1-0pln8351a8tizu-sample-054.txt",
+      "archive": "054-beast-mrnop1p1-0pln8351a8tizu-sample-054.json"
+    },
+    {
+      "sample": 55,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-055",
+      "rolls": 35,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "055-beast-mrnop1p1-0pln8351a8tizu-sample-055.txt",
+      "archive": "055-beast-mrnop1p1-0pln8351a8tizu-sample-055.json"
+    },
+    {
+      "sample": 56,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-056",
+      "rolls": 32,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "056-beast-mrnop1p1-0pln8351a8tizu-sample-056.txt",
+      "archive": "056-beast-mrnop1p1-0pln8351a8tizu-sample-056.json"
+    },
+    {
+      "sample": 57,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-057",
+      "rolls": 57,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "057-beast-mrnop1p1-0pln8351a8tizu-sample-057.txt",
+      "archive": "057-beast-mrnop1p1-0pln8351a8tizu-sample-057.json"
+    },
+    {
+      "sample": 58,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-058",
+      "rolls": 28,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "058-beast-mrnop1p1-0pln8351a8tizu-sample-058.txt",
+      "archive": "058-beast-mrnop1p1-0pln8351a8tizu-sample-058.json"
+    },
+    {
+      "sample": 59,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-059",
+      "rolls": 32,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "059-beast-mrnop1p1-0pln8351a8tizu-sample-059.txt",
+      "archive": "059-beast-mrnop1p1-0pln8351a8tizu-sample-059.json"
+    },
+    {
+      "sample": 60,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-060",
+      "rolls": 44,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "060-beast-mrnop1p1-0pln8351a8tizu-sample-060.txt",
+      "archive": "060-beast-mrnop1p1-0pln8351a8tizu-sample-060.json"
+    },
+    {
+      "sample": 61,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-061",
+      "rolls": 120,
+      "completed": true,
+      "ending": "完成人神（无限制）二级神考，百级成神。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "061-beast-mrnop1p1-0pln8351a8tizu-sample-061.txt",
+      "archive": "061-beast-mrnop1p1-0pln8351a8tizu-sample-061.json"
+    },
+    {
+      "sample": 62,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-062",
+      "rolls": 33,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "062-beast-mrnop1p1-0pln8351a8tizu-sample-062.txt",
+      "archive": "062-beast-mrnop1p1-0pln8351a8tizu-sample-062.json"
+    },
+    {
+      "sample": 63,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-063",
+      "rolls": 36,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "063-beast-mrnop1p1-0pln8351a8tizu-sample-063.txt",
+      "archive": "063-beast-mrnop1p1-0pln8351a8tizu-sample-063.json"
+    },
+    {
+      "sample": 64,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-064",
+      "rolls": 32,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "064-beast-mrnop1p1-0pln8351a8tizu-sample-064.txt",
+      "archive": "064-beast-mrnop1p1-0pln8351a8tizu-sample-064.json"
+    },
+    {
+      "sample": 65,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-065",
+      "rolls": 127,
+      "completed": true,
+      "ending": "完成破神（无限制）三级神考，百级成神。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "065-beast-mrnop1p1-0pln8351a8tizu-sample-065.txt",
+      "archive": "065-beast-mrnop1p1-0pln8351a8tizu-sample-065.json"
+    },
+    {
+      "sample": 66,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-066",
+      "rolls": 41,
+      "completed": true,
+      "ending": "否，突破失败，失去一个属性（若无属性则当场死亡）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "066-beast-mrnop1p1-0pln8351a8tizu-sample-066.txt",
+      "archive": "066-beast-mrnop1p1-0pln8351a8tizu-sample-066.json"
+    },
+    {
+      "sample": 67,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-067",
+      "rolls": 30,
+      "completed": true,
+      "ending": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "067-beast-mrnop1p1-0pln8351a8tizu-sample-067.txt",
+      "archive": "067-beast-mrnop1p1-0pln8351a8tizu-sample-067.json"
+    },
+    {
+      "sample": 68,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-068",
+      "rolls": 36,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "068-beast-mrnop1p1-0pln8351a8tizu-sample-068.txt",
+      "archive": "068-beast-mrnop1p1-0pln8351a8tizu-sample-068.json"
+    },
+    {
+      "sample": 69,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-069",
+      "rolls": 57,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "069-beast-mrnop1p1-0pln8351a8tizu-sample-069.txt",
+      "archive": "069-beast-mrnop1p1-0pln8351a8tizu-sample-069.json"
+    },
+    {
+      "sample": 70,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-070",
+      "rolls": 57,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "070-beast-mrnop1p1-0pln8351a8tizu-sample-070.txt",
+      "archive": "070-beast-mrnop1p1-0pln8351a8tizu-sample-070.json"
+    },
+    {
+      "sample": 71,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-071",
+      "rolls": 49,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "071-beast-mrnop1p1-0pln8351a8tizu-sample-071.txt",
+      "archive": "071-beast-mrnop1p1-0pln8351a8tizu-sample-071.json"
+    },
+    {
+      "sample": 72,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-072",
+      "rolls": 28,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "072-beast-mrnop1p1-0pln8351a8tizu-sample-072.txt",
+      "archive": "072-beast-mrnop1p1-0pln8351a8tizu-sample-072.json"
+    },
+    {
+      "sample": 73,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-073",
+      "rolls": 22,
+      "completed": true,
+      "ending": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "073-beast-mrnop1p1-0pln8351a8tizu-sample-073.txt",
+      "archive": "073-beast-mrnop1p1-0pln8351a8tizu-sample-073.json"
+    },
+    {
+      "sample": 74,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-074",
+      "rolls": 28,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "074-beast-mrnop1p1-0pln8351a8tizu-sample-074.txt",
+      "archive": "074-beast-mrnop1p1-0pln8351a8tizu-sample-074.json"
+    },
+    {
+      "sample": 75,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-075",
+      "rolls": 63,
+      "completed": true,
+      "ending": "你进入了生命之池，你失去了所有与“路边”前缀相关的血脉（本体为“路边”的魂兽当场死亡，【主宰】可以无视）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "075-beast-mrnop1p1-0pln8351a8tizu-sample-075.txt",
+      "archive": "075-beast-mrnop1p1-0pln8351a8tizu-sample-075.json"
+    },
+    {
+      "sample": 76,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-076",
+      "rolls": 115,
+      "completed": true,
+      "ending": "你被唐三斩杀（95+级可以重抽）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "076-beast-mrnop1p1-0pln8351a8tizu-sample-076.txt",
+      "archive": "076-beast-mrnop1p1-0pln8351a8tizu-sample-076.json"
+    },
+    {
+      "sample": 77,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-077",
+      "rolls": 36,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "077-beast-mrnop1p1-0pln8351a8tizu-sample-077.txt",
+      "archive": "077-beast-mrnop1p1-0pln8351a8tizu-sample-077.json"
+    },
+    {
+      "sample": 78,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-078",
+      "rolls": 35,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "078-beast-mrnop1p1-0pln8351a8tizu-sample-078.txt",
+      "archive": "078-beast-mrnop1p1-0pln8351a8tizu-sample-078.json"
+    },
+    {
+      "sample": 79,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-079",
+      "rolls": 44,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "079-beast-mrnop1p1-0pln8351a8tizu-sample-079.txt",
+      "archive": "079-beast-mrnop1p1-0pln8351a8tizu-sample-079.json"
+    },
+    {
+      "sample": 80,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-080",
+      "rolls": 32,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "080-beast-mrnop1p1-0pln8351a8tizu-sample-080.txt",
+      "archive": "080-beast-mrnop1p1-0pln8351a8tizu-sample-080.json"
+    },
+    {
+      "sample": 81,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-081",
+      "rolls": 114,
+      "completed": true,
+      "ending": "完成破神（无限制）三级神考，百级成神。",
+      "auditPassed": false,
+      "issues": [
+        {
+          "code": "stuck-level",
+          "roll": 95,
+          "message": "第 92-95 次投掷内经过 3+ 次时间跳跃但等级未变化。"
+        }
+      ],
+      "biography": "081-beast-mrnop1p1-0pln8351a8tizu-sample-081.txt",
+      "archive": "081-beast-mrnop1p1-0pln8351a8tizu-sample-081.json"
+    },
+    {
+      "sample": 82,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-082",
+      "rolls": 28,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "082-beast-mrnop1p1-0pln8351a8tizu-sample-082.txt",
+      "archive": "082-beast-mrnop1p1-0pln8351a8tizu-sample-082.json"
+    },
+    {
+      "sample": 83,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-083",
+      "rolls": 41,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "083-beast-mrnop1p1-0pln8351a8tizu-sample-083.txt",
+      "archive": "083-beast-mrnop1p1-0pln8351a8tizu-sample-083.json"
+    },
+    {
+      "sample": 84,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-084",
+      "rolls": 57,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "084-beast-mrnop1p1-0pln8351a8tizu-sample-084.txt",
+      "archive": "084-beast-mrnop1p1-0pln8351a8tizu-sample-084.json"
+    },
+    {
+      "sample": 85,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-085",
+      "rolls": 83,
+      "completed": true,
+      "ending": "你进入了生命之池，你失去了所有与“路边”前缀相关的血脉（本体为“路边”的魂兽当场死亡，【主宰】可以无视）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "085-beast-mrnop1p1-0pln8351a8tizu-sample-085.txt",
+      "archive": "085-beast-mrnop1p1-0pln8351a8tizu-sample-085.json"
+    },
+    {
+      "sample": 86,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-086",
+      "rolls": 49,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "086-beast-mrnop1p1-0pln8351a8tizu-sample-086.txt",
+      "archive": "086-beast-mrnop1p1-0pln8351a8tizu-sample-086.json"
+    },
+    {
+      "sample": 87,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-087",
+      "rolls": 127,
+      "completed": true,
+      "ending": "完成防御之神（无限制）二级神考，百级成神。",
+      "auditPassed": false,
+      "issues": [
+        {
+          "code": "stuck-level",
+          "roll": 113,
+          "message": "第 110-113 次投掷内经过 3+ 次时间跳跃但等级未变化。"
+        }
+      ],
+      "biography": "087-beast-mrnop1p1-0pln8351a8tizu-sample-087.txt",
+      "archive": "087-beast-mrnop1p1-0pln8351a8tizu-sample-087.json"
+    },
+    {
+      "sample": 88,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-088",
+      "rolls": 41,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "088-beast-mrnop1p1-0pln8351a8tizu-sample-088.txt",
+      "archive": "088-beast-mrnop1p1-0pln8351a8tizu-sample-088.json"
+    },
+    {
+      "sample": 89,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-089",
+      "rolls": 47,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "089-beast-mrnop1p1-0pln8351a8tizu-sample-089.txt",
+      "archive": "089-beast-mrnop1p1-0pln8351a8tizu-sample-089.json"
+    },
+    {
+      "sample": 90,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-090",
+      "rolls": 55,
+      "completed": true,
+      "ending": "遭遇99级封号斗罗带队猎杀魂环，你被击杀（龙族血脉魂兽则无伤逃走）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "090-beast-mrnop1p1-0pln8351a8tizu-sample-090.txt",
+      "archive": "090-beast-mrnop1p1-0pln8351a8tizu-sample-090.json"
+    },
+    {
+      "sample": 91,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-091",
+      "rolls": 18,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "091-beast-mrnop1p1-0pln8351a8tizu-sample-091.txt",
+      "archive": "091-beast-mrnop1p1-0pln8351a8tizu-sample-091.json"
+    },
+    {
+      "sample": 92,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-092",
+      "rolls": 49,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "092-beast-mrnop1p1-0pln8351a8tizu-sample-092.txt",
+      "archive": "092-beast-mrnop1p1-0pln8351a8tizu-sample-092.json"
+    },
+    {
+      "sample": 93,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-093",
+      "rolls": 32,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "093-beast-mrnop1p1-0pln8351a8tizu-sample-093.txt",
+      "archive": "093-beast-mrnop1p1-0pln8351a8tizu-sample-093.json"
+    },
+    {
+      "sample": 94,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-094",
+      "rolls": 40,
+      "completed": true,
+      "ending": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "094-beast-mrnop1p1-0pln8351a8tizu-sample-094.txt",
+      "archive": "094-beast-mrnop1p1-0pln8351a8tizu-sample-094.json"
+    },
+    {
+      "sample": 95,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-095",
+      "rolls": 47,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "095-beast-mrnop1p1-0pln8351a8tizu-sample-095.txt",
+      "archive": "095-beast-mrnop1p1-0pln8351a8tizu-sample-095.json"
+    },
+    {
+      "sample": 96,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-096",
+      "rolls": 47,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "096-beast-mrnop1p1-0pln8351a8tizu-sample-096.txt",
+      "archive": "096-beast-mrnop1p1-0pln8351a8tizu-sample-096.json"
+    },
+    {
+      "sample": 97,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-097",
+      "rolls": 27,
+      "completed": true,
+      "ending": "你走过斗罗大陆主线年代，命运进入新的时代。",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "097-beast-mrnop1p1-0pln8351a8tizu-sample-097.txt",
+      "archive": "097-beast-mrnop1p1-0pln8351a8tizu-sample-097.json"
+    },
+    {
+      "sample": 98,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-098",
+      "rolls": 47,
+      "completed": true,
+      "ending": "你进入了生命之池，你失去了所有与“路边”前缀相关的血脉（本体为“路边”的魂兽当场死亡，【主宰】可以无视）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "098-beast-mrnop1p1-0pln8351a8tizu-sample-098.txt",
+      "archive": "098-beast-mrnop1p1-0pln8351a8tizu-sample-098.json"
+    },
+    {
+      "sample": 99,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-099",
+      "rolls": 81,
+      "completed": true,
+      "ending": "你触碰到了斩龙剑，你失去了所有与龙族相关的血脉（本体为龙族的魂兽当场死亡，使用反转术式抵消只会保留本体血脉，其余融合的龙族血脉全部抹除）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "099-beast-mrnop1p1-0pln8351a8tizu-sample-099.txt",
+      "archive": "099-beast-mrnop1p1-0pln8351a8tizu-sample-099.json"
+    },
+    {
+      "sample": 100,
+      "route": "beast",
+      "seed": "mrnop1p1-0pln8351a8tizu-sample-100",
+      "rolls": 24,
+      "completed": true,
+      "ending": "遭遇90级封号斗罗猎杀魂环，你被击杀（5万+年龙族血脉魂兽则无伤）",
+      "auditPassed": true,
+      "issues": [],
+      "biography": "100-beast-mrnop1p1-0pln8351a8tizu-sample-100.txt",
+      "archive": "100-beast-mrnop1p1-0pln8351a8tizu-sample-100.json"
+    }
+  ]
+}

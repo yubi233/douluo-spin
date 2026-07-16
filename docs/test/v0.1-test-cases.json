@@ -1,0 +1,25 @@
+{
+  "suite": "douluo-spin-v0.1",
+  "plan": "docs/iteration-plan-v0.1.md",
+  "description": "v0.1 双端界面、权重覆盖与回退的可追踪验收用例。",
+  "environment": {
+    "app": "本地 Vite URL",
+    "storage": "隔离浏览器上下文"
+  },
+  "cases": [
+    {"id":"V01-TC-001","requirementIds":["V01-FLOW-01"],"phase":"A","category":"主流程","priority":"P0","precondition":"全新浏览器上下文。","steps":["打开新命运","选择人类、魂兽、化形三条路线之一","完成一次投掷","启动并暂停自动与极速推进"],"expected":"每条路线可启动，运行状态和按钮文案同步。","verification":["unit","browser"],"evidence":["trace","video"]},
+    {"id":"V01-TC-002","requirementIds":["V01-UNDO-01"],"phase":"A","category":"回退","priority":"P0","precondition":"固定种子的人类命运。","steps":["完成三次投掷","连续返回三次","对同一步再次投掷"],"expected":"任务、角色、结果、日志、步数和概率原子恢复；重投结果相同。","verification":["unit","browser"],"evidence":["trace","screenshot"]},
+    {"id":"V01-TC-003","requirementIds":["V01-UNDO-01"],"phase":"A","category":"忙碌边界","priority":"P1","precondition":"固定种子命运。","steps":["开始转动","动画未结算时检查返回","开始自动推进后点击返回"],"expected":"动画期间返回禁用；自动推进先停止再恢复最近完整快照。","verification":["browser"],"evidence":["trace"]},
+    {"id":"V01-TC-004","requirementIds":["V01-WEIGHT-01"],"phase":"B","category":"加权转盘","priority":"P0","precondition":"三项无条件事件权重为 1:3:6。","steps":["应用权重","查看盘面与占比","转动并等待结果"],"expected":"归一化占比为 10%、30%、60%，Canvas 扇区与落点匹配，结果概率一致。","verification":["unit","browser","canvas-pixels"],"evidence":["screenshot","trace"]},
+    {"id":"V01-TC-005","requirementIds":["V01-OVERRIDE-01"],"phase":"B","category":"本地覆盖","priority":"P0","precondition":"当前存在可执行任务。","steps":["修改当前池权重并应用","刷新页面","再次打开同一池"],"expected":"有效盘面保留修改，内置数据未改变。","verification":["unit","browser"],"evidence":["trace"]},
+    {"id":"V01-TC-006","requirementIds":["V01-EDITOR-01"],"phase":"C","category":"编辑器","priority":"P0","precondition":"当前存在可执行任务。","steps":["打开修改","增加事件并设置权重","停用原始事件","应用"],"expected":"新增事件获得 local- ID，修改立即更新候选与盘面。","verification":["unit","browser"],"evidence":["screenshot","video"]},
+    {"id":"V01-TC-007","requirementIds":["V01-EDITOR-01"],"phase":"C","category":"编辑校验","priority":"P1","precondition":"编辑器已打开。","steps":["输入空文本、非数值、零权重","停用全部可抽事件","尝试应用"],"expected":"显示明确错误且不会覆盖当前配置。","verification":["unit","browser"],"evidence":["screenshot"]},
+    {"id":"V01-TC-008","requirementIds":["V01-EDITOR-01","V01-OVERRIDE-01"],"phase":"C","category":"恢复默认","priority":"P1","precondition":"当前池已修改。","steps":["恢复此转盘默认值","确认","重新打开编辑器"],"expected":"覆盖移除，原始选项和盘面恢复。","verification":["unit","browser"],"evidence":["trace"]},
+    {"id":"V01-TC-009","requirementIds":["V01-EXPORT-01"],"phase":"C","category":"修改导出","priority":"P0","precondition":"两个不同池已有覆盖。","steps":["从更多菜单导出当前修改","读取下载 JSON","恢复一个池后再次导出"],"expected":"JSON 具备格式、源、摘要和完整 options；第二次只含剩余池。","verification":["unit","browser-download"],"evidence":["download","trace","video"]},
+    {"id":"V01-TC-010","requirementIds":["V01-SAVE-01"],"phase":"A","category":"存档","priority":"P1","precondition":"完成至少一次投掷。","steps":["保存到浏览器","刷新","导出和导入存档","导出传记"],"expected":"角色存档独立于转盘覆盖，下载内容可解析。","verification":["browser","browser-download"],"evidence":["download","trace"]},
+    {"id":"V01-TC-011","requirementIds":["V01-RESP-01"],"phase":"D","category":"响应式","priority":"P0","precondition":"固定种子命运。","steps":["在 320x568、375x667、390x844、768x1024、1024x768、1366x768、1440x900 打开主流程"],"expected":"无横向滚动、无遮挡；375px 转盘不超过 280px，1440px 不超过 420px。","verification":["browser"],"evidence":["screenshot"]},
+    {"id":"V01-TC-012","requirementIds":["V01-MOBILE-01"],"phase":"D","category":"移动导航","priority":"P0","precondition":"375x667 视口与已开始命运。","steps":["切换主舞台、角色和纪事","使用固定底栏","打开更多菜单"],"expected":"视图切换不改变游戏状态，底栏可见且不遮挡内容。","verification":["browser"],"evidence":["video","trace"]},
+    {"id":"V01-TC-013","requirementIds":["V01-A11Y-01"],"phase":"D","category":"可访问性","priority":"P1","precondition":"375x667 和桌面视口。","steps":["键盘切换标签","打开并关闭菜单和编辑器","启用减弱动画并转动"],"expected":"焦点进入并返回，所有状态可读，旋转小于 100ms。","verification":["browser"],"evidence":["trace"]},
+    {"id":"V01-TC-014","requirementIds":["V01-DATA-01"],"phase":"F","category":"数据完整性","priority":"P0","precondition":"构建源数据。","steps":["运行目录完整性测试"],"expected":"保持 273 个池、25 个标签和 2456 个选项。","verification":["unit"],"evidence":["test-report"]}
+  ]
+}

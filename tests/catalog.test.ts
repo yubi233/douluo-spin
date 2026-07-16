@@ -13,7 +13,7 @@ describe('wheel catalog', () => {
   it('preserves the complete embedded source data', () => {
     expect(wheelData.decisions).toHaveLength(275)
     expect(wheelData.tags).toHaveLength(25)
-    expect(wheelData.decisions.reduce((sum, pool) => sum + pool.options.length, 0)).toBe(2468)
+    expect(wheelData.decisions.reduce((sum, pool) => sum + pool.options.length, 0)).toBe(2488)
   })
 
   it('indexes pools by exact name and tag', () => {
@@ -31,7 +31,7 @@ describe('wheel catalog', () => {
   it('adds virtual beast martial soul category pools without changing source data', () => {
     const source = findPool('兽武魂')
     const category = findPool('兽武魂分类')
-    expect(source?.options).toHaveLength(131)
+    expect(source?.options).toHaveLength(136)
     expect(category?.options.map((option) => option.name)).toContain('龙族')
     expect(category?.options.map((option) => option.name)).toContain('猫科')
     expect(findPool('兽武魂：鸟禽飞行')?.options.map((option) => option.name)).toContain('六翼天使')
@@ -50,7 +50,7 @@ describe('wheel catalog', () => {
   it('adds virtual tool martial soul category pools without changing source data', () => {
     const source = findPool('器武魂')
     const category = findPool('器武魂分类')
-    expect(source?.options).toHaveLength(75)
+    expect(source?.options).toHaveLength(89)
     expect(category?.options.map((option) => option.name)).toContain('剑类')
     expect(category?.options.map((option) => option.name)).toContain('枪矛戟类')
     expect(category?.options.map((option) => option.name)).toContain('枪械类')

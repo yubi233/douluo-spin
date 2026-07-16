@@ -1,0 +1,423 @@
+{
+  "format": "douluo-spin-long-simulation",
+  "formatVersion": 1,
+  "generatedAt": "2026-07-16T08:44:23.521Z",
+  "seed": "mrn9j422-0e6srvd18a5adi",
+  "requestedRolls": 20,
+  "executedRolls": 20,
+  "audit": {
+    "passed": true,
+    "issues": []
+  },
+  "biography": "《斗罗大陆 · 命运轮盘人物传记》\n\n【命运档案】\n命运种子：mrn9j422-0e6srvd18a5adi\n姓名：命运旅者\n路线：人类魂师\n时间坐标：唐三 12 岁\n实际年龄：12岁\n当前境界：24级（上限99级）\n命运状态：命运尚未完结\n阵营履历：武魂殿重点培养学员 · 史莱克学院\n\n【人物身份】\n性别：男\n容貌：D\n武魂类型：兽武魂\n主武魂：钻石猛犸\n\n【能力与机缘】\n特殊天赋：无\n称号与特质：启蒙期·6-11岁\n领域：无\n魂骨：无\n神考：无\n\n【魂环明细】\n- 第1魂环｜200年｜200年魂环\n- 第2魂环｜800年｜800年魂环\n\n【命运纪事】\n时间未定｜命运启封｜种子：mrn9j422-0e6srvd18a5adi\n时间未定｜基础设定3:你的性别是？｜男\n时间未定｜基础设定4:容貌（B级以下无法恋爱）｜D级（平平无奇）\n时间未定｜基础设定5:武魂天赋｜兽武魂\n时间未定｜兽武魂分类｜蹄角大型兽\n时间未定｜兽武魂：蹄角大型兽｜钻石猛犸\n时间未定｜基础设定6:是否拥有特殊天赋｜否\n8岁｜基础设定7:你的年龄｜8岁\n唐三 8 岁｜基础设定8:穿越时期｜唐三8岁\n唐三 8 岁｜故事开始时的魂力等级（8岁限定）｜8级\n唐三 8 岁｜人物背景or加入的势力（6岁限定）｜武魂殿重点培养学员（要求先天魂力7级以上）\n唐三 8 岁｜势力专属剧情：武魂殿｜【启蒙期·6-11岁】分殿安排你复核觉醒记录，你发现一名平民孩子的武魂潜力被低估\n唐三 10 岁｜2年后，你的成长（6岁-12岁限定，已达12岁则不可再抽取该池）｜等级+2\n唐三 10 岁｜是否获得特殊成长经历（每次经过一次时间跳跃，可抽取该池）｜是\n唐三 10 岁｜特殊成长经历｜略有领悟（等级+3）\n唐三 10 岁｜魂环吸收（第一魂环）（抽取完魂环后请进入对应的魂骨抽奖池）｜200年魂环\n唐三 12 岁｜2年后，你的成长（6岁-12岁限定，已达12岁则不可再抽取该池）｜等级+3\n唐三 12 岁｜是否获得特殊成长经历（每次经过一次时间跳跃，可抽取该池）｜是\n唐三 12 岁｜特殊成长经历｜吃下仙草，等级+8\n唐三 12 岁｜魂环吸收（第二魂环）（抽取完魂环后请进入对应的魂骨抽奖池）｜800年魂环\n唐三 12 岁｜加入的势力（12岁限定）｜史莱克学院（20+级限定，否则重抽）（进入剧情分支一）",
+  "trace": [
+    {
+      "roll": 1,
+      "pool": "基础设定3:你的性别是？",
+      "optionId": "b34683",
+      "option": "男",
+      "probability": 0.47619047619047616,
+      "queuedNextPool": "基础设定4:容貌（B级以下无法恋爱）"
+    },
+    {
+      "roll": 2,
+      "pool": "基础设定4:容貌（B级以下无法恋爱）",
+      "optionId": "3e26b6",
+      "option": "D级（平平无奇）",
+      "probability": 0.18518518518518517,
+      "queuedNextPool": "基础设定5:武魂天赋"
+    },
+    {
+      "roll": 3,
+      "pool": "基础设定5:武魂天赋",
+      "optionId": "18adfc",
+      "option": "兽武魂",
+      "probability": 0.3611111111111111,
+      "queuedNextPool": "兽武魂分类"
+    },
+    {
+      "roll": 4,
+      "pool": "兽武魂分类",
+      "optionId": "beast-martial-category-蹄角大型兽",
+      "option": "蹄角大型兽",
+      "probability": 0.07633587786259542,
+      "queuedNextPool": "兽武魂：蹄角大型兽"
+    },
+    {
+      "roll": 5,
+      "pool": "兽武魂：蹄角大型兽",
+      "optionId": "1cb1a9",
+      "option": "钻石猛犸",
+      "probability": 0.1,
+      "queuedNextPool": "基础设定6:是否拥有特殊天赋"
+    },
+    {
+      "roll": 6,
+      "pool": "基础设定6:是否拥有特殊天赋",
+      "optionId": "3c9407",
+      "option": "否",
+      "probability": 0.75,
+      "queuedNextPool": "基础设定7:你的年龄"
+    },
+    {
+      "roll": 7,
+      "pool": "基础设定7:你的年龄",
+      "optionId": "867d49",
+      "option": "8岁",
+      "probability": 0.12096774193548387,
+      "queuedNextPool": "基础设定8:穿越时期"
+    },
+    {
+      "roll": 8,
+      "pool": "基础设定8:穿越时期",
+      "optionId": "6489bc",
+      "option": "唐三8岁",
+      "probability": 0.032119914346895075,
+      "queuedNextPool": "故事开始时的魂力等级（8岁限定）"
+    },
+    {
+      "roll": 9,
+      "pool": "故事开始时的魂力等级（8岁限定）",
+      "optionId": "ac45f4",
+      "option": "8级",
+      "probability": 0.052083333333333336,
+      "queuedNextPool": "人物背景or加入的势力（6岁限定）"
+    },
+    {
+      "roll": 10,
+      "pool": "人物背景or加入的势力（6岁限定）",
+      "optionId": "3983ad",
+      "option": "武魂殿重点培养学员（要求先天魂力7级以上）",
+      "probability": 0.03333333333333333,
+      "queuedNextPool": null
+    },
+    {
+      "roll": 11,
+      "pool": "势力专属剧情：武魂殿",
+      "optionId": "faction-story-wuhun-1",
+      "option": "【启蒙期·6-11岁】分殿安排你复核觉醒记录，你发现一名平民孩子的武魂潜力被低估",
+      "probability": 0.6666666666666666,
+      "queuedNextPool": "2年后，你的成长（6岁-12岁限定，已达12岁则不可再抽取该池）"
+    },
+    {
+      "roll": 12,
+      "pool": "2年后，你的成长（6岁-12岁限定，已达12岁则不可再抽取该池）",
+      "optionId": "0311f0",
+      "option": "等级+2",
+      "probability": 0.056818181818181816,
+      "queuedNextPool": "是否获得特殊成长经历（每次经过一次时间跳跃，可抽取该池）"
+    },
+    {
+      "roll": 13,
+      "pool": "是否获得特殊成长经历（每次经过一次时间跳跃，可抽取该池）",
+      "optionId": "bc5322",
+      "option": "是",
+      "probability": 0.4,
+      "queuedNextPool": "特殊成长经历"
+    },
+    {
+      "roll": 14,
+      "pool": "特殊成长经历",
+      "optionId": "737f0b",
+      "option": "略有领悟（等级+3）",
+      "probability": 0.24509803921568626,
+      "queuedNextPool": "魂环吸收（第一魂环）（抽取完魂环后请进入对应的魂骨抽奖池）"
+    },
+    {
+      "roll": 15,
+      "pool": "魂环吸收（第一魂环）（抽取完魂环后请进入对应的魂骨抽奖池）",
+      "optionId": "b42434",
+      "option": "200年魂环",
+      "probability": 0.09722222222222222,
+      "queuedNextPool": "2年后，你的成长（6岁-12岁限定，已达12岁则不可再抽取该池）"
+    },
+    {
+      "roll": 16,
+      "pool": "2年后，你的成长（6岁-12岁限定，已达12岁则不可再抽取该池）",
+      "optionId": "48523d",
+      "option": "等级+3",
+      "probability": 0.13636363636363635,
+      "queuedNextPool": "是否获得特殊成长经历（每次经过一次时间跳跃，可抽取该池）"
+    },
+    {
+      "roll": 17,
+      "pool": "是否获得特殊成长经历（每次经过一次时间跳跃，可抽取该池）",
+      "optionId": "bc5322",
+      "option": "是",
+      "probability": 0.4,
+      "queuedNextPool": "特殊成长经历"
+    },
+    {
+      "roll": 18,
+      "pool": "特殊成长经历",
+      "optionId": "499af7",
+      "option": "吃下仙草，等级+8",
+      "probability": 0.049019607843137254,
+      "queuedNextPool": "魂环吸收（第二魂环）（抽取完魂环后请进入对应的魂骨抽奖池）"
+    },
+    {
+      "roll": 19,
+      "pool": "魂环吸收（第二魂环）（抽取完魂环后请进入对应的魂骨抽奖池）",
+      "optionId": "8e5d1e",
+      "option": "800年魂环",
+      "probability": 0.11267605633802817,
+      "queuedNextPool": "加入的势力（12岁限定）"
+    },
+    {
+      "roll": 20,
+      "pool": "加入的势力（12岁限定）",
+      "optionId": "84af8b",
+      "option": "史莱克学院（20+级限定，否则重抽）（进入剧情分支一）",
+      "probability": 0.24691358024691357,
+      "queuedNextPool": "势力专属剧情：史莱克学院"
+    }
+  ],
+  "state": {
+    "value": "humanAdventure",
+    "context": {
+      "seed": "mrn9j422-0e6srvd18a5adi",
+      "rng": 392881452,
+      "route": "human",
+      "name": "命运旅者",
+      "step": 20,
+      "age": 12,
+      "tangAge": 12,
+      "gender": "男",
+      "appearance": "D",
+      "level": 24,
+      "maxLevel": 99,
+      "faction": "史莱克学院",
+      "branch": 1,
+      "martialSoulTypes": [
+        "兽武魂"
+      ],
+      "martialSouls": [
+        "钻石猛犸"
+      ],
+      "talents": [],
+      "traits": [
+        "启蒙期·6-11岁"
+      ],
+      "domains": [],
+      "rings": [
+        {
+          "index": 1,
+          "years": 200,
+          "description": "200年魂环"
+        },
+        {
+          "index": 2,
+          "years": 800,
+          "description": "800年魂环"
+        }
+      ],
+      "soulBones": [],
+      "beast": null,
+      "godTrial": null,
+      "queue": [
+        {
+          "id": "task-21",
+          "tag": "势力专属剧情",
+          "pool": "势力专属剧情：史莱克学院",
+          "handler": "story",
+          "meta": {
+            "factionId": "shrek",
+            "factionStoryStage": "youth"
+          }
+        }
+      ],
+      "activeTask": null,
+      "lastPool": "加入的势力（12岁限定）",
+      "lastOptionId": "84af8b",
+      "lastResult": "史莱克学院（20+级限定，否则重抽）（进入剧情分支一）",
+      "lastProbability": 0.24691358024691357,
+      "logs": [
+        {
+          "id": "0-0-1784191463499",
+          "step": 0,
+          "title": "命运启封",
+          "text": "种子：mrn9j422-0e6srvd18a5adi",
+          "tone": "major",
+          "time": "时间未定"
+        },
+        {
+          "id": "1-1-1784191463502",
+          "step": 1,
+          "title": "基础设定3:你的性别是？",
+          "text": "男",
+          "tone": "normal",
+          "time": "时间未定"
+        },
+        {
+          "id": "2-2-1784191463503",
+          "step": 2,
+          "title": "基础设定4:容貌（B级以下无法恋爱）",
+          "text": "D级（平平无奇）",
+          "tone": "normal",
+          "time": "时间未定"
+        },
+        {
+          "id": "3-3-1784191463503",
+          "step": 3,
+          "title": "基础设定5:武魂天赋",
+          "text": "兽武魂",
+          "tone": "normal",
+          "time": "时间未定"
+        },
+        {
+          "id": "4-4-1784191463503",
+          "step": 4,
+          "title": "兽武魂分类",
+          "text": "蹄角大型兽",
+          "tone": "normal",
+          "time": "时间未定"
+        },
+        {
+          "id": "5-5-1784191463504",
+          "step": 5,
+          "title": "兽武魂：蹄角大型兽",
+          "text": "钻石猛犸",
+          "tone": "normal",
+          "time": "时间未定"
+        },
+        {
+          "id": "6-6-1784191463504",
+          "step": 6,
+          "title": "基础设定6:是否拥有特殊天赋",
+          "text": "否",
+          "tone": "normal",
+          "time": "时间未定"
+        },
+        {
+          "id": "7-7-1784191463504",
+          "step": 7,
+          "title": "基础设定7:你的年龄",
+          "text": "8岁",
+          "tone": "normal",
+          "time": "8岁"
+        },
+        {
+          "id": "8-8-1784191463505",
+          "step": 8,
+          "title": "基础设定8:穿越时期",
+          "text": "唐三8岁",
+          "tone": "normal",
+          "time": "唐三 8 岁"
+        },
+        {
+          "id": "9-9-1784191463505",
+          "step": 9,
+          "title": "故事开始时的魂力等级（8岁限定）",
+          "text": "8级",
+          "tone": "normal",
+          "time": "唐三 8 岁"
+        },
+        {
+          "id": "10-10-1784191463505",
+          "step": 10,
+          "title": "人物背景or加入的势力（6岁限定）",
+          "text": "武魂殿重点培养学员（要求先天魂力7级以上）",
+          "tone": "normal",
+          "time": "唐三 8 岁"
+        },
+        {
+          "id": "11-11-1784191463505",
+          "step": 11,
+          "title": "势力专属剧情：武魂殿",
+          "text": "【启蒙期·6-11岁】分殿安排你复核觉醒记录，你发现一名平民孩子的武魂潜力被低估",
+          "tone": "major",
+          "time": "唐三 8 岁"
+        },
+        {
+          "id": "12-12-1784191463507",
+          "step": 12,
+          "title": "2年后，你的成长（6岁-12岁限定，已达12岁则不可再抽取该池）",
+          "text": "等级+2",
+          "tone": "good",
+          "time": "唐三 10 岁"
+        },
+        {
+          "id": "13-13-1784191463507",
+          "step": 13,
+          "title": "是否获得特殊成长经历（每次经过一次时间跳跃，可抽取该池）",
+          "text": "是",
+          "tone": "normal",
+          "time": "唐三 10 岁"
+        },
+        {
+          "id": "14-14-1784191463515",
+          "step": 14,
+          "title": "特殊成长经历",
+          "text": "略有领悟（等级+3）",
+          "tone": "good",
+          "time": "唐三 10 岁"
+        },
+        {
+          "id": "15-15-1784191463517",
+          "step": 15,
+          "title": "魂环吸收（第一魂环）（抽取完魂环后请进入对应的魂骨抽奖池）",
+          "text": "200年魂环",
+          "tone": "normal",
+          "time": "唐三 10 岁"
+        },
+        {
+          "id": "16-16-1784191463517",
+          "step": 16,
+          "title": "2年后，你的成长（6岁-12岁限定，已达12岁则不可再抽取该池）",
+          "text": "等级+3",
+          "tone": "good",
+          "time": "唐三 12 岁"
+        },
+        {
+          "id": "17-17-1784191463517",
+          "step": 17,
+          "title": "是否获得特殊成长经历（每次经过一次时间跳跃，可抽取该池）",
+          "text": "是",
+          "tone": "normal",
+          "time": "唐三 12 岁"
+        },
+        {
+          "id": "18-18-1784191463517",
+          "step": 18,
+          "title": "特殊成长经历",
+          "text": "吃下仙草，等级+8",
+          "tone": "good",
+          "time": "唐三 12 岁"
+        },
+        {
+          "id": "19-19-1784191463519",
+          "step": 19,
+          "title": "魂环吸收（第二魂环）（抽取完魂环后请进入对应的魂骨抽奖池）",
+          "text": "800年魂环",
+          "tone": "normal",
+          "time": "唐三 12 岁"
+        },
+        {
+          "id": "20-20-1784191463519",
+          "step": 20,
+          "title": "加入的势力（12岁限定）",
+          "text": "史莱克学院（20+级限定，否则重抽）（进入剧情分支一）",
+          "tone": "normal",
+          "time": "唐三 12 岁"
+        }
+      ],
+      "flags": {
+        "beastMartialSoulCategory": "蹄角大型兽",
+        "factionHistory": "武魂殿重点培养学员｜史莱克学院",
+        "factionId": "shrek",
+        "faction:6": true,
+        "factionStory:wuhun:junior": true,
+        "result:势力专属剧情：武魂殿": "【启蒙期·6-11岁】分殿安排你复核觉醒记录，你发现一名平民孩子的武魂潜力被低估",
+        "faction:12": true,
+        "factionStory:shrek:youth": true
+      },
+      "alive": true,
+      "ending": "",
+      "resumeState": null,
+      "settings": {
+        "softenText": false,
+        "spinDuration": 900
+      }
+    }
+  }
+}
