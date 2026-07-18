@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Shield, Sparkles, Swords } from 'lucide-vue-next'
-import type { GameContext } from '@/domain/types'
-import { calculateCombatPower } from '@/domain/engine'
-import { getMartialSoulTier, highestMartialSoulTier } from '@/domain/martialSoulTiers'
+import type { GameViewModel } from '@/application/gameViewModel'
 
 const props = defineProps<{
-  context: GameContext
+  context: GameViewModel
   routeLabel: string
   phaseLabel: string
 }>()
@@ -15,30 +13,12 @@ const TIER_LABELS: Record<number, string> = { 1: '废武魂', 2: '一般武魂',
 
 const powerValue = computed(() => props.context.beast?.cultivation ?? props.context.level)
 const powerLabel = computed(() => props.context.beast ? '年限修为' : '魂力等级')
-const combatPower = computed(() => props.context.beast ? 0 : calculateCombatPower(props.context))
+const combatPower = computed(() => props.context.beast ? 0 : props.context.combatPower)
 const combatDetail = computed(() => {
   if (props.context.beast) return ''
-  const ctx = props.context
-  const levelBase = Math.round(ctx.level * ctx.level / 20)
-  const ringPwr = ctx.rings.reduce((s, r) => {
-    const y = r.years
-    return s + (y < 100 ? Math.round(5 + (y - 10) / 90 * 3) : y < 1000 ? Math.round(9 + (y - 100) / 900 * 2) : y < 10000 ? Math.round(12 + (y - 1000) / 9000 * 3) : y < 100000 ? Math.round(16 + (y - 10000) / 90000 * 4) : y < 1000000 ? Math.round(21 + (y - 100000) / 900000 * 9) : Math.round(31 + Math.min(9, (y - 1000000) / 1000000 * 9)))
-  }, 0)
-  const tierPwr = ctx.martialSouls.reduce((s, ms) => {
-    const t = getMartialSoulTier(ms)
-    const tp: Record<number, number> = { 1: 0, 2: 3, 3: 8, 4: 15, 5: 25, 6: 45 }
-    return s + (tp[t] ?? 0)
-  }, 0)
-  const domainPwr = ctx.domains.length * 15
-  const bonePwr = ctx.soulBones.length * 12
-  const beforeCoeff = levelBase + ringPwr + tierPwr + domainPwr + bonePwr
-  const talentCoeff = Math.min(ctx.talents.length, 10) * 0.005
-  const battleTraitCount = ctx.traits.filter((t) => /[杀战斗力破斩暴狂怒王]/.test(t)).length
-  const traitCoeff = Math.min(battleTraitCount, 10) * 0.005
-  const coeff = 1 + talentCoeff + traitCoeff
-  return `等级${levelBase} + 魂环${ringPwr} + 武魂${tierPwr} + 领域${domainPwr} + 魂骨${bonePwr}  × 系数${coeff.toFixed(3)}`
+  return `等级与魂环共享投影战力 ${props.context.combatPower}`
 })
-const topTier = computed(() => props.context.beast ? 0 : highestMartialSoulTier(props.context))
+const topTier = computed(() => props.context.beast ? 0 : props.context.martialSouls.length ? 3 : 0)
 const topTierLabel = computed(() => TIER_LABELS[topTier.value] ?? '')
 const appearanceValue = computed(() => props.context.beast
   ? props.context.beast.type || '未确定'
@@ -47,8 +27,6 @@ const progressValue = computed(() => props.context.beast
   ? props.context.beast.laws.join('、') || '暂无法则'
   : `${props.context.rings.length}枚魂环 · ${props.context.soulBones.length}块魂骨`)
 const factionValue = computed(() => {
-  const history = props.context.flags.factionHistory
-  if (typeof history === 'string' && history) return history.split('｜').join(' · ')
   return props.context.faction || props.context.beast?.area || '自由'
 })
 const timeLabel = computed(() => {
@@ -61,14 +39,12 @@ const soulValues = computed(() => props.context.beast
   : [...props.context.martialSoulTypes, ...props.context.martialSouls])
 const soulChips = computed(() => {
   if (props.context.beast) return soulValues.value
-  return props.context.martialSouls.map((s) => {
-    const tier = getMartialSoulTier(s)
-    return `${s}【${TIER_LABELS[tier] ?? ''}】`
-  })
+  return props.context.martialSouls
 })
 const traitValues = computed(() => [...props.context.talents, ...props.context.traits, ...props.context.domains])
 const gearValues = computed(() => [
   ...props.context.soulBones,
+  ...props.context.godhoods.map((godhood) => `${godhood.deity}｜${godhood.tier}神｜${godhood.origin === 'selfCreated' ? '自创' : '继承'}`),
   ...(props.context.godTrial
     ? [`${props.context.godTrial.deity || '未知神祇'}${props.context.godTrial.tier}神考 ${props.context.godTrial.completed}/${props.context.godTrial.total}`]
     : []),
@@ -107,7 +83,7 @@ const ringDetails = computed(() => props.context.rings.map((ring) => ({
       <div><dt>年龄与性别</dt><dd>{{ context.age == null ? '未确定' : `${context.age}岁` }} · {{ context.gender || '未确定' }}</dd></div>
       <div><dt>{{ context.beast ? '魂兽类型' : '颜值' }}</dt><dd>{{ appearanceValue }}</dd></div>
       <div><dt>阵营与区域</dt><dd>{{ factionValue }}</dd></div>
-      <div><dt>核心状态</dt><dd>{{ context.alive ? context.godTrial ? '神考中' : '存活' : '已陨落' }}</dd></div>
+      <div><dt>核心状态</dt><dd>{{ context.alive ? context.godhoods.length ? '已成神' : context.godTrial ? '神考中' : '存活' : '已陨落' }}</dd></div>
       <div><dt>{{ context.beast ? '法则掌握' : '魂环进度' }}</dt><dd>{{ progressValue }}</dd></div>
       <div v-if="!context.beast"><dt>战力值</dt><dd>{{ combatPower }}</dd></div>
     </dl>

@@ -1,0 +1,150 @@
+import { turnId } from '@/core/ids'
+import type {
+  CommandReceipt,
+  CompiledContent,
+  DomainEvent,
+  EventBatch,
+  GameCommand,
+  GameState,
+  Route,
+} from '@/core/model/contracts'
+import { InvalidCommandError } from '@/core/model/errors'
+import { draw } from '@/core/draw/draw'
+import { compileEffects } from '@/core/effects/compileEffects'
+import { characterSetupProcess } from '@/core/processes/characterSetupProcess'
+import { beastCultivationProcess } from '@/core/processes/beastCultivationProcess'
+import { endingProcess } from '@/core/processes/endingProcess'
+import { godTrialProcess } from '@/core/processes/godTrialProcess'
+import { humanProgressionProcess } from '@/core/processes/humanProgressionProcess'
+import { postwarStoryProcess } from '@/core/processes/postwarStoryProcess'
+import { settleProcesses, type ProcessManager } from '@/core/processes/processManager'
+import { soulRingProcess } from '@/core/processes/soulRingProcess'
+import { storyTimelineProcess } from '@/core/processes/storyTimelineProcess'
+import { hashSeed, nextRandom } from '@/core/random/random'
+import { applyBatch, createInitialGameState } from '@/core/reducer/reducer'
+import { canExecuteCommand } from '@/core/statechart/gameLifecycle'
+import type { PolicyRegistry } from '@/core/rules/evaluate'
+
+export class GameService {
+  #state: GameState
+  #batches: EventBatch[] = []
+
+  constructor(
+    readonly content: CompiledContent,
+    readonly policies: PolicyRegistry,
+    readonly managers: readonly ProcessManager[] = [
+      characterSetupProcess,
+      soulRingProcess,
+      storyTimelineProcess,
+      humanProgressionProcess,
+      postwarStoryProcess,
+      beastCultivationProcess,
+      godTrialProcess,
+      endingProcess,
+    ],
+  ) {
+    this.#state = createInitialGameState(content.manifest.contentVersion)
+  }
+
+  get state(): GameState {
+    return structuredClone(this.#state)
+  }
+
+  get eventLog(): readonly EventBatch[] {
+    return structuredClone(this.#batches)
+  }
+
+  restore(batches: readonly EventBatch[]): void {
+    let projected = createInitialGameState(this.content.manifest.contentVersion)
+    batches.forEach((batch, index) => {
+      const expectedTurnId = `turn.${String(index + 1).padStart(6, '0')}`
+      if (batch.turnId !== expectedTurnId) throw new Error(`Turn receipt mismatch: expected ${expectedTurnId}, received ${batch.turnId}`)
+      if (index === 0 && batch.command !== 'run.start') throw new Error('Event log must begin with run.start')
+      projected = applyBatch(projected, batch)
+    })
+    this.#batches = [...structuredClone(batches)]
+    this.#state = projected
+  }
+
+  dispatch(command: GameCommand): CommandReceipt {
+    if (command.type === 'turn.undo') return this.undo(command)
+    if (command.type === 'run.reset') {
+      this.#state = createInitialGameState(this.content.manifest.contentVersion)
+      this.#batches = []
+      return { batch: null }
+    }
+    if (command.type === 'run.start') return this.start(command)
+    if (command.type === 'turn.spin') return this.spin(command)
+    if (!canExecuteCommand(this.#state.phase, command)) throw new InvalidCommandError(command.type, this.#state.phase)
+    const ending = this.content.mechanics.endings.get(command.endingId)
+    if (!ending) throw new Error(`Unknown ending ${command.endingId}`)
+    return this.commit(command, [{ type: 'run.finished', endingId: command.endingId, alive: ending.alive }], this.#state.random.state)
+  }
+
+  private start(command: Extract<GameCommand, { type: 'run.start' }>): CommandReceipt {
+    const resolvedRoute: Route = command.route === 'random' ? (nextRandom(hashSeed(command.seed)).value < 0.5 ? 'human' : 'beast') : command.route
+    if (!canExecuteCommand(this.#state.phase, command, resolvedRoute)) throw new InvalidCommandError(command.type, this.#state.phase)
+    const rng = hashSeed(command.seed)
+    return this.commit(command, [
+      { type: 'run.started', route: resolvedRoute, seed: command.seed },
+      { type: 'phase.changed', from: this.#state.phase, to: resolvedRoute === 'beast' ? 'setup.beast' : resolvedRoute === 'transformed' ? 'setup.transformed' : 'setup.human' },
+    ], rng)
+  }
+
+  private spin(command: Extract<GameCommand, { type: 'turn.spin' }>): CommandReceipt {
+    if (!canExecuteCommand(this.#state.phase, command)) throw new InvalidCommandError(command.type, this.#state.phase)
+    const task = this.#state.agenda[0]
+    if (!task) throw new InvalidCommandError(`${command.type}:no-task`, this.#state.phase)
+    const pool = this.content.mechanics.pools.get(task.poolId)
+    if (!pool) throw new Error(`Unknown pool ${task.poolId}`)
+    const result = draw(pool, this.#state, this.policies)
+    const option = pool.options.find((candidate) => candidate.id === result.candidate.optionId)!
+    const events: DomainEvent[] = [
+      { type: 'option.selected', poolId: pool.id, optionId: option.id, probability: result.candidate.probability },
+      { type: 'task.completed', taskId: task.id },
+      ...compileEffects(option.effects, this.#state, this.policies, this.content.mechanics.endings),
+    ]
+    const receipt = this.commit(command, events, result.nextRng)
+    return {
+      ...receipt,
+      draw: {
+        poolId: pool.id,
+        optionId: option.id,
+        probability: result.candidate.probability,
+        startAngle: result.candidate.startAngle,
+        endAngle: result.candidate.endAngle,
+      },
+    }
+  }
+
+  private undo(command: Extract<GameCommand, { type: 'turn.undo' }>): CommandReceipt {
+    if (!canExecuteCommand(this.#state.phase, command)) throw new InvalidCommandError(command.type, this.#state.phase)
+    let index = -1
+    for (let batchIndex = this.#batches.length - 1; batchIndex >= 0; batchIndex -= 1) {
+      if (this.#batches[batchIndex]?.command === 'turn.spin') {
+        index = batchIndex
+        break
+      }
+    }
+    if (index < 0) throw new InvalidCommandError(`${command.type}:empty`, this.#state.phase)
+    this.#batches = this.#batches.slice(0, index)
+    this.#state = this.#batches.reduce(applyBatch, createInitialGameState(this.content.manifest.contentVersion))
+    return { batch: null }
+  }
+
+  private commit(command: GameCommand, initialEvents: readonly DomainEvent[], rngAfter: number): CommandReceipt {
+    const settled = settleProcesses(this.#state, initialEvents, this.managers)
+    const batch: EventBatch = {
+      turnId: turnId(`turn.${String(this.#batches.length + 1).padStart(6, '0')}`),
+      command: command.type,
+      contentVersion: this.content.manifest.contentVersion,
+      rngBefore: this.#state.random.state,
+      rngAfter,
+      events: settled.events,
+    }
+    const nextState = applyBatch(this.#state, batch)
+    this.#batches = [...this.#batches, batch]
+    this.#state = nextState
+    return { batch: structuredClone(batch) }
+  }
+}

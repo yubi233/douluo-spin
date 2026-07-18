@@ -1,0 +1,1630 @@
+{
+  "format": "douluo-spin-v03-run",
+  "schemaVersion": 3,
+  "campaignId": "v03-preflight-20260719",
+  "generation": "dev5-working-tree-r2",
+  "commit": "2d58014aa8207d7bac219ac67c340848d4e9903a",
+  "contentVersion": "v0.3.0-dev.5",
+  "batch": 1,
+  "sample": 11,
+  "route": "human",
+  "seed": "v03-preflight-dev5-r2-batch-01-sample-11",
+  "completed": true,
+  "audit": {
+    "passed": true,
+    "issues": []
+  },
+  "trace": [
+    {
+      "turn": 1,
+      "poolId": "pool.setup.gender",
+      "optionId": "option.gender.none",
+      "probability": 0.047619047619047616,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "entity.granted",
+        "signal.emitted",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 2,
+      "poolId": "pool.setup.appearance",
+      "optionId": "option.appearance.b",
+      "probability": 0.18518518518518517,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "entity.granted",
+        "signal.emitted",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 3,
+      "poolId": "pool.setup.martial-type",
+      "optionId": "option.martial-type.tool",
+      "probability": 0.3611111111111111,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "entity.granted",
+        "signal.emitted",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 4,
+      "poolId": "pool.setup.martial-soul.tool",
+      "optionId": "option.martial-soul.tool-iron-sword",
+      "probability": 1,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "entity.granted",
+        "signal.emitted",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 5,
+      "poolId": "pool.setup.age",
+      "optionId": "option.age.six",
+      "probability": 0.8,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "stat.changed",
+        "signal.emitted",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 6,
+      "poolId": "pool.setup.period",
+      "optionId": "option.period.tang-six",
+      "probability": 0.3333333333333333,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "time.advanced",
+        "signal.emitted",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 7,
+      "poolId": "pool.setup.initial-power",
+      "optionId": "option.power.ten",
+      "probability": 0.8333333333333334,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "stat.changed",
+        "signal.emitted",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 8,
+      "poolId": "pool.setup.faction",
+      "optionId": "option.faction.tang",
+      "probability": 0.15384615384615385,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "entity.granted",
+        "signal.emitted",
+        "phase.changed",
+        "task.scheduled",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 9,
+      "poolId": "pool.human.growth",
+      "optionId": "option.growth.steady",
+      "probability": 0.8648648648648649,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "stat.changed",
+        "time.advanced",
+        "stat.changed",
+        "signal.emitted",
+        "task.scheduled",
+        "task.scheduled",
+        "task.scheduled",
+        "growth.completed",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 10,
+      "poolId": "pool.human.soul-ring",
+      "optionId": "option.ring.hundred",
+      "probability": 0.625,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "soul-ring.granted"
+      ]
+    },
+    {
+      "turn": 11,
+      "poolId": "pool.human.soul-ring",
+      "optionId": "option.ring.hundred",
+      "probability": 0.625,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "soul-ring.granted"
+      ]
+    },
+    {
+      "turn": 12,
+      "poolId": "pool.human.soul-ring",
+      "optionId": "option.ring.thousand",
+      "probability": 0.375,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "soul-ring.granted"
+      ]
+    },
+    {
+      "turn": 13,
+      "poolId": "pool.story.1",
+      "optionId": "option.story.1.participate",
+      "probability": 0.75,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "story.completed"
+      ]
+    },
+    {
+      "turn": 14,
+      "poolId": "pool.human.growth",
+      "optionId": "option.growth.steady",
+      "probability": 0.8324661810613945,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "stat.changed",
+        "time.advanced",
+        "stat.changed",
+        "signal.emitted",
+        "task.scheduled",
+        "task.scheduled",
+        "task.scheduled",
+        "growth.completed",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 15,
+      "poolId": "pool.human.soul-ring",
+      "optionId": "option.ring.thousand",
+      "probability": 0.3333333333333333,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "soul-ring.granted"
+      ]
+    },
+    {
+      "turn": 16,
+      "poolId": "pool.human.soul-ring",
+      "optionId": "option.ring.hundred",
+      "probability": 0.5555555555555556,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "soul-ring.granted"
+      ]
+    },
+    {
+      "turn": 17,
+      "poolId": "pool.story.2",
+      "optionId": "option.story.2.participate",
+      "probability": 0.75,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "story.completed"
+      ]
+    },
+    {
+      "turn": 18,
+      "poolId": "pool.human.growth",
+      "optionId": "option.growth.steady",
+      "probability": 0.7568590350047304,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "stat.changed",
+        "time.advanced",
+        "stat.changed",
+        "signal.emitted",
+        "task.scheduled",
+        "task.scheduled",
+        "task.scheduled",
+        "task.scheduled",
+        "growth.completed",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 19,
+      "poolId": "pool.human.soul-ring",
+      "optionId": "option.ring.ten-thousand",
+      "probability": 0.1111111111111111,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "soul-ring.granted"
+      ]
+    },
+    {
+      "turn": 20,
+      "poolId": "pool.human.soul-ring",
+      "optionId": "option.ring.hundred",
+      "probability": 0.5555555555555556,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "soul-ring.granted"
+      ]
+    },
+    {
+      "turn": 21,
+      "poolId": "pool.human.soul-ring",
+      "optionId": "option.ring.hundred",
+      "probability": 0.5555555555555556,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "soul-ring.granted"
+      ]
+    },
+    {
+      "turn": 22,
+      "poolId": "pool.story.3",
+      "optionId": "option.story.3.participate",
+      "probability": 0.75,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "story.completed"
+      ]
+    },
+    {
+      "turn": 23,
+      "poolId": "pool.human.growth",
+      "optionId": "option.growth.steady",
+      "probability": 0.6938421509106678,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "stat.changed",
+        "time.advanced",
+        "stat.changed",
+        "signal.emitted",
+        "task.scheduled",
+        "task.scheduled",
+        "growth.completed",
+        "god-trial.started",
+        "phase.changed",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 24,
+      "poolId": "pool.human.soul-ring",
+      "optionId": "option.ring.thousand",
+      "probability": 0.3333333333333333,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "soul-ring.granted"
+      ]
+    },
+    {
+      "turn": 25,
+      "poolId": "pool.story.4",
+      "optionId": "option.story.4.observe",
+      "probability": 0.25,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "story.completed"
+      ]
+    },
+    {
+      "turn": 26,
+      "poolId": "pool.god-trial.exam",
+      "optionId": "option.god-trial.exam.success",
+      "probability": 0.9,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "god-trial.progressed",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 27,
+      "poolId": "pool.god-trial.exam",
+      "optionId": "option.god-trial.exam.success",
+      "probability": 0.9,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "god-trial.progressed",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 28,
+      "poolId": "pool.god-trial.exam",
+      "optionId": "option.god-trial.exam.costly",
+      "probability": 0.1,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "god-trial.progressed",
+        "entity.granted",
+        "stat.changed",
+        "run.finished"
+      ]
+    }
+  ],
+  "eventLog": [
+    {
+      "turnId": "turn.000001",
+      "command": "run.start",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 0,
+      "rngAfter": 2657120873,
+      "events": [
+        {
+          "type": "run.started",
+          "route": "human",
+          "seed": "v03-preflight-dev5-r2-batch-01-sample-11"
+        },
+        {
+          "type": "phase.changed",
+          "from": "idle",
+          "to": "setup.human"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.setup.gender",
+            "poolId": "pool.setup.gender",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000002",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 2657120873,
+      "rngAfter": 193719390,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.setup.gender",
+          "optionId": "option.gender.none",
+          "probability": 0.047619047619047616
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.setup.gender"
+        },
+        {
+          "type": "entity.granted",
+          "entityType": "gender",
+          "entityId": "entity.gender.none"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.setup.gender-selected"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.setup.appearance",
+            "poolId": "pool.setup.appearance",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000003",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 193719390,
+      "rngAfter": 2025285203,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.setup.appearance",
+          "optionId": "option.appearance.b",
+          "probability": 0.18518518518518517
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.setup.appearance"
+        },
+        {
+          "type": "entity.granted",
+          "entityType": "appearance",
+          "entityId": "entity.appearance.b"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.setup.appearance-selected"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.setup.martial-type",
+            "poolId": "pool.setup.martial-type",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000004",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 2025285203,
+      "rngAfter": 3856851016,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.setup.martial-type",
+          "optionId": "option.martial-type.tool",
+          "probability": 0.3611111111111111
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.setup.martial-type"
+        },
+        {
+          "type": "entity.granted",
+          "entityType": "martial-soul-type",
+          "entityId": "entity.martial-type.tool"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.setup.martial-type-selected"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.setup.martial-soul.tool",
+            "poolId": "pool.setup.martial-soul.tool",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000005",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 3856851016,
+      "rngAfter": 1393449533,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.setup.martial-soul.tool",
+          "optionId": "option.martial-soul.tool-iron-sword",
+          "probability": 1
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.setup.martial-soul.tool"
+        },
+        {
+          "type": "entity.granted",
+          "entityType": "martial-soul",
+          "entityId": "entity.martial-soul.tool.iron-sword"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.setup.martial-soul-selected"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.setup.age",
+            "poolId": "pool.setup.age",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000006",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 1393449533,
+      "rngAfter": 3225015346,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.setup.age",
+          "optionId": "option.age.six",
+          "probability": 0.8
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.setup.age"
+        },
+        {
+          "type": "stat.changed",
+          "stat": "age",
+          "before": 0,
+          "after": 6
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.setup.age-selected"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.setup.period",
+            "poolId": "pool.setup.period",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000007",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 3225015346,
+      "rngAfter": 761613863,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.setup.period",
+          "optionId": "option.period.tang-six",
+          "probability": 0.3333333333333333
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.setup.period"
+        },
+        {
+          "type": "time.advanced",
+          "before": 0,
+          "after": 6
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.setup.period-selected"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.setup.initial-power",
+            "poolId": "pool.setup.initial-power",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000008",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 761613863,
+      "rngAfter": 2593179676,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.setup.initial-power",
+          "optionId": "option.power.ten",
+          "probability": 0.8333333333333334
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.setup.initial-power"
+        },
+        {
+          "type": "stat.changed",
+          "stat": "level",
+          "before": 1,
+          "after": 10
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.setup.initial-power-selected"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.setup.faction",
+            "poolId": "pool.setup.faction",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000009",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 2593179676,
+      "rngAfter": 129778193,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.setup.faction",
+          "optionId": "option.faction.tang",
+          "probability": 0.15384615384615385
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.setup.faction"
+        },
+        {
+          "type": "entity.granted",
+          "entityType": "faction",
+          "entityId": "entity.faction.tang"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.setup.faction-selected"
+        },
+        {
+          "type": "phase.changed",
+          "from": "setup.human",
+          "to": "adventure.human"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.human.growth.1",
+            "poolId": "pool.human.growth",
+            "process": "human-progression"
+          }
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.soul-ring.1",
+            "poolId": "pool.human.soul-ring",
+            "process": "soul-ring"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000010",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 129778193,
+      "rngAfter": 1961344006,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.human.growth",
+          "optionId": "option.growth.steady",
+          "probability": 0.8648648648648649
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.human.growth.1"
+        },
+        {
+          "type": "stat.changed",
+          "stat": "age",
+          "before": 6,
+          "after": 8
+        },
+        {
+          "type": "time.advanced",
+          "before": 6,
+          "after": 8
+        },
+        {
+          "type": "stat.changed",
+          "stat": "level",
+          "before": 10,
+          "after": 34
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.human.growth-completed"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.soul-ring.2",
+            "poolId": "pool.human.soul-ring",
+            "process": "soul-ring"
+          }
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.soul-ring.3",
+            "poolId": "pool.human.soul-ring",
+            "process": "soul-ring"
+          }
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.story.1",
+            "poolId": "pool.story.1",
+            "process": "story-timeline"
+          }
+        },
+        {
+          "type": "growth.completed",
+          "route": "human",
+          "cycle": 1
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.human.growth.2",
+            "poolId": "pool.human.growth",
+            "process": "human-progression"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000011",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 1961344006,
+      "rngAfter": 3792909819,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.human.soul-ring",
+          "optionId": "option.ring.hundred",
+          "probability": 0.625
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.soul-ring.1"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.soul-ring.selected"
+        },
+        {
+          "type": "soul-ring.granted",
+          "ringId": "entity.soul-ring.hundred",
+          "index": 1
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000012",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 3792909819,
+      "rngAfter": 1329508336,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.human.soul-ring",
+          "optionId": "option.ring.hundred",
+          "probability": 0.625
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.soul-ring.2"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.soul-ring.selected"
+        },
+        {
+          "type": "soul-ring.granted",
+          "ringId": "entity.soul-ring.hundred",
+          "index": 2
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000013",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 1329508336,
+      "rngAfter": 3161074149,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.human.soul-ring",
+          "optionId": "option.ring.thousand",
+          "probability": 0.375
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.soul-ring.3"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.soul-ring.selected"
+        },
+        {
+          "type": "soul-ring.granted",
+          "ringId": "entity.soul-ring.thousand",
+          "index": 3
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000014",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 3161074149,
+      "rngAfter": 697672666,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.story.1",
+          "optionId": "option.story.1.participate",
+          "probability": 0.75
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.story.1"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.story.completed"
+        },
+        {
+          "type": "story.completed",
+          "nodeId": "entity.story-node.1",
+          "index": 1
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000015",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 697672666,
+      "rngAfter": 2529238479,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.human.growth",
+          "optionId": "option.growth.steady",
+          "probability": 0.8324661810613945
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.human.growth.2"
+        },
+        {
+          "type": "stat.changed",
+          "stat": "age",
+          "before": 8,
+          "after": 10
+        },
+        {
+          "type": "time.advanced",
+          "before": 8,
+          "after": 10
+        },
+        {
+          "type": "stat.changed",
+          "stat": "level",
+          "before": 34,
+          "after": 58
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.human.growth-completed"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.soul-ring.4",
+            "poolId": "pool.human.soul-ring",
+            "process": "soul-ring"
+          }
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.soul-ring.5",
+            "poolId": "pool.human.soul-ring",
+            "process": "soul-ring"
+          }
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.story.2",
+            "poolId": "pool.story.2",
+            "process": "story-timeline"
+          }
+        },
+        {
+          "type": "growth.completed",
+          "route": "human",
+          "cycle": 2
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.human.growth.3",
+            "poolId": "pool.human.growth",
+            "process": "human-progression"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000016",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 2529238479,
+      "rngAfter": 65836996,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.human.soul-ring",
+          "optionId": "option.ring.thousand",
+          "probability": 0.3333333333333333
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.soul-ring.4"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.soul-ring.selected"
+        },
+        {
+          "type": "soul-ring.granted",
+          "ringId": "entity.soul-ring.thousand",
+          "index": 4
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000017",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 65836996,
+      "rngAfter": 1897402809,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.human.soul-ring",
+          "optionId": "option.ring.hundred",
+          "probability": 0.5555555555555556
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.soul-ring.5"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.soul-ring.selected"
+        },
+        {
+          "type": "soul-ring.granted",
+          "ringId": "entity.soul-ring.hundred",
+          "index": 5
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000018",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 1897402809,
+      "rngAfter": 3728968622,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.story.2",
+          "optionId": "option.story.2.participate",
+          "probability": 0.75
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.story.2"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.story.completed"
+        },
+        {
+          "type": "story.completed",
+          "nodeId": "entity.story-node.2",
+          "index": 2
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000019",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 3728968622,
+      "rngAfter": 1265567139,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.human.growth",
+          "optionId": "option.growth.steady",
+          "probability": 0.7568590350047304
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.human.growth.3"
+        },
+        {
+          "type": "stat.changed",
+          "stat": "age",
+          "before": 10,
+          "after": 12
+        },
+        {
+          "type": "time.advanced",
+          "before": 10,
+          "after": 12
+        },
+        {
+          "type": "stat.changed",
+          "stat": "level",
+          "before": 58,
+          "after": 82
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.human.growth-completed"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.soul-ring.6",
+            "poolId": "pool.human.soul-ring",
+            "process": "soul-ring"
+          }
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.soul-ring.7",
+            "poolId": "pool.human.soul-ring",
+            "process": "soul-ring"
+          }
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.soul-ring.8",
+            "poolId": "pool.human.soul-ring",
+            "process": "soul-ring"
+          }
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.story.3",
+            "poolId": "pool.story.3",
+            "process": "story-timeline"
+          }
+        },
+        {
+          "type": "growth.completed",
+          "route": "human",
+          "cycle": 3
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.human.growth.4",
+            "poolId": "pool.human.growth",
+            "process": "human-progression"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000020",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 1265567139,
+      "rngAfter": 3097132952,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.human.soul-ring",
+          "optionId": "option.ring.ten-thousand",
+          "probability": 0.1111111111111111
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.soul-ring.6"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.soul-ring.selected"
+        },
+        {
+          "type": "soul-ring.granted",
+          "ringId": "entity.soul-ring.ten-thousand",
+          "index": 6
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000021",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 3097132952,
+      "rngAfter": 633731469,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.human.soul-ring",
+          "optionId": "option.ring.hundred",
+          "probability": 0.5555555555555556
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.soul-ring.7"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.soul-ring.selected"
+        },
+        {
+          "type": "soul-ring.granted",
+          "ringId": "entity.soul-ring.hundred",
+          "index": 7
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000022",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 633731469,
+      "rngAfter": 2465297282,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.human.soul-ring",
+          "optionId": "option.ring.hundred",
+          "probability": 0.5555555555555556
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.soul-ring.8"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.soul-ring.selected"
+        },
+        {
+          "type": "soul-ring.granted",
+          "ringId": "entity.soul-ring.hundred",
+          "index": 8
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000023",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 2465297282,
+      "rngAfter": 1895799,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.story.3",
+          "optionId": "option.story.3.participate",
+          "probability": 0.75
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.story.3"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.story.completed"
+        },
+        {
+          "type": "story.completed",
+          "nodeId": "entity.story-node.3",
+          "index": 3
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000024",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 1895799,
+      "rngAfter": 1833461612,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.human.growth",
+          "optionId": "option.growth.steady",
+          "probability": 0.6938421509106678
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.human.growth.4"
+        },
+        {
+          "type": "stat.changed",
+          "stat": "age",
+          "before": 12,
+          "after": 14
+        },
+        {
+          "type": "time.advanced",
+          "before": 12,
+          "after": 14
+        },
+        {
+          "type": "stat.changed",
+          "stat": "level",
+          "before": 82,
+          "after": 106
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.human.growth-completed"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.soul-ring.9",
+            "poolId": "pool.human.soul-ring",
+            "process": "soul-ring"
+          }
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.story.4",
+            "poolId": "pool.story.4",
+            "process": "story-timeline"
+          }
+        },
+        {
+          "type": "growth.completed",
+          "route": "human",
+          "cycle": 4
+        },
+        {
+          "type": "god-trial.started",
+          "tierId": "entity.god-tier.sea",
+          "deityId": "entity.godhood.sea",
+          "total": 3,
+          "origin": "inheritance"
+        },
+        {
+          "type": "phase.changed",
+          "from": "adventure.human",
+          "to": "god-trial"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.god-trial.exam.1",
+            "poolId": "pool.god-trial.exam",
+            "process": "god-trial"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000025",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 1833461612,
+      "rngAfter": 3665027425,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.human.soul-ring",
+          "optionId": "option.ring.thousand",
+          "probability": 0.3333333333333333
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.soul-ring.9"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.soul-ring.selected"
+        },
+        {
+          "type": "soul-ring.granted",
+          "ringId": "entity.soul-ring.thousand",
+          "index": 9
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000026",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 3665027425,
+      "rngAfter": 1201625942,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.story.4",
+          "optionId": "option.story.4.observe",
+          "probability": 0.25
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.story.4"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.story.completed"
+        },
+        {
+          "type": "story.completed",
+          "nodeId": "entity.story-node.4",
+          "index": 4
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000027",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 1201625942,
+      "rngAfter": 3033191755,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.god-trial.exam",
+          "optionId": "option.god-trial.exam.success",
+          "probability": 0.9
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.god-trial.exam.1"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.god-trial.exam-completed"
+        },
+        {
+          "type": "god-trial.progressed",
+          "before": 0,
+          "after": 1
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.god-trial.exam.2",
+            "poolId": "pool.god-trial.exam",
+            "process": "god-trial"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000028",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 3033191755,
+      "rngAfter": 569790272,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.god-trial.exam",
+          "optionId": "option.god-trial.exam.success",
+          "probability": 0.9
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.god-trial.exam.2"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.god-trial.exam-completed"
+        },
+        {
+          "type": "god-trial.progressed",
+          "before": 1,
+          "after": 2
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.god-trial.exam.3",
+            "poolId": "pool.god-trial.exam",
+            "process": "god-trial"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000029",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.5",
+      "rngBefore": 569790272,
+      "rngAfter": 2401356085,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.god-trial.exam",
+          "optionId": "option.god-trial.exam.costly",
+          "probability": 0.1
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.god-trial.exam.3"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.god-trial.exam-completed"
+        },
+        {
+          "type": "god-trial.progressed",
+          "before": 2,
+          "after": 3
+        },
+        {
+          "type": "entity.granted",
+          "entityType": "godhood",
+          "entityId": "entity.godhood.sea"
+        },
+        {
+          "type": "stat.changed",
+          "stat": "level",
+          "before": 106,
+          "after": 100
+        },
+        {
+          "type": "run.finished",
+          "endingId": "ending.god-ascension",
+          "alive": true
+        }
+      ]
+    }
+  ],
+  "state": {
+    "schemaVersion": 3,
+    "contentVersion": "v0.3.0-dev.5",
+    "phase": "ended",
+    "route": "human",
+    "random": {
+      "seed": "v03-preflight-dev5-r2-batch-01-sample-11",
+      "state": 2401356085
+    },
+    "turn": 28,
+    "stats": {
+      "age": 14,
+      "level": 100,
+      "max-level": 99,
+      "appearance-rank": 0,
+      "beast-cultivation": 0,
+      "tang-age": 14
+    },
+    "entities": {
+      "gender": [
+        "entity.gender.none"
+      ],
+      "appearance": [
+        "entity.appearance.b"
+      ],
+      "martial-soul-type": [
+        "entity.martial-type.tool"
+      ],
+      "martial-soul": [
+        "entity.martial-soul.tool.iron-sword"
+      ],
+      "trait": [],
+      "domain": [],
+      "soul-bone": [],
+      "faction": [
+        "entity.faction.tang"
+      ],
+      "godhood": [
+        "entity.godhood.sea"
+      ],
+      "beast-species": [],
+      "beast-bloodline": [],
+      "beast-type": [],
+      "beast-area": [],
+      "soul-ring": [
+        "entity.soul-ring.hundred",
+        "entity.soul-ring.hundred",
+        "entity.soul-ring.thousand",
+        "entity.soul-ring.thousand",
+        "entity.soul-ring.hundred",
+        "entity.soul-ring.ten-thousand",
+        "entity.soul-ring.hundred",
+        "entity.soul-ring.hundred",
+        "entity.soul-ring.thousand"
+      ],
+      "story-node": [
+        "entity.story-node.1",
+        "entity.story-node.2",
+        "entity.story-node.3",
+        "entity.story-node.4"
+      ]
+    },
+    "progression": {
+      "growthCycles": 4,
+      "rings": [
+        "entity.soul-ring.hundred",
+        "entity.soul-ring.hundred",
+        "entity.soul-ring.thousand",
+        "entity.soul-ring.thousand",
+        "entity.soul-ring.hundred",
+        "entity.soul-ring.ten-thousand",
+        "entity.soul-ring.hundred",
+        "entity.soul-ring.hundred",
+        "entity.soul-ring.thousand"
+      ],
+      "storyNodes": [
+        "entity.story-node.1",
+        "entity.story-node.2",
+        "entity.story-node.3",
+        "entity.story-node.4"
+      ],
+      "pendingTribulation": null,
+      "resolvedTribulations": [],
+      "beastRouteChoiceResolved": false,
+      "godTrial": {
+        "tierId": "entity.god-tier.sea",
+        "deityId": "entity.godhood.sea",
+        "completed": 3,
+        "total": 3,
+        "origin": "inheritance"
+      }
+    },
+    "agenda": [],
+    "ending": {
+      "endingId": "ending.god-ascension",
+      "alive": true
+    }
+  }
+}

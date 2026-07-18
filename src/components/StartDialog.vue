@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { Dices, PawPrint, UserRound, X } from 'lucide-vue-next'
-import { createSeed } from '@/domain/random'
-import type { StartRoute } from '@/domain/types'
+import type { StartRoute } from '@/core/model/contracts'
+
+function createSeed() {
+  const value = new Uint32Array(1)
+  globalThis.crypto?.getRandomValues(value)
+  return `${Date.now().toString(36)}-${(value[0] ?? 0).toString(36)}`
+}
 
 const props = defineProps<{ open: boolean; cancellable: boolean }>()
 const emit = defineEmits<{ start: [route: StartRoute, seed: string]; cancel: [] }>()

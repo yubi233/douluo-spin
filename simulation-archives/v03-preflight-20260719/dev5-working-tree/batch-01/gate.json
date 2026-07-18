@@ -1,0 +1,20 @@
+{
+  "batch": 1,
+  "status": "failed",
+  "commit": "2d58014aa8207d7bac219ac67c340848d4e9903a",
+  "contentVersion": "v0.3.0-dev.5",
+  "automatedAudit": {
+    "passed": 20,
+    "total": 20
+  },
+  "manualReview": {
+    "passed": 6,
+    "failed": 14,
+    "pending": 0
+  },
+  "analysisCompleted": true,
+  "defectCount": 2,
+  "fixOutcome": "generation-invalidated-fix-landed-regression-passed",
+  "regressionVerified": true,
+  "attempt": 1
+}

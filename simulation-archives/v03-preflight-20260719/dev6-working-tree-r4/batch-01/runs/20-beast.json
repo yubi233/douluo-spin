@@ -1,0 +1,933 @@
+{
+  "format": "douluo-spin-v03-run",
+  "schemaVersion": 3,
+  "campaignId": "v03-preflight-20260719",
+  "generation": "dev6-working-tree-r4",
+  "commit": "2d58014aa8207d7bac219ac67c340848d4e9903a",
+  "contentVersion": "v0.3.0-dev.6",
+  "batch": 1,
+  "sample": 20,
+  "route": "beast",
+  "seed": "v03-preflight-dev6-r4-batch-01-sample-20",
+  "completed": true,
+  "audit": {
+    "passed": true,
+    "issues": []
+  },
+  "trace": [
+    {
+      "turn": 1,
+      "poolId": "pool.beast.setup.period",
+      "optionId": "option.beast.period.early",
+      "probability": 0.5,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "time.advanced",
+        "signal.emitted",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 2,
+      "poolId": "pool.beast.setup.gender",
+      "optionId": "option.beast.gender.male",
+      "probability": 0.5,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "entity.granted",
+        "signal.emitted",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 3,
+      "poolId": "pool.beast.setup.realm",
+      "optionId": "option.beast.realm.hundred-thousand",
+      "probability": 0.2,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "stat.changed",
+        "signal.emitted",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 4,
+      "poolId": "pool.beast.setup.type",
+      "optionId": "option.beast.type.land",
+      "probability": 0.5,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "entity.granted",
+        "signal.emitted",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 5,
+      "poolId": "pool.beast.setup.species",
+      "optionId": "option.beast.species.wind-wolf",
+      "probability": 1,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "entity.granted",
+        "entity.granted",
+        "signal.emitted",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 6,
+      "poolId": "pool.beast.setup.area",
+      "optionId": "option.beast.area.forest",
+      "probability": 1,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "entity.granted",
+        "signal.emitted",
+        "phase.changed",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 7,
+      "poolId": "pool.beast.growth",
+      "optionId": "option.beast.growth.absorb",
+      "probability": 0.7142857142857143,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "stat.changed",
+        "time.advanced",
+        "signal.emitted",
+        "growth.completed",
+        "beast.tribulation-requested",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 8,
+      "poolId": "pool.beast.tribulation",
+      "optionId": "option.beast.tribulation.success",
+      "probability": 0.9,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "beast.tribulation-resolved",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 9,
+      "poolId": "pool.beast.route-choice",
+      "optionId": "option.beast.route.remain",
+      "probability": 0.5,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "beast.route-choice-resolved",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 10,
+      "poolId": "pool.beast.growth",
+      "optionId": "option.beast.growth.absorb",
+      "probability": 0.7142857142857143,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "stat.changed",
+        "time.advanced",
+        "signal.emitted",
+        "growth.completed",
+        "beast.tribulation-requested",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 11,
+      "poolId": "pool.beast.tribulation",
+      "optionId": "option.beast.tribulation.success",
+      "probability": 0.9,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "beast.tribulation-resolved",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 12,
+      "poolId": "pool.beast.growth",
+      "optionId": "option.beast.growth.hunt",
+      "probability": 0.2857142857142857,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "stat.changed",
+        "time.advanced",
+        "signal.emitted",
+        "growth.completed",
+        "beast.tribulation-requested",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 13,
+      "poolId": "pool.beast.tribulation",
+      "optionId": "option.beast.tribulation.success",
+      "probability": 0.9,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "beast.tribulation-resolved",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 14,
+      "poolId": "pool.beast.growth",
+      "optionId": "option.beast.growth.absorb",
+      "probability": 0.7142857142857143,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "stat.changed",
+        "time.advanced",
+        "signal.emitted",
+        "growth.completed",
+        "beast.tribulation-requested",
+        "task.scheduled"
+      ]
+    },
+    {
+      "turn": 15,
+      "poolId": "pool.beast.tribulation",
+      "optionId": "option.beast.tribulation.success",
+      "probability": 0.9,
+      "eventTypes": [
+        "option.selected",
+        "task.completed",
+        "signal.emitted",
+        "beast.tribulation-resolved",
+        "entity.granted",
+        "run.finished"
+      ]
+    }
+  ],
+  "eventLog": [
+    {
+      "turnId": "turn.000001",
+      "command": "run.start",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 0,
+      "rngAfter": 318005097,
+      "events": [
+        {
+          "type": "run.started",
+          "route": "beast",
+          "seed": "v03-preflight-dev6-r4-batch-01-sample-20"
+        },
+        {
+          "type": "phase.changed",
+          "from": "idle",
+          "to": "setup.beast"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.beast.setup.period",
+            "poolId": "pool.beast.setup.period",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000002",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 318005097,
+      "rngAfter": 2149570910,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.setup.period",
+          "optionId": "option.beast.period.early",
+          "probability": 0.5
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.beast.setup.period"
+        },
+        {
+          "type": "time.advanced",
+          "before": 0,
+          "after": -100
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.period-selected"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.beast.setup.gender",
+            "poolId": "pool.beast.setup.gender",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000003",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 2149570910,
+      "rngAfter": 3981136723,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.setup.gender",
+          "optionId": "option.beast.gender.male",
+          "probability": 0.5
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.beast.setup.gender"
+        },
+        {
+          "type": "entity.granted",
+          "entityType": "gender",
+          "entityId": "entity.gender.male"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.gender-selected"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.beast.setup.realm",
+            "poolId": "pool.beast.setup.realm",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000004",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 3981136723,
+      "rngAfter": 1517735240,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.setup.realm",
+          "optionId": "option.beast.realm.hundred-thousand",
+          "probability": 0.2
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.beast.setup.realm"
+        },
+        {
+          "type": "stat.changed",
+          "stat": "beast-cultivation",
+          "before": 0,
+          "after": 100000
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.realm-selected"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.beast.setup.type",
+            "poolId": "pool.beast.setup.type",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000005",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 1517735240,
+      "rngAfter": 3349301053,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.setup.type",
+          "optionId": "option.beast.type.land",
+          "probability": 0.5
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.beast.setup.type"
+        },
+        {
+          "type": "entity.granted",
+          "entityType": "beast-type",
+          "entityId": "entity.beast-type.land"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.type-selected"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.beast.setup.species",
+            "poolId": "pool.beast.setup.species",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000006",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 3349301053,
+      "rngAfter": 885899570,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.setup.species",
+          "optionId": "option.beast.species.wind-wolf",
+          "probability": 1
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.beast.setup.species"
+        },
+        {
+          "type": "entity.granted",
+          "entityType": "beast-species",
+          "entityId": "entity.beast-species.wind-wolf"
+        },
+        {
+          "type": "entity.granted",
+          "entityType": "beast-bloodline",
+          "entityId": "entity.beast-bloodline.wind-wolf"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.species-selected"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.pool.beast.setup.area",
+            "poolId": "pool.beast.setup.area",
+            "process": "character-setup"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000007",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 885899570,
+      "rngAfter": 2717465383,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.setup.area",
+          "optionId": "option.beast.area.forest",
+          "probability": 1
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.pool.beast.setup.area"
+        },
+        {
+          "type": "entity.granted",
+          "entityType": "beast-area",
+          "entityId": "entity.beast-area.forest"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.area-selected"
+        },
+        {
+          "type": "phase.changed",
+          "from": "setup.beast",
+          "to": "adventure.beast"
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.beast.growth.1",
+            "poolId": "pool.beast.growth",
+            "process": "beast-cultivation"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000008",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 2717465383,
+      "rngAfter": 254063900,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.growth",
+          "optionId": "option.beast.growth.absorb",
+          "probability": 0.7142857142857143
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.beast.growth.1"
+        },
+        {
+          "type": "stat.changed",
+          "stat": "beast-cultivation",
+          "before": 100000,
+          "after": 350000
+        },
+        {
+          "type": "time.advanced",
+          "before": -100,
+          "after": -90
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.growth-completed"
+        },
+        {
+          "type": "growth.completed",
+          "route": "beast",
+          "cycle": 1
+        },
+        {
+          "type": "beast.tribulation-requested",
+          "threshold": 100000
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.beast.tribulation.100000",
+            "poolId": "pool.beast.tribulation",
+            "process": "beast-cultivation"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000009",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 254063900,
+      "rngAfter": 2085629713,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.tribulation",
+          "optionId": "option.beast.tribulation.success",
+          "probability": 0.9
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.beast.tribulation.100000"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.tribulation-success"
+        },
+        {
+          "type": "beast.tribulation-resolved",
+          "threshold": 100000
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.beast.route-choice",
+            "poolId": "pool.beast.route-choice",
+            "process": "beast-cultivation"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000010",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 2085629713,
+      "rngAfter": 3917195526,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.route-choice",
+          "optionId": "option.beast.route.remain",
+          "probability": 0.5
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.beast.route-choice"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.remain"
+        },
+        {
+          "type": "beast.route-choice-resolved",
+          "transformed": false
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.beast.growth.2",
+            "poolId": "pool.beast.growth",
+            "process": "beast-cultivation"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000011",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 3917195526,
+      "rngAfter": 1453794043,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.growth",
+          "optionId": "option.beast.growth.absorb",
+          "probability": 0.7142857142857143
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.beast.growth.2"
+        },
+        {
+          "type": "stat.changed",
+          "stat": "beast-cultivation",
+          "before": 350000,
+          "after": 600000
+        },
+        {
+          "type": "time.advanced",
+          "before": -90,
+          "after": -80
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.growth-completed"
+        },
+        {
+          "type": "growth.completed",
+          "route": "beast",
+          "cycle": 2
+        },
+        {
+          "type": "beast.tribulation-requested",
+          "threshold": 300000
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.beast.tribulation.300000",
+            "poolId": "pool.beast.tribulation",
+            "process": "beast-cultivation"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000012",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 1453794043,
+      "rngAfter": 3285359856,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.tribulation",
+          "optionId": "option.beast.tribulation.success",
+          "probability": 0.9
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.beast.tribulation.300000"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.tribulation-success"
+        },
+        {
+          "type": "beast.tribulation-resolved",
+          "threshold": 300000
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.beast.growth.3",
+            "poolId": "pool.beast.growth",
+            "process": "beast-cultivation"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000013",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 3285359856,
+      "rngAfter": 821958373,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.growth",
+          "optionId": "option.beast.growth.hunt",
+          "probability": 0.2857142857142857
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.beast.growth.3"
+        },
+        {
+          "type": "stat.changed",
+          "stat": "beast-cultivation",
+          "before": 600000,
+          "after": 900000
+        },
+        {
+          "type": "time.advanced",
+          "before": -80,
+          "after": -70
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.growth-completed"
+        },
+        {
+          "type": "growth.completed",
+          "route": "beast",
+          "cycle": 3
+        },
+        {
+          "type": "beast.tribulation-requested",
+          "threshold": 600000
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.beast.tribulation.600000",
+            "poolId": "pool.beast.tribulation",
+            "process": "beast-cultivation"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000014",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 821958373,
+      "rngAfter": 2653524186,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.tribulation",
+          "optionId": "option.beast.tribulation.success",
+          "probability": 0.9
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.beast.tribulation.600000"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.tribulation-success"
+        },
+        {
+          "type": "beast.tribulation-resolved",
+          "threshold": 600000
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.beast.growth.4",
+            "poolId": "pool.beast.growth",
+            "process": "beast-cultivation"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000015",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 2653524186,
+      "rngAfter": 190122703,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.growth",
+          "optionId": "option.beast.growth.absorb",
+          "probability": 0.7142857142857143
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.beast.growth.4"
+        },
+        {
+          "type": "stat.changed",
+          "stat": "beast-cultivation",
+          "before": 900000,
+          "after": 1000000
+        },
+        {
+          "type": "time.advanced",
+          "before": -70,
+          "after": -60
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.growth-completed"
+        },
+        {
+          "type": "growth.completed",
+          "route": "beast",
+          "cycle": 4
+        },
+        {
+          "type": "beast.tribulation-requested",
+          "threshold": 1000000
+        },
+        {
+          "type": "task.scheduled",
+          "task": {
+            "id": "task.beast.tribulation.1000000",
+            "poolId": "pool.beast.tribulation",
+            "process": "beast-cultivation"
+          }
+        }
+      ]
+    },
+    {
+      "turnId": "turn.000016",
+      "command": "turn.spin",
+      "contentVersion": "v0.3.0-dev.6",
+      "rngBefore": 190122703,
+      "rngAfter": 2021688516,
+      "events": [
+        {
+          "type": "option.selected",
+          "poolId": "pool.beast.tribulation",
+          "optionId": "option.beast.tribulation.success",
+          "probability": 0.9
+        },
+        {
+          "type": "task.completed",
+          "taskId": "task.beast.tribulation.1000000"
+        },
+        {
+          "type": "signal.emitted",
+          "signalId": "signal.beast.tribulation-success"
+        },
+        {
+          "type": "beast.tribulation-resolved",
+          "threshold": 1000000
+        },
+        {
+          "type": "entity.granted",
+          "entityType": "godhood",
+          "entityId": "entity.godhood.beast"
+        },
+        {
+          "type": "run.finished",
+          "endingId": "ending.beast-ascension",
+          "alive": true
+        }
+      ]
+    }
+  ],
+  "state": {
+    "schemaVersion": 3,
+    "contentVersion": "v0.3.0-dev.6",
+    "phase": "ended",
+    "route": "beast",
+    "random": {
+      "seed": "v03-preflight-dev6-r4-batch-01-sample-20",
+      "state": 2021688516
+    },
+    "turn": 15,
+    "stats": {
+      "age": 0,
+      "level": 1,
+      "max-level": 99,
+      "appearance-rank": 0,
+      "beast-cultivation": 1000000,
+      "tang-age": -60
+    },
+    "entities": {
+      "gender": [
+        "entity.gender.male"
+      ],
+      "appearance": [],
+      "martial-soul-type": [],
+      "martial-soul": [],
+      "trait": [],
+      "domain": [],
+      "soul-bone": [],
+      "faction": [],
+      "godhood": [
+        "entity.godhood.beast"
+      ],
+      "beast-species": [
+        "entity.beast-species.wind-wolf"
+      ],
+      "beast-bloodline": [
+        "entity.beast-bloodline.wind-wolf"
+      ],
+      "beast-type": [
+        "entity.beast-type.land"
+      ],
+      "beast-area": [
+        "entity.beast-area.forest"
+      ],
+      "soul-ring": [],
+      "story-node": []
+    },
+    "progression": {
+      "growthCycles": 4,
+      "rings": [],
+      "storyNodes": [],
+      "pendingTribulation": null,
+      "resolvedTribulations": [
+        100000,
+        300000,
+        600000,
+        1000000
+      ],
+      "beastRouteChoiceResolved": true,
+      "godTrial": null
+    },
+    "agenda": [],
+    "ending": {
+      "endingId": "ending.beast-ascension",
+      "alive": true
+    }
+  }
+}

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { FastForward, Gauge, Monitor, Pause, Pencil, Play, RotateCcw, Settings2, Smartphone, Sparkles } from 'lucide-vue-next'
 import CharacterPanel from '@/components/CharacterPanel.vue'
 import ChroniclePanel from '@/components/ChroniclePanel.vue'
@@ -9,28 +9,21 @@ import OverflowMenu from '@/components/OverflowMenu.vue'
 import PoolBrowser from '@/components/PoolBrowser.vue'
 import StartDialog from '@/components/StartDialog.vue'
 import WheelEditorDialog from '@/components/WheelEditorDialog.vue'
-import { findPool } from '@/domain/catalog'
-import { calculateCombatPower, estimateOpponentLevel } from '@/domain/engine'
+import type { WheelOptionView } from '@/application/gameViewModel'
 import { useGameStore } from '@/composables/useGameStore'
 
 const store = useGameStore()
-const importInput = ref<HTMLInputElement | null>(null)
+const importSaveInput = ref<HTMLInputElement | null>(null)
+const importOverridesInput = ref<HTMLInputElement | null>(null)
 const importStatus = ref('')
 const mobileTab = ref<MobileTab>('stage')
 const editorOpen = ref(false)
+const editorError = ref('')
 const layoutMode = ref<'desktop' | 'mobile'>(typeof window !== 'undefined' && window.innerWidth <= 760 ? 'mobile' : 'desktop')
-const customGodName = ref('')
-const showCustomGodDialog = ref(false)
 
 const currentTask = computed(() => store.displayTask.value)
-const currentOptions = computed(() => store.wheelOptions.value.length > 0
-  ? store.wheelOptions.value
-  : store.activePool.value && currentTask.value
-    ? store.activePool.value.options.filter((option) => option.enabled !== false)
-    : [])
-const originalPool = computed(() => store.activePool.value ? findPool(store.activePool.value.name) ?? null : null)
-const editorModified = computed(() => Boolean(store.activePool.value && originalPool.value
-  && JSON.stringify(store.activePool.value.options) !== JSON.stringify(originalPool.value.options)))
+const currentOptions = computed<readonly WheelOptionView[]>(() => [...store.wheelOptions.value])
+const editorModified = computed(() => Boolean(store.activePool.value && store.isPoolModified(store.activePool.value.id)))
 const recentLogs = computed(() => store.displayLogs.value.slice(-3).reverse())
 const statusText = computed(() => {
   if (store.isBusy.value) return `命运转动中 · 第 ${store.context.value.step + 1} 步`
@@ -40,43 +33,12 @@ const statusText = computed(() => {
   return store.isStarted.value ? '待命' : '尚未开始'
 })
 const resultTone = computed(() => {
-  const text = store.context.value.lastResult
-  if (/死亡|失败|重伤|失去|反噬/.test(text)) return 'bad'
-  if (/神|十万年|领域|法则|进化|觉醒/.test(text)) return 'rare'
-  if (/获得|成功|胜利|提升|等级\+/.test(text)) return 'good'
-  return 'normal'
+  const tone = recentLogs.value[0]?.tone
+  return tone === 'major' ? 'rare' : tone ?? 'normal'
 })
 const summaryPower = computed(() => store.context.value.beast ? `${store.context.value.beast.cultivation}年` : `${store.context.value.level}级`)
-const combatPowerValue = computed(() => store.context.value.beast ? 0 : calculateCombatPower(store.context.value))
-const combatMultiplier = computed(() => {
-  if (!store.displayTask.value || store.context.value.beast) return null
-  const handler = store.displayTask.value.handler
-  if (handler !== 'story') return null
-  const power = combatPowerValue.value
-  if (power <= 0) return null
-  const pool = store.activePool.value
-  if (!pool) return null
-  const opts = currentOptions.value
-  const opponentLevels = new Set<number>()
-  for (const opt of opts) {
-    const ol = estimateOpponentLevel(opt.name)
-    if (ol > 0) opponentLevels.add(ol)
-  }
-  const avgOpponentLevel = opponentLevels.size > 0
-    ? Math.round([...opponentLevels].reduce((a, b) => a + b, 0) / opponentLevels.size)
-    : 0
-  const opponentPower = avgOpponentLevel > 0 ? Math.round(avgOpponentLevel * avgOpponentLevel / 20) : 0
-  const ratio = opponentPower > 0 ? (power / opponentPower).toFixed(2) : '-'
-  const victoryMult = opponentPower > 0
-    ? Math.max(0.1, Math.min(10, (power / opponentPower) * 2)).toFixed(2)
-    : (1 + Math.min(power / 100, 5)).toFixed(2)
-  const defeatMult = opponentPower > 0
-    ? Math.max(0.05, Math.min(10, 1 / Math.max(0.1, power / opponentPower) * 2)).toFixed(3)
-    : Math.max(0.05, 1 - Math.min(power / 120, 0.95)).toFixed(3)
-  return { opponentLevel: avgOpponentLevel, opponentPower, ratio, victory: victoryMult, defeat: defeatMult }
-})
 
-async function handleImport(event: Event) {
+async function handleSaveImport(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
@@ -86,16 +48,33 @@ async function handleImport(event: Event) {
   window.setTimeout(() => { importStatus.value = '' }, 2200)
 }
 
+async function handleOverridesImport(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  const error = store.importWheelOverrides(await file.text())
+  importStatus.value = error ? `转盘修改导入失败：${error}` : '转盘修改导入成功'
+  input.value = ''
+  window.setTimeout(() => { importStatus.value = '' }, 3200)
+}
+
 function openEditor() {
   if (!store.activePool.value || store.isBusy.value || store.awaitingAdvance.value) return
   store.stopAuto()
+  editorError.value = ''
   editorOpen.value = true
+}
+
+function advanceOrSpin() {
+  if (store.awaitingAdvance.value) store.advance()
+  else void store.spin()
 }
 
 function applyEditor(options: typeof currentOptions.value) {
   const pool = store.activePool.value
   if (!pool) return
   const error = store.applyWheelOverride(pool, options)
+  editorError.value = error ?? ''
   if (!error) editorOpen.value = false
 }
 
@@ -113,20 +92,6 @@ function setLayoutMode(mode: 'desktop' | 'mobile') {
   layoutMode.value = mode
 }
 
-function submitCustomGodName() {
-  const name = customGodName.value.trim()
-  if (!name) return
-  store.resolveCustomGod(name)
-  customGodName.value = ''
-  showCustomGodDialog.value = false
-}
-
-watch(() => store.needsCustomGodName.value, (val) => {
-  if (val) {
-    customGodName.value = ''
-    showCustomGodDialog.value = true
-  }
-})
 </script>
 
 <template>
@@ -148,8 +113,9 @@ watch(() => store.needsCustomGodName.value, (val) => {
           @save="store.persist"
           @restore="store.restoreLocal"
           @export-overrides="store.exportWheelOverrides"
+          @import-overrides="importOverridesInput?.click()"
           @export-save="store.exportSave"
-          @import-save="importInput?.click()"
+          @import-save="importSaveInput?.click()"
           @export-chronicle="store.exportChronicle"
           @clear-overrides="clearOverrides"
         />
@@ -178,22 +144,18 @@ watch(() => store.needsCustomGodName.value, (val) => {
             :duration="store.isTurbo.value ? 40 : store.context.value.settings.spinDuration"
             :disabled="!store.isStarted.value || store.isBusy.value || store.isAuto.value || store.machine.value.value === 'ending'"
             :awaiting-advance="store.awaitingAdvance.value"
-            @spin="store.spin"
+            @spin="advanceOrSpin"
           />
           <div class="stage-feedback">
             <div class="result-panel" :data-tone="resultTone">
               <span>本次命运</span><p>{{ store.displayResult.value }}</p>
               <small v-if="store.context.value.lastPool">{{ store.context.value.lastPool }} · 第 {{ store.context.value.step }} 次投掷<template v-if="store.context.value.lastProbability != null"> · 概率 {{ (store.context.value.lastProbability * 100).toFixed(2) }}%</template></small>
-              <small v-if="combatMultiplier" class="combat-coeff">
-                战力 {{ combatPowerValue }}<template v-if="combatMultiplier.opponentLevel > 0"> · 对手 {{ combatMultiplier.opponentLevel }}级(战力{{ combatMultiplier.opponentPower }}) · 战力比 {{ combatMultiplier.ratio }}x</template>
-                 · 胜率乘 {{ combatMultiplier.victory }}x · 败率乘 {{ combatMultiplier.defeat }}x
-              </small>
             </div>
             <section class="recent-log"><header><span>最近经历</span><small>{{ recentLogs.length }} 条</small></header><p v-for="entry in recentLogs" :key="entry.id"><strong>{{ entry.title }}</strong>{{ entry.text }}</p><p v-if="!recentLogs.length" class="empty">转动命运轮盘后，这里会显示最近经历。</p></section>
           </div>
         </div>
         <div class="play-controls" aria-label="命运推进操作">
-          <button class="button gold" :disabled="!store.isStarted.value || store.isBusy.value || store.isAuto.value || store.machine.value.value === 'ending'" @click="store.spin"><Play :size="17" />{{ store.awaitingAdvance.value ? '进入下一项' : '继续剧情' }}</button>
+          <button class="button gold" :disabled="!store.isStarted.value || store.isBusy.value || store.isAuto.value || store.machine.value.value === 'ending'" @click="advanceOrSpin"><Play :size="17" />{{ store.awaitingAdvance.value ? '进入下一项' : '继续剧情' }}</button>
           <button class="button primary" :disabled="store.isBusy.value || store.machine.value.value === 'ending'" @click="store.toggleAuto(false)"><Pause v-if="store.isAuto.value && !store.isTurbo.value" :size="17" /><Play v-else :size="17" />{{ store.isAuto.value && !store.isTurbo.value ? '暂停自动' : '自动推进' }}</button>
           <button class="button" :disabled="store.isBusy.value || store.machine.value.value === 'ending'" @click="store.toggleAuto(true)"><Pause v-if="store.isAuto.value && store.isTurbo.value" :size="17" /><FastForward v-else :size="17" />{{ store.isAuto.value && store.isTurbo.value ? '暂停极速' : '极速结算' }}</button>
         </div>
@@ -218,29 +180,9 @@ watch(() => store.needsCustomGodName.value, (val) => {
     </details>
   </div>
 
-  <input ref="importInput" class="sr-only" type="file" accept="application/json,.json" @change="handleImport" />
+  <input ref="importSaveInput" class="sr-only" type="file" accept="application/json,.json" aria-label="导入存档文件" @change="handleSaveImport" />
+  <input ref="importOverridesInput" class="sr-only" type="file" accept="application/json,.json" aria-label="导入转盘覆盖文件" @change="handleOverridesImport" />
   <StartDialog :open="store.isStartOpen.value || !store.isStarted.value" :cancellable="store.isStarted.value" @start="store.start" @cancel="store.cancelStart" />
-  <WheelEditorDialog :open="editorOpen" :pool="store.activePool.value" :task="currentTask" :context="store.context.value" :original-option-ids="originalPool?.options.map((option) => option.id) ?? []" :modified="editorModified" @close="editorOpen = false" @apply="applyEditor" @reset="resetEditor" />
+  <WheelEditorDialog :open="editorOpen" :pool="store.activePool.value" :modified="editorModified" :external-error="editorError" :catalog="store.editorCatalog.value" :preview="store.previewWheelOverride" @close="editorOpen = false" @apply="applyEditor" @reset="resetEditor" />
   <div v-if="store.machine.value.value === 'ending'" class="ending-banner" role="status"><div><span>{{ store.context.value.alive ? '命运终章' : '命运断绝' }}</span><strong>{{ store.context.value.ending }}</strong></div><button class="button primary" @click="store.openStart"><Sparkles :size="17" />再来一局</button></div>
-
-  <Teleport to="body">
-    <div v-if="showCustomGodDialog" class="modal-backdrop custom-god-dialog" @click.self="() => {}">
-      <div class="dialog">
-        <h2>自创神位</h2>
-        <p>五次春秋更迭，你踏遍斗罗大陆的每一个角落——星斗大森林的深处、海神岛的潮汐之间、武魂殿的圣殿之下、杀戮之都的无尽血海。然而无论你如何追寻，神位的感召始终与你无缘。仰望星空，你心中生出一股冲天豪气——若天道不授神位于我，我便逆天而行，燃出一条属于自己的成神之路。</p>
-        <form @submit.prevent="submitCustomGodName">
-          <label class="god-name-label">
-            <span>请为你的神位命名</span>
-            <div class="god-name-input-wrap">
-              <input v-model="customGodName" type="text" maxlength="6" placeholder="如：剑、战狼、星辰" autofocus />
-              <span class="god-name-suffix">神</span>
-            </div>
-          </label>
-          <footer class="dialog-actions">
-            <button type="submit" class="button primary" :disabled="!customGodName.trim()">确定</button>
-          </footer>
-        </form>
-      </div>
-    </div>
-  </Teleport>
 </template>

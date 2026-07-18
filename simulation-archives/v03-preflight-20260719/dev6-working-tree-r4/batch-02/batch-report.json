@@ -1,0 +1,185 @@
+{
+  "batch": 2,
+  "summaries": [
+    {
+      "sample": 1,
+      "route": "human",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-01",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.god-ascension",
+      "turns": 28
+    },
+    {
+      "sample": 2,
+      "route": "beast",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-02",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.death",
+      "turns": 15
+    },
+    {
+      "sample": 3,
+      "route": "human",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-03",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.self-created-ascension",
+      "turns": 32
+    },
+    {
+      "sample": 4,
+      "route": "beast",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-04",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.beast-ascension",
+      "turns": 15
+    },
+    {
+      "sample": 5,
+      "route": "human",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-05",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.god-ascension",
+      "turns": 28
+    },
+    {
+      "sample": 6,
+      "route": "beast",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-06",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.beast-ascension",
+      "turns": 15
+    },
+    {
+      "sample": 7,
+      "route": "human",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-07",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.god-ascension",
+      "turns": 28
+    },
+    {
+      "sample": 8,
+      "route": "beast",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-08",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.god-ascension",
+      "turns": 32
+    },
+    {
+      "sample": 9,
+      "route": "human",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-09",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.god-ascension",
+      "turns": 28
+    },
+    {
+      "sample": 10,
+      "route": "beast",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-10",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.death",
+      "turns": 22
+    },
+    {
+      "sample": 11,
+      "route": "human",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-11",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.god-ascension",
+      "turns": 28
+    },
+    {
+      "sample": 12,
+      "route": "beast",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-12",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.death",
+      "turns": 11
+    },
+    {
+      "sample": 13,
+      "route": "human",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-13",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.god-ascension",
+      "turns": 28
+    },
+    {
+      "sample": 14,
+      "route": "beast",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-14",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.death",
+      "turns": 13
+    },
+    {
+      "sample": 15,
+      "route": "human",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-15",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.death",
+      "turns": 23
+    },
+    {
+      "sample": 16,
+      "route": "beast",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-16",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.god-ascension",
+      "turns": 32
+    },
+    {
+      "sample": 17,
+      "route": "human",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-17",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.god-ascension",
+      "turns": 28
+    },
+    {
+      "sample": 18,
+      "route": "beast",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-18",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.beast-ascension",
+      "turns": 15
+    },
+    {
+      "sample": 19,
+      "route": "human",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-19",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.god-ascension",
+      "turns": 28
+    },
+    {
+      "sample": 20,
+      "route": "beast",
+      "seed": "v03-preflight-dev6-r4-batch-02-sample-20",
+      "completed": true,
+      "auditPassed": true,
+      "ending": "ending.god-ascension",
+      "turns": 32
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "format": "douluo-spin-v03-certification",
+  "schemaVersion": 3,
+  "campaignId": "v03-preflight-20260719",
+  "certificationGeneration": "dev5-working-tree",
+  "commit": "2d58014aa8207d7bac219ac67c340848d4e9903a",
+  "contentVersion": "v0.3.0-dev.5",
+  "seedPrefix": "v03-preflight-dev5",
+  "batchCount": 2,
+  "batchSize": 20,
+  "routeDistribution": {
+    "human": 20,
+    "beast": 20
+  },
+  "batches": [
+    {
+      "index": 1,
+      "status": "failed",
+      "automatedPassed": 20,
+      "manualPassed": 6
+    }
+  ]
+}

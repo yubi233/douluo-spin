@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { optionWeight } from '@/domain/catalog'
-import type { WheelOption } from '@/domain/types'
+import type { WheelOptionView as WheelOption } from '@/application/gameViewModel'
 import { advanceWheelRotation, targetRotationForSegment } from '@/utils/wheelGeometry'
 
 const props = defineProps<{
@@ -24,10 +23,11 @@ const inspected = ref<{ index: number; x: number; y: number } | null>(null)
 let observer: ResizeObserver | null = null
 let resetFrame: number | null = null
 const minLabelAngle = 8 * (Math.PI / 180)
+const optionWeight = (option: WheelOption) => option.weight
 
 const visibleOptions = computed(() => props.options.length > 0
   ? props.options
-  : ['斗罗大陆', '命运', '武魂', '魂兽', '神考', '雷劫'].map((name, index) => ({ id: String(index), name })))
+  : ['斗罗大陆', '命运', '武魂', '魂兽', '神考', '雷劫'].map((name, index) => ({ id: String(index), name, enabled: true, weight: 1, probability: 1 / 6, effects: [] })))
 const inspectedOption = computed(() => inspected.value ? visibleOptions.value[inspected.value.index] : null)
 const inspectedProbability = computed(() => {
   const option = inspectedOption.value

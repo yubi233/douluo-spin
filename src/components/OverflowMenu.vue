@@ -3,7 +3,7 @@ import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { MoreVertical } from 'lucide-vue-next'
 
 defineProps<{ overrides: number }>()
-const emit = defineEmits<{ save: []; restore: []; exportOverrides: []; exportSave: []; importSave: []; exportChronicle: []; clearOverrides: [] }>()
+const emit = defineEmits<{ save: []; restore: []; exportOverrides: []; importOverrides: []; exportSave: []; importSave: []; exportChronicle: []; clearOverrides: [] }>()
 const open = ref(false)
 const trigger = ref<HTMLButtonElement | null>(null)
 const firstAction = ref<HTMLButtonElement | null>(null)
@@ -38,6 +38,7 @@ onBeforeUnmount(() => {
       <button type="button" role="menuitem" @click="choose(() => emit('importSave'))">导入存档</button>
       <button type="button" role="menuitem" @click="choose(() => emit('exportChronicle'))">导出传记</button>
       <button type="button" role="menuitem" :disabled="overrides === 0" @click="choose(() => emit('exportOverrides'))">导出当前修改{{ overrides ? ` (${overrides})` : '（暂无修改）' }}</button>
+      <button type="button" role="menuitem" @click="choose(() => emit('importOverrides'))">导入转盘修改</button>
       <button type="button" role="menuitem" :disabled="overrides === 0" @click="choose(() => emit('clearOverrides'))">清除全部转盘修改</button>
     </div>
   </div>

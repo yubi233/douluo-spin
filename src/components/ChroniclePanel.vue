@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Copy, Download, Search } from 'lucide-vue-next'
-import type { ChronicleEntry } from '@/domain/types'
+import type { ChronicleView as ChronicleEntry } from '@/application/gameViewModel'
 
 const props = defineProps<{ entries: ChronicleEntry[]; copyStatus: 'idle' | 'success' | 'failed' }>()
 const emit = defineEmits<{ export: []; copy: [] }>()
