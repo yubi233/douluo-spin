@@ -85,6 +85,7 @@ function validatePredicate(
         'actor.martial-souls': 'martial-soul', 'actor.traits': 'trait', 'actor.domains': 'domain',
         'actor.soul-bones': 'soul-bone', 'actor.beast-types': 'beast-type',
         'actor.beast-species': 'beast-species', 'actor.beast-areas': 'beast-area',
+        'actor.beast-bloodlines': 'beast-bloodline',
         'story.completed-nodes': 'story-node',
       }
       if (actualType !== expectedType[predicate.fact]) {

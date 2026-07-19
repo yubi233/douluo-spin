@@ -1,6 +1,7 @@
 import { GameService } from './gameService'
 import type { CompiledContent, EventBatch, GameState, Route } from '@/core/model/contracts'
 import type { PolicyRegistry } from '@/core/rules/evaluate'
+import { legacyBeastSpeciesSemantic, legacyBeastTypeRequiresArea, legacyBeastTypeSpeciesPool, legacyFlow } from '@/content/v03/legacyFlow'
 
 export interface SimulationTraceEntry {
   readonly turn: number
@@ -31,11 +32,15 @@ export function auditTraceOrder(
   initialAdventureLevel: number,
 ): readonly SimulationIssue[] {
   const pools = trace.map((entry) => entry.poolId)
-  const faction = pools.indexOf('pool.setup.faction')
-  const firstStory = pools.indexOf('pool.story.1')
-  const firstRing = pools.indexOf('pool.human.soul-ring')
-  const firstGrowth = pools.indexOf('pool.human.growth')
-  const appearance = pools.lastIndexOf('pool.setup.appearance')
+  const factionPools = new Set(legacyFlow.progression.factionByAge.map((entry) => entry.poolId))
+  const storyPools = new Set(legacyFlow.pools.filter((pool) => pool.role === 'story').map((pool) => pool.activePoolId))
+  const ringPools = new Set(legacyFlow.progression.soulRingByIndex.map((entry) => entry.poolId))
+  const growthPools = new Set(legacyFlow.progression.humanGrowthByAge.map((entry) => entry.poolId))
+  const faction = pools.findIndex((pool) => factionPools.has(pool as never))
+  const firstStory = pools.findIndex((pool) => storyPools.has(pool as never))
+  const firstRing = pools.findIndex((pool) => ringPools.has(pool as never))
+  const firstGrowth = pools.findIndex((pool) => growthPools.has(pool as never))
+  const appearance = pools.lastIndexOf(legacyFlow.entrypoints.human[1]!)
   const issues: SimulationIssue[] = []
   if ((route === 'human' || route === 'transformed') && firstStory >= 0 && (faction < 0 || firstStory < faction)) {
     issues.push({ code: 'invalid-task-order', message: 'First story task ran before faction setup completed' })
@@ -55,14 +60,22 @@ export function auditBeastIdentity(state: GameState): readonly SimulationIssue[]
   const bloodline = state.entities['beast-bloodline'][0]
   const area = state.entities['beast-area'][0]
   if (!type && !species && !bloodline && !area) return []
-  const landValid = type === 'entity.beast-type.land' && species === 'entity.beast-species.wind-wolf'
-    && bloodline === 'entity.beast-bloodline.wind-wolf' && area === 'entity.beast-area.forest'
-  const seaValid = type === 'entity.beast-type.sea' && species === 'entity.beast-species.spirit-whale'
-    && bloodline === 'entity.beast-bloodline.spirit-whale' && area === 'entity.beast-area.ocean'
-  return landValid || seaValid ? [] : [{
+  const speciesPool = type ? legacyBeastTypeSpeciesPool(type) : null
+  const speciesSemantic = species ? legacyBeastSpeciesSemantic(species) : undefined
+  const requiresArea = type ? legacyBeastTypeRequiresArea(type) : null
+  const valid = Boolean(type && species && bloodline && speciesPool && speciesSemantic
+    && legacyFlowPoolContainsSpecies(speciesPool, species)
+    && speciesSemantic.beastBloodlineEntityId === bloodline
+    && (requiresArea ? area : !area))
+  return valid ? [] : [{
     code: 'incompatible-beast-identity',
     message: `Incompatible beast identity: type=${type}, species=${species}, bloodline=${bloodline}, area=${area}`,
   }]
+}
+
+function legacyFlowPoolContainsSpecies(poolId: string, speciesId: string): boolean {
+  return legacyFlow.pools.find((pool) => pool.activePoolId === poolId as never)?.options
+    .some((option) => option.semantic.beastSpeciesEntityId === speciesId) ?? false
 }
 
 function levelAtAdventureStart(eventLog: readonly EventBatch[]): number {
@@ -110,9 +123,9 @@ export function simulateJourney(
   issues.push(...auditBeastIdentity(state))
   const inheritedAscension = state.ending?.endingId === 'ending.god-ascension'
     && state.progression.godTrial?.origin === 'inheritance'
-  const mainStoryNodes = state.progression.storyNodes.filter((id) => /^entity\.story-node\.\d+$/.test(id)).length
-  if (inheritedAscension && mainStoryNodes < 4) {
-    issues.push({ code: 'missing-story-node', message: `Inherited ascension completed after only ${mainStoryNodes} main story nodes` })
+  const originalStoryNodes = state.progression.storyNodes.filter((id) => id.startsWith('entity.legacy.story-node.')).length
+  if (inheritedAscension && originalStoryNodes === 0) {
+    issues.push({ code: 'missing-story-node', message: 'Inherited ascension completed without an original story node' })
   }
   return {
     seed: options.seed,

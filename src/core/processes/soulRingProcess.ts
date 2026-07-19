@@ -1,21 +1,34 @@
-import { entityId, poolId, signalId } from '../ids'
+import { signalId } from '../ids'
+import { legacyFlow, legacyOptionSemantic, legacyPoolsForRole } from '@/content/v03/legacyFlow'
 import type { DomainEvent, GameState } from '../model/contracts'
 import type { ProcessManager } from './processManager'
 import { hasSignal, selectedOption, task } from './processHelpers'
-
-const ringByOption = new Map([
-  ['option.ring.hundred', entityId('entity.soul-ring.hundred')],
-  ['option.ring.thousand', entityId('entity.soul-ring.thousand')],
-  ['option.ring.ten-thousand', entityId('entity.soul-ring.ten-thousand')],
-])
 
 export const soulRingProcess: ProcessManager = {
   id: 'soul-ring',
   react(state: GameState, events: readonly DomainEvent[]): readonly DomainEvent[] {
     if (hasSignal(events, signalId('signal.soul-ring.selected'))) {
       const option = selectedOption(events)
-      const ringId = option ? ringByOption.get(option) : undefined
-      return ringId ? [{ type: 'soul-ring.granted', ringId, index: state.progression.rings.length + 1 }] : []
+      const semantic = option ? legacyOptionSemantic(option) : undefined
+      const ringId = semantic?.ringEntityId
+      if (!ringId) return []
+      const index = state.progression.rings.length + 1
+      const result: DomainEvent[] = [{ type: 'soul-ring.granted', ringId, index }]
+      const speciesPool = legacyPoolsForRole('ring-species').find((pool) => pool.ringIndex === index)
+      if (speciesPool) result.push({ type: 'task.scheduled', task: task(`ring-species.${index}`, speciesPool.activePoolId, 'soul-ring') })
+      const soulBonePool = soulBoneChancePool(semantic.ringYears ?? 0)
+      if (soulBonePool) result.push({ type: 'task.scheduled', task: task(`soul-bone-chance.${index}`, soulBonePool.activePoolId, 'soul-ring') })
+      if ((semantic.ringYears ?? 0) >= 100_000 && state.stats.level < 80) {
+        const bonusPool = legacyPoolsForRole('ring-bonus')[0]
+        if (bonusPool) result.push({ type: 'task.scheduled', task: task(`ring-bonus.${index}`, bonusPool.activePoolId, 'soul-ring') })
+      }
+      return result
+    }
+    if (hasSignal(events, signalId('signal.soul-bone-chance-selected'))) {
+      const option = selectedOption(events)
+      if (!option || legacyOptionSemantic(option)?.accepted !== true) return []
+      const pool = legacyPoolsForRole('soul-bone')[0]
+      return pool ? [{ type: 'task.scheduled', task: task(`soul-bone.${state.progression.rings.length}`, pool.activePoolId, 'soul-ring') }] : []
     }
     const isHumanAdventure = state.phase === 'adventure.human' || state.phase === 'adventure.transformed'
     if (!isHumanAdventure) return []
@@ -27,9 +40,16 @@ export const soulRingProcess: ProcessManager = {
     const scheduled = new Set(state.agenda.filter((entry) => entry.process === 'soul-ring').map((entry) => entry.id))
     const result: DomainEvent[] = []
     for (let index = state.progression.rings.length + 1; index <= target; index += 1) {
-      const next = task(`soul-ring.${index}`, poolId('pool.human.soul-ring'), 'soul-ring')
+      const poolId = legacyFlow.progression.soulRingByIndex.find((entry) => entry.index === index)?.poolId
+      if (!poolId) break
+      const next = task(`soul-ring.${index}`, poolId, 'soul-ring')
       if (!scheduled.has(next.id)) result.push({ type: 'task.scheduled', task: next })
     }
     return result
   },
+}
+
+function soulBoneChancePool(ringYears: number) {
+  const threshold = ringYears < 100 ? 10 : ringYears < 1_000 ? 100 : ringYears < 10_000 ? 1_000 : 10_000
+  return legacyPoolsForRole('soul-bone-chance').find((pool) => pool.soulBoneYears === threshold)
 }

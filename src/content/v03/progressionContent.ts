@@ -41,6 +41,7 @@ export const progressionEndings: readonly EndingSource[] = [
   { id: endingId('ending.death'), alive: false, presentation: { title: '命运断绝', description: '在成长旅途中陨落。' } },
   { id: endingId('ending.god-ascension'), alive: true, presentation: { title: '百级成神', description: '完成神考，踏入神界。' } },
   { id: endingId('ending.beast-ascension'), alive: true, presentation: { title: '兽域飞升', description: '渡过百万年神劫，凝聚兽域权柄。' } },
+  { id: endingId('ending.beast-immortal'), alive: true, presentation: { title: '百万年长生', description: '渡过百万年神劫，但未能自创兽神神位。' } },
 ]
 
 interface OptionDefinition {
@@ -77,6 +78,11 @@ function pool(id: string, title: string, tag: ReturnType<typeof entityId>, optio
 }
 
 const emit = (value: string): EffectSpec => ({ type: 'signal.emit', signalId: signalId(value) })
+const emitGodOffer = (threshold: number, accepted: boolean): EffectSpec => ({
+  type: 'signal.emit',
+  signalId: signalId('signal.god-offer.resolved'),
+  payload: { threshold, accepted },
+})
 const change = (stat: 'age' | 'level' | 'beast-cultivation', delta: number): EffectSpec => ({
   type: 'stat.change', stat, delta: { type: 'constant', value: delta },
 })
@@ -84,6 +90,15 @@ const advance = (years: number): EffectSpec => ({ type: 'time.advance', years: {
 const grant = (entityType: EntityType, value: string): EffectSpec => ({ type: 'entity.grant', entityType, entityId: entityId(value) })
 
 export const progressionPools: readonly PoolSource[] = [
+  pool('pool.god-trial.training', '神考修行', godTag, [
+    { id: 'option.god-trial.training.steady', title: '以神考压力淬炼魂力', weight: 49, effects: [change('age', 2), advance(2), change('level', 10), emit('signal.god-trial.training-completed')] },
+    { id: 'option.god-trial.training.breakthrough', title: '借神性突破魂力瓶颈', weight: 49, effects: [change('age', 2), advance(2), change('level', 12), emit('signal.god-trial.training-completed')] },
+    { id: 'option.god-trial.training.failure', title: '神考反噬，试炼中陨落', weight: 2, effects: [{ type: 'run.finish', endingId: endingId('ending.death') }] },
+  ]),
+  ...[20, 30, 40, 50, 60, 70, 80, 99].map((threshold) => pool(`pool.god-offer.${threshold}`, `${threshold}级神位感召`, godTag, [
+    { id: `option.god-offer.${threshold}.accepted`, title: '接受神位感召', weight: 1, effects: [emitGodOffer(threshold, true)] },
+    { id: `option.god-offer.${threshold}.declined`, title: '神位感召未至', weight: 1, effects: [emitGodOffer(threshold, false)] },
+  ])),
   pool('pool.setup.age', '基础设定7:你的年龄', progressionTag, [
     { id: 'option.age.six', title: '六岁觉醒武魂', weight: 8, effects: [change('age', 6), emit('signal.setup.age-selected')] },
     { id: 'option.age.twelve', title: '十二岁踏入魂师界', weight: 2, effects: [change('age', 12), emit('signal.setup.age-selected')] },

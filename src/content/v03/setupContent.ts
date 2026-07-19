@@ -18,10 +18,6 @@ export const setupEntities: readonly EntitySource[] = [
     ['mutated', '变异武魂'], ['beast', '兽武魂'], ['concept', '概念型武魂'],
     ['tool', '器武魂'], ['body', '本体武魂'], ['ultimate', '极致武魂'],
   ].map(([id, title]) => ({ id: entityId(`entity.martial-type.${id}`), entityType: 'martial-soul-type' as const, presentation: { title: title! } })),
-  ...[
-    ['beast.wind-wolf', '疾风魔狼'], ['tool.iron-sword', '青钢剑'], ['mutated.shadow-vine', '幽影藤'],
-    ['concept.time-mark', '时之刻印'], ['body.spirit-eyes', '灵眸'], ['ultimate.ice-phoenix', '极致之冰凤凰'],
-  ].map(([id, title]) => ({ id: entityId(`entity.martial-soul.${id}`), entityType: 'martial-soul' as const, presentation: { title: title! } })),
 ]
 
 function selectionPool(
@@ -68,22 +64,8 @@ const martialTypeOptions = setupEntities.filter((entity) => entity.entityType ==
   return { id: `option.martial-type.${type}`, entity: entity.id, title: entity.presentation.title, weight: martialTypeWeights[type]! }
 })
 
-const martialSoulPools = setupEntities.filter((entity) => entity.entityType === 'martial-soul').map((entity) => {
-  const segments = entity.id.split('.')
-  const type = segments[2]!
-  const soul = segments.slice(2).join('-')
-  return selectionPool(
-    `pool.setup.martial-soul.${type}`,
-    `${entity.presentation.title}武魂池`,
-    'signal.setup.martial-soul-selected',
-    'martial-soul',
-    [{ id: `option.martial-soul.${soul}`, entity: entity.id, title: entity.presentation.title, weight: 1 }],
-  )
-})
-
 export const setupPools: readonly PoolSource[] = [
   selectionPool('pool.setup.gender', '基础设定3:你的性别是？', 'signal.setup.gender-selected', 'gender', genderOptions),
   selectionPool('pool.setup.appearance', '基础设定4:容貌', 'signal.setup.appearance-selected', 'appearance', appearanceOptions),
   selectionPool('pool.setup.martial-type', '基础设定5:武魂天赋', 'signal.setup.martial-type-selected', 'martial-soul-type', martialTypeOptions),
-  ...martialSoulPools,
 ]

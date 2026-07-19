@@ -11,7 +11,8 @@ function firstEntity(fact: CollectionFactKey) {
   const entityType = ({
     'actor.martial-souls': 'martial-soul', 'actor.traits': 'trait', 'actor.domains': 'domain',
     'actor.soul-bones': 'soul-bone', 'actor.beast-types': 'beast-type',
-    'actor.beast-species': 'beast-species', 'actor.beast-areas': 'beast-area', 'story.completed-nodes': 'story-node',
+    'actor.beast-species': 'beast-species', 'actor.beast-areas': 'beast-area',
+    'actor.beast-bloodlines': 'beast-bloodline', 'story.completed-nodes': 'story-node',
   } as const)[fact]
   return props.catalog.entities.find((entity) => entity.type === entityType)?.id ?? props.catalog.entities[0]?.id ?? 'entity.missing'
 }
@@ -19,7 +20,8 @@ function entitiesForFact(fact: CollectionFactKey) {
   const entityType = ({
     'actor.martial-souls': 'martial-soul', 'actor.traits': 'trait', 'actor.domains': 'domain',
     'actor.soul-bones': 'soul-bone', 'actor.beast-types': 'beast-type',
-    'actor.beast-species': 'beast-species', 'actor.beast-areas': 'beast-area', 'story.completed-nodes': 'story-node',
+    'actor.beast-species': 'beast-species', 'actor.beast-areas': 'beast-area',
+    'actor.beast-bloodlines': 'beast-bloodline', 'story.completed-nodes': 'story-node',
   } as const)[fact]
   return props.catalog.entities.filter((entity) => entity.type === entityType)
 }

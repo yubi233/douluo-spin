@@ -1,0 +1,13 @@
+# Exact source archive from 2d58014 (the parent of the destructive v0.3 refactor commit 1338d1b).
+# Each digest is SHA-256 of the file bytes. The archive is migration evidence only and is never imported by the v0.3 runtime.
+cf1aaf84e4101e85058a51c13a14eb465d837c0cb61ff56b980ad49e25d39a8d  domain/biography.ts
+80e37e3e466cff1dca806e7bbed1d7ed0421df2ab05cf594c9d90fe20e7fbf57  domain/canonAdditions.ts
+2510a4ee254284e4ae2b3a7885f642d71eae05dd3685aca2597053505b22374a  domain/catalog.ts
+72a83126942e7a7a52f8d0eb769384a546a966afda112f8b6ca884267d0a826a  domain/engine.ts
+692870a724bd1cf788a4e4e3e84069ce6dcf0141da10e5780e015330eeb243f8  domain/machine.ts
+157866a5863e2bbd33cc608a12a6cdaa093a09a8b35eacaeaeb6b6979d7824af  domain/martialSoulCategories.ts
+f9e8408a07b4587c8999f99aa8b9b7877f96a6b9ada2860ed824a5b84e62e6a5  domain/martialSoulTiers.ts
+23f8daabd7dbf6313f5fb05d597ff6117c7c18e9c54e869e33abc812e1cf5ea9  domain/overrides.ts
+9b44a7bfbbb63e628452a43550e68f57022baf371fc7b5579d187a13d49d0e48  domain/random.ts
+9e05199c449b1fbdba68802f4732e41b1ed395be4635f26feff3bf072f555642  domain/simulation.ts
+2fce74f24b8e8ab3da9e43505f39c83d047555d1d036c06963eb2cb517c66575  domain/types.ts

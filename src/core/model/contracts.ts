@@ -33,6 +33,8 @@ export type NumericFactKey =
   | 'timeline.tang-age'
   | 'progression.ring-count'
   | 'progression.combat-power'
+  | 'progression.negative-story-count'
+  | 'progression.combat-story-count'
 
 export type CollectionFactKey =
   | 'actor.martial-souls'
@@ -42,6 +44,7 @@ export type CollectionFactKey =
   | 'actor.beast-types'
   | 'actor.beast-species'
   | 'actor.beast-areas'
+  | 'actor.beast-bloodlines'
   | 'story.completed-nodes'
 
 export type FactKey =
@@ -210,11 +213,34 @@ export interface Task {
   readonly id: string
   readonly poolId: PoolId
   readonly process: string
+  readonly candidateOptionIds?: readonly OptionId[]
   readonly payload?: JsonObject
 }
 
+export type BeastEvolutionKind = 'strength' | 'mind' | 'body' | 'defense' | 'speed'
+export type BeastElement =
+  | 'metal'
+  | 'life'
+  | 'fire'
+  | 'space'
+  | 'moon'
+  | 'wind'
+  | 'destruction'
+  | 'time'
+  | 'water'
+  | 'dark'
+  | 'ice'
+  | 'sun'
+  | 'wood'
+  | 'lightning'
+  | 'earth'
+  | 'death'
+  | 'light'
+  | 'poison'
+export type SeaGodExamGrade = 'yellow' | 'purple' | 'black' | 'top' | 'sea-god'
+
 export type DomainEvent =
-  | { readonly type: 'run.started'; readonly route: Route; readonly seed: string }
+  | { readonly type: 'run.started'; readonly route: Route; readonly requestedRoute: StartRoute; readonly seed: string }
   | { readonly type: 'option.selected'; readonly poolId: PoolId; readonly optionId: OptionId; readonly probability: number }
   | { readonly type: 'stat.changed'; readonly stat: StatId; readonly before: number; readonly after: number }
   | { readonly type: 'entity.granted'; readonly entityType: EntityType; readonly entityId: EntityId }
@@ -228,9 +254,22 @@ export type DomainEvent =
   | { readonly type: 'growth.completed'; readonly route: Route; readonly cycle: number }
   | { readonly type: 'soul-ring.granted'; readonly ringId: EntityId; readonly index: number }
   | { readonly type: 'story.completed'; readonly nodeId: EntityId; readonly index: number }
+  | { readonly type: 'story.branch-selected'; readonly branch: number }
+  | { readonly type: 'story.milestone-scheduled'; readonly branch: number; readonly atTangAge: number }
+  | { readonly type: 'faction.stage-selected'; readonly stage: number }
+  | { readonly type: 'faction-story.stage-completed'; readonly factionId: string; readonly stage: string }
+  | { readonly type: 'flow.stage-completed'; readonly stage: string }
+  | { readonly type: 'beast.evolution-advanced'; readonly kind: BeastEvolutionKind; readonly before: number; readonly after: number }
+  | { readonly type: 'beast.element-advanced'; readonly element: BeastElement; readonly before: number; readonly after: number }
+  | { readonly type: 'story.metric-recorded'; readonly metric: 'negative' | 'combat'; readonly before: number; readonly after: number }
+  | { readonly type: 'combat-power.recalculated'; readonly before: CombatPowerSnapshot; readonly after: CombatPowerSnapshot; readonly trigger: string }
   | { readonly type: 'beast.tribulation-requested'; readonly threshold: number }
   | { readonly type: 'beast.tribulation-resolved'; readonly threshold: number }
   | { readonly type: 'beast.route-choice-resolved'; readonly transformed: boolean }
+  | { readonly type: 'sea-god.started'; readonly grade: SeaGodExamGrade; readonly total: number }
+  | { readonly type: 'sea-god.plan-selected'; readonly completed: number; readonly failed: boolean }
+  | { readonly type: 'sea-god.plan-extended'; readonly before: number; readonly after: number }
+  | { readonly type: 'sea-god.reward-progressed'; readonly before: number; readonly after: number }
   | { readonly type: 'god-trial.started'; readonly tierId: EntityId; readonly deityId: EntityId; readonly total: number; readonly origin: 'inheritance' | 'self-created' }
   | { readonly type: 'god-trial.progressed'; readonly before: number; readonly after: number }
   | { readonly type: 'run.finished'; readonly endingId: EndingId; readonly alive: boolean }
@@ -244,6 +283,18 @@ export interface EventBatch {
   readonly events: readonly DomainEvent[]
 }
 
+export interface CombatPowerSnapshot {
+  readonly levelBase: number
+  readonly ringPower: number
+  readonly martialSoulPower: number
+  readonly domainPower: number
+  readonly soulBonePower: number
+  readonly talentCoefficient: number
+  readonly battleTraitCoefficient: number
+  readonly multiplier: number
+  readonly total: number
+}
+
 export interface GameState {
   readonly schemaVersion: 3
   readonly contentVersion: string
@@ -254,12 +305,28 @@ export interface GameState {
   readonly stats: Readonly<Record<StatId, number>>
   readonly entities: Readonly<Record<EntityType, readonly EntityId[]>>
   readonly progression: {
+    readonly combatPower: CombatPowerSnapshot
     readonly growthCycles: number
     readonly rings: readonly EntityId[]
     readonly storyNodes: readonly EntityId[]
+    readonly storyBranch: number | null
+    readonly scheduledStoryMilestones: readonly string[]
+    readonly factionStages: readonly number[]
+    readonly factionStoryStages: readonly string[]
+    readonly completedFlowStages: readonly string[]
+    readonly beastEvolution: Readonly<Record<BeastEvolutionKind, number>>
+    readonly beastElements: Readonly<Record<BeastElement, number>>
+    readonly storyMetrics: Readonly<{ negative: number; combat: number }>
     readonly pendingTribulation: number | null
     readonly resolvedTribulations: readonly number[]
     readonly beastRouteChoiceResolved: boolean
+    readonly seaGodTrial: {
+      readonly grade: SeaGodExamGrade
+      readonly completed: number
+      readonly total: number
+      readonly planned: number | null
+      readonly failed: boolean
+    } | null
     readonly godTrial: {
       readonly tierId: EntityId
       readonly deityId: EntityId

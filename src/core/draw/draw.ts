@@ -18,8 +18,15 @@ export interface DrawResult {
   readonly candidates: readonly Candidate[]
 }
 
-export function candidateDistribution(pool: MechanicsPool, state: GameState, policies: PolicyRegistry): readonly Candidate[] {
+export function candidateDistribution(
+  pool: MechanicsPool,
+  state: GameState,
+  policies: PolicyRegistry,
+  candidateOptionIds?: readonly OptionId[],
+): readonly Candidate[] {
+  const allowedOptionIds = candidateOptionIds ? new Set(candidateOptionIds) : null
   const weighted = pool.options.flatMap((option) => {
+    if (allowedOptionIds && !allowedOptionIds.has(option.id)) return []
     if (!option.enabled) return []
     if (option.availableWhen && !evaluatePredicate(option.availableWhen, state, policies)) return []
     const modifier = option.weightModifier ? evaluateNumber(option.weightModifier, state, policies) : 1
@@ -37,8 +44,13 @@ export function candidateDistribution(pool: MechanicsPool, state: GameState, pol
   })
 }
 
-export function draw(pool: MechanicsPool, state: GameState, policies: PolicyRegistry): DrawResult {
-  const candidates = candidateDistribution(pool, state, policies)
+export function draw(
+  pool: MechanicsPool,
+  state: GameState,
+  policies: PolicyRegistry,
+  candidateOptionIds?: readonly OptionId[],
+): DrawResult {
+  const candidates = candidateDistribution(pool, state, policies, candidateOptionIds)
   const random = nextRandom(state.random.state)
   let cursor = 0
   const candidate = candidates.find((item) => {

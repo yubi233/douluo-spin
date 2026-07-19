@@ -10,6 +10,7 @@ import type {
   Scalar,
 } from '../model/contracts'
 import type { EntityId, PolicyId } from '../ids'
+import { calculateCombatPower } from './combatPower'
 
 export type PolicyEvaluator = (state: GameState, args?: JsonObject) => number | boolean
 export type PolicyRegistry = ReadonlyMap<PolicyId, PolicyEvaluator>
@@ -22,7 +23,9 @@ function numericFact(state: GameState, fact: NumericFactKey): number {
     case 'beast.cultivation': return state.stats['beast-cultivation']
     case 'timeline.tang-age': return state.stats['tang-age']
     case 'progression.ring-count': return state.progression.rings.length
-    case 'progression.combat-power': return state.stats.level * state.stats.level / 20
+    case 'progression.combat-power': return calculateCombatPower(state).total
+    case 'progression.negative-story-count': return state.progression.storyMetrics.negative
+    case 'progression.combat-story-count': return state.progression.storyMetrics.combat
   }
 }
 
@@ -35,6 +38,7 @@ function collectionFact(state: GameState, fact: CollectionFactKey): readonly Ent
     case 'actor.beast-types': return state.entities['beast-type']
     case 'actor.beast-species': return state.entities['beast-species']
     case 'actor.beast-areas': return state.entities['beast-area']
+    case 'actor.beast-bloodlines': return state.entities['beast-bloodline']
     case 'story.completed-nodes': return state.progression.storyNodes
   }
 }
@@ -46,7 +50,7 @@ function scalarFact(state: GameState, fact: FactKey): Scalar | readonly EntityId
   if (fact === 'actor.faction') return state.entities.faction[0] ?? null
   if (fact === 'timeline.canon-phase') return state.stats['tang-age'] >= 26 ? 'post-tang-ascension' : state.stats['tang-age'] >= 24 ? 'tang-ascension-war' : 'pre-tang-ascension'
   if (fact === 'god-trial.active') return state.progression.godTrial != null
-  if (fact === 'actor.martial-souls' || fact === 'actor.traits' || fact === 'actor.domains' || fact === 'actor.soul-bones' || fact === 'actor.beast-types' || fact === 'actor.beast-species' || fact === 'actor.beast-areas' || fact === 'story.completed-nodes') {
+  if (fact === 'actor.martial-souls' || fact === 'actor.traits' || fact === 'actor.domains' || fact === 'actor.soul-bones' || fact === 'actor.beast-types' || fact === 'actor.beast-species' || fact === 'actor.beast-areas' || fact === 'actor.beast-bloodlines' || fact === 'story.completed-nodes') {
     return collectionFact(state, fact)
   }
   return numericFact(state, fact)
@@ -98,9 +102,9 @@ export function createContentRegistries(policies: PolicyRegistry, signals: Reado
   return {
     facts: new Set<FactKey>([
       'actor.age', 'actor.level', 'actor.max-level', 'beast.cultivation', 'timeline.tang-age',
-      'progression.ring-count', 'progression.combat-power', 'actor.route', 'actor.gender', 'actor.alive',
+      'progression.ring-count', 'progression.combat-power', 'progression.negative-story-count', 'progression.combat-story-count', 'actor.route', 'actor.gender', 'actor.alive',
       'actor.faction', 'timeline.canon-phase', 'god-trial.active', 'actor.martial-souls', 'actor.traits',
-      'actor.domains', 'actor.soul-bones', 'actor.beast-types', 'actor.beast-species', 'actor.beast-areas',
+      'actor.domains', 'actor.soul-bones', 'actor.beast-types', 'actor.beast-species', 'actor.beast-areas', 'actor.beast-bloodlines',
       'story.completed-nodes',
     ]),
     policies: new Set(policies.keys()),

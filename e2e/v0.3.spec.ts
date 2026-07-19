@@ -58,8 +58,17 @@ test('desktop: v0.3 receipt, deterministic undo, save and pure narrative editor'
     await spinOnce(page)
     const firstResult = await page.locator('.result-panel p').textContent()
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('douluo-spin-vue-v3') ?? '{}'))
-    expect(stored).toMatchObject({ format: 'douluo-spin-event-log', schemaVersion: 3, contentVersion: 'v0.3.0' })
+    expect(stored).toMatchObject({ format: 'douluo-spin-event-log', schemaVersion: 3, contentVersion: 'v0.3.5' })
     expect(stored.batches).toHaveLength(2)
+
+    await page.locator('.advanced-section > summary').click()
+    const browser = page.locator('.pool-browser')
+    await browser.locator('select').first().selectOption({ label: '原版迁移内容' })
+    await browser.locator('select').nth(1).selectOption('pool.legacy.7ba36261-846a-4e5b-bdcf-8e0612794350')
+    await browser.getByRole('button', { name: '投掷当前池' }).click()
+    await expect(browser.locator('.pool-result small')).toContainText('等级')
+    await page.locator('.advanced-section > summary').click()
+
     await page.reload()
     await expect(page.locator('.result-panel p')).toHaveText(firstResult ?? '')
 

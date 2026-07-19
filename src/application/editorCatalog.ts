@@ -11,11 +11,13 @@ import type {
 export const numericFacts: readonly NumericFactKey[] = [
   'actor.age', 'actor.level', 'actor.max-level', 'beast.cultivation',
   'timeline.tang-age', 'progression.ring-count', 'progression.combat-power',
+  'progression.negative-story-count', 'progression.combat-story-count',
 ]
 
 export const collectionFacts: readonly CollectionFactKey[] = [
   'actor.martial-souls', 'actor.traits', 'actor.domains', 'actor.soul-bones',
-  'actor.beast-types', 'actor.beast-species', 'actor.beast-areas', 'story.completed-nodes',
+  'actor.beast-types', 'actor.beast-species', 'actor.beast-areas', 'actor.beast-bloodlines',
+  'story.completed-nodes',
 ]
 
 export const scalarFacts: readonly FactKey[] = [

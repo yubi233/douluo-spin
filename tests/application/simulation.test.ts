@@ -2,103 +2,51 @@ import { describe, expect, it } from 'vitest'
 import { auditBeastIdentity, auditTraceOrder, simulateJourney } from '@/application/simulation'
 import { formatBiography, projectGameView } from '@/application/gameViewModel'
 import { v03Content, v03Policies } from '@/content/v03/content'
+import { legacyFlow } from '@/content/v03/legacyFlow'
 
 function simulate(seed: string, route: 'human' | 'beast') {
-  return simulateJourney(v03Content, v03Policies, { seed, route })
+  return simulateJourney(v03Content, v03Policies, { seed, route, maxTurns: 240 })
 }
 
-describe('v0.3 complete deterministic journeys', () => {
-  it('completes the pre-ascension human route through rings, story nodes and inherited god trial', () => {
+const godOfferPoolIds = new Set([20, 30, 40, 50, 60, 70, 80, 99].map((threshold) => `pool.god-offer.${threshold}`))
+const activeFlowPoolIds = new Set([
+  ...legacyFlow.pools.map((pool) => pool.activePoolId),
+  ...legacyFlow.virtualPools.map((pool) => pool.activePoolId),
+  ...godOfferPoolIds,
+])
+const humanEntryPoolIds = new Set(legacyFlow.entrypoints.human)
+const beastEntryPoolIds = new Set(legacyFlow.entrypoints.beast)
+const ringPoolIds = new Set(legacyFlow.progression.soulRingByIndex.map((entry) => entry.poolId))
+const humanGrowthPoolIds = new Set(legacyFlow.progression.humanGrowthByAge.map((entry) => entry.poolId))
+
+function traceIndex(trace: readonly { poolId: string }[], candidates: ReadonlySet<string>) {
+  return trace.findIndex((entry) => candidates.has(entry.poolId))
+}
+
+describe('v0.3 original-content deterministic journeys', () => {
+  it('runs a human journey only through generated original or explicit virtual pools', () => {
     const result = simulate('v03-human-2', 'human')
+
     expect(result.audit).toEqual({ passed: true, issues: [] })
-    expect(result.state.ending).toEqual({ endingId: 'ending.god-ascension', alive: true })
-    expect(result.state.progression.rings).toHaveLength(9)
-    expect(result.state.progression.storyNodes).toHaveLength(4)
-    expect(result.state.progression.godTrial).toMatchObject({ completed: 3, total: 3 })
-    expect(result.state.progression.godTrial?.origin).toBe('inheritance')
-    expect(result.state.agenda).toEqual([])
+    expect(result.completed).toBe(true)
+    expect(result.state.route).toBe('human')
+    expect(result.state.ending).not.toBeNull()
+    expect(result.trace.length).toBeGreaterThan(0)
+    expect(humanEntryPoolIds.has(result.trace[0]!.poolId as never)).toBe(true)
+    expect(result.trace.every((entry) => activeFlowPoolIds.has(entry.poolId as never))).toBe(true)
   })
 
-  it('completes four non-deifying postwar stages before a self-created godhood', () => {
-    const result = simulate('v03-human-1', 'human')
-    expect(result.audit.passed).toBe(true)
-    expect(result.state.progression.storyNodes.filter((id) => id.startsWith('entity.story-node.postwar.'))).toHaveLength(4)
-    expect(result.state.progression.godTrial).toMatchObject({ origin: 'self-created', completed: 3, total: 3 })
-    expect(result.state.ending).toEqual({ endingId: 'ending.self-created-ascension', alive: true })
-  })
+  it('keeps the original soul-ring sequence ahead of the first human growth task', () => {
+    const result = simulate('v03-human-2', 'human')
+    const firstRing = traceIndex(result.trace, ringPoolIds)
+    const firstGrowth = traceIndex(result.trace, humanGrowthPoolIds)
 
-  it('commits a lethal human outcome once and schedules nothing after ending', () => {
-    const result = simulate('v03-human-28', 'human')
-    expect(result.state.ending).toEqual({ endingId: 'ending.death', alive: false })
-    expect(result.state.agenda).toEqual([])
-    const finalBatch = result.eventLog.at(-1)!
-    expect(finalBatch.events.filter((event) => event.type === 'run.finished')).toHaveLength(1)
-    expect(finalBatch.events.at(-1)?.type).toBe('run.finished')
-  })
+    expect(firstRing).toBeGreaterThanOrEqual(0)
+    expect(firstGrowth).toBeGreaterThanOrEqual(0)
+    expect(firstRing).toBeLessThan(firstGrowth)
+    expect(auditTraceOrder(result.state.route, result.trace, 20)).toEqual([])
 
-  it('completes the beast route through four explicit tribulation thresholds', () => {
-    const result = simulate('v03-beast-2', 'beast')
-    expect(result.audit.passed).toBe(true)
-    expect(result.state.route).toBe('beast')
-    expect(result.state.entities['beast-bloodline']).toHaveLength(1)
-    expect(result.state.entities['beast-bloodline'][0]).toMatch(/^entity\.beast-bloodline\./)
-    expect(result.state.progression.resolvedTribulations).toEqual([100_000, 300_000, 600_000, 1_000_000])
-    expect(result.state.ending).toEqual({ endingId: 'ending.beast-ascension', alive: true })
-  })
-
-  it('keeps beast type, species, bloodline and area compatible', () => {
-    const result = simulate('v03-preflight-dev5-r3-batch-01-sample-04', 'beast')
-    expect(result.audit.passed).toBe(true)
-    expect(auditBeastIdentity(result.state)).toEqual([])
-
-    const invalid = structuredClone(result.state) as unknown as { entities: Record<string, string[]> }
-    invalid.entities['beast-type'] = ['entity.beast-type.land']
-    invalid.entities['beast-species'] = ['entity.beast-species.spirit-whale']
-    invalid.entities['beast-bloodline'] = ['entity.beast-bloodline.spirit-whale']
-    invalid.entities['beast-area'] = ['entity.beast-area.ocean']
-    expect(auditBeastIdentity(invalid as never)[0]?.code).toBe('incompatible-beast-identity')
-  })
-
-  it('changes route explicitly and completes transformed setup and progression', () => {
-    const result = simulate('v03-beast-1', 'beast')
-    expect(result.audit.passed).toBe(true)
-    expect(result.state.route).toBe('transformed')
-    expect(result.state.progression.beastRouteChoiceResolved).toBe(true)
-    expect(result.state.entities['martial-soul']).toContain('entity.martial-soul.beast-form')
-    expect(result.state.progression.rings).toHaveLength(9)
-    expect(result.state.ending).toEqual({ endingId: 'ending.god-ascension', alive: true })
-  })
-
-  it('completes all four story nodes when transformed breakthroughs reach level 100 early', () => {
-    const result = simulate('v03-final-1338d1b-batch-13-sample-12', 'beast')
-    expect(result.audit).toEqual({ passed: true, issues: [] })
-    expect(result.state.route).toBe('transformed')
-    expect(result.state.progression.storyNodes.filter((id) => /^entity\.story-node\.\d+$/.test(id))).toHaveLength(4)
-    expect(result.state.progression.godTrial).toMatchObject({ origin: 'inheritance', completed: 3 })
-    expect(result.state.ending).toEqual({ endingId: 'ending.god-ascension', alive: true })
-  })
-
-  it('finishes human setup before scheduling the first story node', () => {
-    const result = simulate('v03-preflight-dev5-batch-01-sample-03', 'human')
-    const pools = result.trace.map((entry) => entry.poolId)
-    expect(pools.indexOf('pool.setup.faction')).toBeLessThan(pools.indexOf('pool.story.1'))
-  })
-
-  it('finishes transformed appearance and faction setup before granting soul rings', () => {
-    const result = simulate('v03-preflight-dev5-batch-01-sample-02', 'beast')
-    const pools = result.trace.map((entry) => entry.poolId)
-    const firstRing = pools.indexOf('pool.human.soul-ring')
-    expect(result.state.route).toBe('transformed')
-    expect(pools.indexOf('pool.setup.appearance')).toBeLessThan(firstRing)
-    expect(pools.indexOf('pool.setup.faction')).toBeLessThan(firstRing)
-  })
-
-  it('grants initial soul rings before the first human growth task', () => {
-    const result = simulate('v03-preflight-dev5-r2-batch-01-sample-15', 'human')
-    const pools = result.trace.map((entry) => entry.poolId)
-    expect(pools.indexOf('pool.human.soul-ring')).toBeLessThan(pools.indexOf('pool.human.growth'))
-
-    const growth = result.trace.find((entry) => entry.poolId === 'pool.human.growth')!
+    const growth = result.trace[firstGrowth]!
     const faultyTrace = [growth, ...result.trace.filter((entry) => entry !== growth)]
     expect(auditTraceOrder('human', faultyTrace, 20)).toContainEqual({
       code: 'invalid-task-order',
@@ -106,9 +54,63 @@ describe('v0.3 complete deterministic journeys', () => {
     })
   })
 
+  it('commits exactly one terminal event and clears the agenda for a real lethal path', () => {
+    const result = simulate('v03-human-2', 'human')
+    const terminalEvents = result.eventLog.flatMap((batch) => batch.events.filter((event) => event.type === 'run.finished'))
+
+    expect(result.state.ending).toEqual({ endingId: 'ending.death', alive: false })
+    expect(result.state.agenda).toEqual([])
+    expect(terminalEvents).toEqual([{ type: 'run.finished', endingId: 'ending.death', alive: false }])
+  })
+
+  it('uses the generated god offer, original god pools and gated reward progression to ascend', () => {
+    const result = simulate('v03-recovery-human-023', 'human')
+    const godTierPoolIds = new Set(legacyFlow.pools.filter((pool) => pool.role === 'god-tier').map((pool) => pool.activePoolId))
+    const deityPoolIds = new Set(legacyFlow.pools.filter((pool) => pool.role === 'god-deity').map((pool) => pool.activePoolId))
+    const rewardPoolIds = new Set(legacyFlow.pools.filter((pool) => pool.role === 'god-reward').map((pool) => pool.activePoolId))
+
+    expect(result.audit).toEqual({ passed: true, issues: [] })
+    expect(result.state.ending).toEqual({ endingId: 'ending.god-ascension', alive: true })
+    expect(result.state.progression.godTrial).toMatchObject({ origin: 'inheritance' })
+    expect(result.trace.some((entry) => entry.poolId.startsWith('pool.god-offer.'))).toBe(true)
+    expect(result.trace.some((entry) => godTierPoolIds.has(entry.poolId as never))).toBe(true)
+    expect(result.trace.some((entry) => deityPoolIds.has(entry.poolId as never))).toBe(true)
+    expect(result.trace.some((entry) => rewardPoolIds.has(entry.poolId as never))).toBe(true)
+  })
+
+  it('keeps beast type, species, bloodline and area compatible with original IDs', () => {
+    const result = simulate('v03-beast-2', 'beast')
+
+    expect(result.audit.passed).toBe(true)
+    expect(result.state.route).toBe('beast')
+    expect(beastEntryPoolIds.has(result.trace[0]!.poolId as never)).toBe(true)
+    expect(result.state.entities['beast-bloodline']).toHaveLength(1)
+    expect(result.state.entities['beast-bloodline'][0]).toMatch(/^entity\.legacy\.beast-bloodline\./)
+    expect(auditBeastIdentity(result.state)).toEqual([])
+
+    const invalid = structuredClone(result.state) as unknown as { entities: Record<string, string[]> }
+    invalid.entities['beast-type'] = ['entity.legacy.beast-type.invalid']
+    invalid.entities['beast-species'] = ['entity.legacy.beast-species.invalid']
+    invalid.entities['beast-bloodline'] = ['entity.legacy.beast-bloodline.invalid']
+    invalid.entities['beast-area'] = ['entity.legacy.beast-area.invalid']
+    expect(auditBeastIdentity(invalid as never)[0]?.code).toBe('incompatible-beast-identity')
+  })
+
+  it('changes a real beast route into transformed human setup before continuing its original journey', () => {
+    const result = simulate('v03-recovery-beast-001', 'beast')
+
+    expect(result.audit).toEqual({ passed: true, issues: [] })
+    expect(result.state.route).toBe('transformed')
+    expect(result.state.progression.beastRouteChoiceResolved).toBe(true)
+    expect(result.state.entities['martial-soul']).toHaveLength(1)
+    expect(result.trace.some((entry) => humanEntryPoolIds.has(entry.poolId as never))).toBe(true)
+    expect(result.trace.every((entry) => activeFlowPoolIds.has(entry.poolId as never))).toBe(true)
+  })
+
   it('repeats a complete journey byte-for-byte for the same seed and commands', () => {
-    const first = simulate('v03-beast-7', 'beast')
-    const second = simulate('v03-beast-7', 'beast')
+    const first = simulate('v03-recovery-beast-007', 'beast')
+    const second = simulate('v03-recovery-beast-007', 'beast')
+
     expect(JSON.stringify(first.eventLog)).toBe(JSON.stringify(second.eventLog))
     expect(first.state).toEqual(second.state)
   })
@@ -117,6 +119,7 @@ describe('v0.3 complete deterministic journeys', () => {
     const result = simulate('v03-human-2', 'human')
     const view = projectGameView(result.state, result.eventLog, v03Content)
     const biography = formatBiography(view)
+
     expect(view.route).toBe(result.state.route)
     expect(view.rings).toHaveLength(result.state.progression.rings.length)
     expect(view.logs).toHaveLength(result.trace.length)

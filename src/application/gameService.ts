@@ -19,11 +19,13 @@ import { humanProgressionProcess } from '@/core/processes/humanProgressionProces
 import { postwarStoryProcess } from '@/core/processes/postwarStoryProcess'
 import { settleProcesses, type ProcessManager } from '@/core/processes/processManager'
 import { soulRingProcess } from '@/core/processes/soulRingProcess'
+import { seaGodProcess } from '@/core/processes/seaGodProcess'
 import { storyTimelineProcess } from '@/core/processes/storyTimelineProcess'
-import { hashSeed, nextRandom } from '@/core/random/random'
+import { hashSeed } from '@/core/random/random'
 import { applyBatch, createInitialGameState } from '@/core/reducer/reducer'
 import { canExecuteCommand } from '@/core/statechart/gameLifecycle'
 import type { PolicyRegistry } from '@/core/rules/evaluate'
+import { calculateCombatPower } from '@/core/rules/combatPower'
 
 export class GameService {
   #state: GameState
@@ -36,6 +38,7 @@ export class GameService {
       characterSetupProcess,
       soulRingProcess,
       storyTimelineProcess,
+      seaGodProcess,
       humanProgressionProcess,
       postwarStoryProcess,
       beastCultivationProcess,
@@ -82,11 +85,13 @@ export class GameService {
   }
 
   private start(command: Extract<GameCommand, { type: 'run.start' }>): CommandReceipt {
-    const resolvedRoute: Route = command.route === 'random' ? (nextRandom(hashSeed(command.seed)).value < 0.5 ? 'human' : 'beast') : command.route
+    // Random runs use the human setup state only as a statechart host. The
+    // original race pool selects the actual route before setup continues.
+    const resolvedRoute: Route = command.route === 'random' ? 'human' : command.route
     if (!canExecuteCommand(this.#state.phase, command, resolvedRoute)) throw new InvalidCommandError(command.type, this.#state.phase)
     const rng = hashSeed(command.seed)
     return this.commit(command, [
-      { type: 'run.started', route: resolvedRoute, seed: command.seed },
+      { type: 'run.started', route: resolvedRoute, requestedRoute: command.route, seed: command.seed },
       { type: 'phase.changed', from: this.#state.phase, to: resolvedRoute === 'beast' ? 'setup.beast' : resolvedRoute === 'transformed' ? 'setup.transformed' : 'setup.human' },
     ], rng)
   }
@@ -97,7 +102,7 @@ export class GameService {
     if (!task) throw new InvalidCommandError(`${command.type}:no-task`, this.#state.phase)
     const pool = this.content.mechanics.pools.get(task.poolId)
     if (!pool) throw new Error(`Unknown pool ${task.poolId}`)
-    const result = draw(pool, this.#state, this.policies)
+    const result = draw(pool, this.#state, this.policies, task.candidateOptionIds)
     const option = pool.options.find((candidate) => candidate.id === result.candidate.optionId)!
     const events: DomainEvent[] = [
       { type: 'option.selected', poolId: pool.id, optionId: option.id, probability: result.candidate.probability },
@@ -134,13 +139,21 @@ export class GameService {
 
   private commit(command: GameCommand, initialEvents: readonly DomainEvent[], rngAfter: number): CommandReceipt {
     const settled = settleProcesses(this.#state, initialEvents, this.managers)
+    const events: readonly DomainEvent[] = settled.state.route == null
+      ? settled.events
+      : [...settled.events, {
+        type: 'combat-power.recalculated' as const,
+        before: this.#state.progression.combatPower,
+        after: calculateCombatPower(settled.state),
+        trigger: command.type,
+      }]
     const batch: EventBatch = {
       turnId: turnId(`turn.${String(this.#batches.length + 1).padStart(6, '0')}`),
       command: command.type,
       contentVersion: this.content.manifest.contentVersion,
       rngBefore: this.#state.random.state,
       rngAfter,
-      events: settled.events,
+      events,
     }
     const nextState = applyBatch(this.#state, batch)
     this.#batches = [...this.#batches, batch]

@@ -17,7 +17,9 @@ export function compileEffects(
     switch (effect.type) {
       case 'stat.change': {
         const before = projected.stats[effect.stat]
-        event = { type: 'stat.changed', stat: effect.stat, before, after: clampStatValue(effect.stat, before + evaluateNumber(effect.delta, projected, policies)) }
+        const rawAfter = before + evaluateNumber(effect.delta, projected, policies)
+        const limitedAfter = effect.stat === 'level' ? Math.min(rawAfter, projected.stats['max-level']) : rawAfter
+        event = { type: 'stat.changed', stat: effect.stat, before, after: clampStatValue(effect.stat, limitedAfter) }
         break
       }
       case 'entity.grant': {

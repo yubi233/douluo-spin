@@ -1,7 +1,7 @@
 {
   "name": "douluo-spin",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.3.9",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3005",
@@ -9,10 +9,12 @@
     "build": "vue-tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json && vite build",
     "architecture:validate": "vite-node scripts/validate-v03-architecture.ts",
     "content:validate": "vite-node scripts/validate-v03-content.ts",
+    "content:migrate": "vite-node scripts/migrate-v03-legacy-content.ts",
     "test": "vitest run tests",
     "test:core": "vitest run tests/core tests/application tests/content",
     "test:watch": "vitest",
     "simulate:long": "vite-node scripts/run-long-simulation.ts",
+    "simulate:recovery": "vite-node scripts/run-recovery-simulation.ts",
     "test:e2e": "playwright test",
     "test:verify": "npm run content:validate && npm test && npm run build && npm run architecture:validate && npm run test:e2e"
   },
