@@ -39,12 +39,12 @@ const copyTitle = computed(() => {
       >
         <Copy :size="18" />
       </button>
-      <button class="icon-button export-button" title="导出人物传记" :aria-label="copyTitle" @click="emit('export')"><Download :size="18" /></button>
+      <button class="icon-button export-button" title="导出人物传记" aria-label="导出人物传记" @click="emit('export')"><Download :size="18" /></button>
     </div>
     <div class="timeline">
       <article v-for="entry in filtered" :key="entry.id" class="timeline-entry" :data-tone="entry.tone">
         <i aria-hidden="true" />
-        <div><header><strong>{{ entry.title }}</strong><time>{{ entry.time }}</time></header><p>{{ entry.text }}</p></div>
+        <div><header><strong>{{ entry.title }}</strong><time>{{ entry.time }}</time></header><small v-if="entry.milestone" class="timeline-milestone">{{ entry.milestone }}</small><p>{{ entry.text }}</p></div>
       </article>
       <p v-if="!filtered.length" class="empty-state">还没有符合条件的命运纪事。</p>
     </div>

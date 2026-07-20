@@ -1,6 +1,8 @@
 import type { Candidate } from '@/core/draw/draw'
 import type { CombatPowerSnapshot, CompiledContent, EffectSpec, EventBatch, GameState, MechanicsOption, Predicate } from '@/core/model/contracts'
+import { applyBatch, createInitialGameState } from '@/core/reducer/reducer'
 import { calculateCombatPower } from '@/core/rules/combatPower'
+import { DOULUO_CALENDAR_MILESTONES, douluoMilestoneAtTangAge, formatDouluoDate } from '@/core/rules/douluoCalendar'
 import { highestLegacyMartialSoulTier, legacyMartialSoulTier } from '@/content/v03/legacyMartialSoulRules'
 
 export interface WheelOptionView {
@@ -35,6 +37,7 @@ export interface ChronicleView {
   readonly text: string
   readonly tone: 'normal' | 'good' | 'bad' | 'major'
   readonly time: string
+  readonly milestone: string
 }
 
 export interface GameViewModel {
@@ -81,14 +84,19 @@ const martialSoulTierLabels: Readonly<Record<number, string>> = {
 }
 
 function timeLabel(state: GameState): string {
-  const age = state.stats['tang-age']
-  return age < 0 ? `唐三出生前 ${Math.abs(age)} 年` : `唐三 ${age} 岁`
+  return formatDouluoDate(state.stats['tang-age'])
 }
 
 export function projectChronicle(state: GameState, batches: readonly EventBatch[], content: CompiledContent): ChronicleView[] {
+  let projectedState = createInitialGameState(state.contentVersion)
+  const markedMilestones = new Set<number>()
   return batches.flatMap((batch, index) => {
+    projectedState = applyBatch(projectedState, batch)
     const selected = batch.events.find((event) => event.type === 'option.selected')
     if (!selected || selected.type !== 'option.selected') return []
+    const milestone = douluoMilestoneAtTangAge(projectedState.stats['tang-age'])
+    const milestoneTitle = milestone && !markedMilestones.has(milestone.tangAge) ? milestone.title : ''
+    if (milestone) markedMilestones.add(milestone.tangAge)
     const finished = batch.events.find((event) => event.type === 'run.finished')
     const hasProgress = batch.events.some((event) => event.type === 'stat.changed' || event.type === 'entity.granted')
     const tone = finished && finished.type === 'run.finished' ? (finished.alive ? 'major' : 'bad') : hasProgress ? 'good' : 'normal'
@@ -98,7 +106,8 @@ export function projectChronicle(state: GameState, batches: readonly EventBatch[
       title: content.presentation.pools.get(selected.poolId)?.title ?? selected.poolId,
       text: content.presentation.options.get(selected.optionId)?.title ?? selected.optionId,
       tone,
-      time: timeLabel(state),
+      time: timeLabel(projectedState),
+      milestone: milestoneTitle,
     } satisfies ChronicleView]
   })
 }
@@ -203,6 +212,7 @@ export function formatBiography(view: GameViewModel): string {
     `命运种子：${view.seed}`,
     `路线：${view.route ?? '未开始'}`,
     `终局：${view.ending || '旅程进行中'}`,
+    `当前历法：${formatDouluoDate(view.tangAge ?? 0)}`,
     `等级/修为：${view.beast ? `${view.beast.cultivation}年` : `${view.level}级`}`,
     `武魂/本体：${view.beast ? view.beast.species : view.martialSoulDetails.map((soul) => `${soul.title}【${soul.tierLabel}】`).join('、') || '未觉醒'}`,
     ...(view.beast ? [] : [`最高武魂阶位：${view.martialSouls.length ? martialSoulTierLabels[view.highestMartialSoulTier] : '无'}`]),
@@ -214,8 +224,11 @@ export function formatBiography(view: GameViewModel): string {
       `战力构成：等级 ${formatCombatPart(combat.levelBase)} + 魂环 ${formatCombatPart(combat.ringPower)} + 武魂 ${formatCombatPart(combat.martialSoulPower)} + 领域 ${formatCombatPart(combat.domainPower)} + 魂骨 ${formatCombatPart(combat.soulBonePower)}；天赋系数 ${formatCombatPart(combat.talentCoefficient)}，战斗称号系数 ${formatCombatPart(combat.battleTraitCoefficient)}`,
     ]),
     '',
+    '## 斗罗历关键节点',
+    ...DOULUO_CALENDAR_MILESTONES.map((milestone) => `- ${formatDouluoDate(milestone.tangAge)}：${milestone.title}`),
+    '',
     '## 命运纪事',
-    ...view.logs.flatMap((entry) => ['', `### 第${entry.step}回 · ${entry.title}`, entry.text]),
+    ...view.logs.flatMap((entry) => ['', `### 第${entry.step}回 · ${entry.time}${entry.milestone ? ` · ${entry.milestone}` : ''} · ${entry.title}`, entry.text]),
   ].join('\n')
 }
 
