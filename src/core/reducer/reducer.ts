@@ -111,6 +111,14 @@ export function reduceEvent(state: GameState, event: DomainEvent): GameState {
           ? [event.task, ...state.agenda]
           : [...state.agenda, event.task],
       }
+    case 'task.reroll-prepared':
+      if (!state.agenda.some((task) => task.id === event.taskId)) throw new Error(`Unknown reroll task ${event.taskId}`)
+      return {
+        ...state,
+        agenda: state.agenda.map((task) => task.id === event.taskId
+          ? { ...task, rerollExcludedOptionId: event.excludedOptionId }
+          : task),
+      }
     case 'task.completed':
       return { ...state, agenda: state.agenda.filter((task) => task.id !== event.taskId) }
     case 'phase.changed':

@@ -53,7 +53,11 @@ function refreshWheel(reset = true) {
     return
   }
   const mechanics = contentService.content.mechanics.pools.get(task.poolId)
-  const candidates = mechanics ? candidateDistribution(mechanics, gameService.state, v03Policies) : []
+  const allowed = task.candidateOptionIds ? new Set(task.candidateOptionIds) : null
+  const candidateOptionIds = mechanics?.options
+    .filter((option) => (!allowed || allowed.has(option.id)) && option.id !== task.rerollExcludedOptionId)
+    .map((option) => option.id)
+  const candidates = mechanics ? candidateDistribution(mechanics, gameService.state, v03Policies, candidateOptionIds) : []
   const projected = projectPool(contentService.content, task.poolId, candidates)
   wheelTask.value = projected ? { id: task.id, poolId: task.poolId, pool: projected.name, process: task.process } : null
   wheelPool.value = projected

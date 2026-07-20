@@ -2,15 +2,16 @@ import { describe, expect, it } from 'vitest'
 import { GameService } from '@/application/gameService'
 import { v03Content, v03Policies } from '@/content/v03/content'
 import { legacyFlow, legacyOptionSemantic, legacyPoolForRole, legacyPoolsForRole } from '@/content/v03/legacyFlow'
-import { candidateDistribution } from '@/core/draw/draw'
+import { candidateDistribution, draw } from '@/core/draw/draw'
 import { compileEffects } from '@/core/effects/compileEffects'
-import { entityId, signalId } from '@/core/ids'
-import type { CompiledContent, DomainEvent, EffectSpec, GameCommand } from '@/core/model/contracts'
+import { entityId, signalId, turnId } from '@/core/ids'
+import type { CompiledContent, DomainEvent, EffectSpec, EventBatch, GameCommand } from '@/core/model/contracts'
 import { ProcessCycleError, UnhandledEffectError } from '@/core/model/errors'
 import { characterSetupProcess } from '@/core/processes/characterSetupProcess'
 import { humanProgressionProcess } from '@/core/processes/humanProgressionProcess'
 import { settleProcesses, type ProcessManager } from '@/core/processes/processManager'
 import { createInitialGameState, reduceEvents } from '@/core/reducer/reducer'
+import { nextRandom } from '@/core/random/random'
 import { canExecuteCommand, gameLifecycleMachine } from '@/core/statechart/gameLifecycle'
 
 function createService() {
@@ -358,7 +359,7 @@ describe('v0.3 setup walking skeleton', () => {
     for (let remaining = 2; remaining >= 0; remaining -= 1) {
       const receipt = service.dispatch({ type: 'turn.undo' })
       expect(service.state.turn).toBe(remaining)
-      expect(receipt.batch).toMatchObject({ command: 'turn.undo', events: [] })
+      expect(receipt.batch).toMatchObject({ command: 'turn.undo' })
     }
     const redrawn = Array.from({ length: 3 }, () => service.dispatch({ type: 'turn.spin' }))
     expect(redrawn[0]?.draw?.optionId).not.toBe(originals[0]?.draw?.optionId)
@@ -366,6 +367,48 @@ describe('v0.3 setup walking skeleton', () => {
     const restored = createService()
     restored.restore(service.eventLog)
     expect(restored.state).toEqual(service.state)
+  })
+
+  it('forces a true redraw when the previous option rounds to full probability', () => {
+    let service = createService()
+    start(service, 'reroll-diagnostic-17')
+
+    for (let step = 0; step < 9; step += 1) {
+      service.dispatch({ type: 'turn.spin' })
+      const remaining = service.eventLog.slice(0, -1)
+      const restored = createService()
+      restored.restore(remaining)
+      const task = restored.state.agenda[0]!
+      const pool = v03Content.mechanics.pools.get(task.poolId)!
+      let rngAfter = nextRandom(restored.state.random.state).state
+      for (let attempt = 0; attempt < 256; attempt += 1) {
+        const preview = draw(pool, { ...restored.state, random: { ...restored.state.random, state: rngAfter } }, v03Policies, task.candidateOptionIds)
+        if (preview.candidate.optionId !== service.eventLog.at(-1)?.events.find((event) => event.type === 'option.selected')?.optionId) break
+        rngAfter = preview.nextRng
+      }
+      const undoBatch: EventBatch = {
+        turnId: turnId(`turn.${String(remaining.length + 1).padStart(6, '0')}`),
+        command: 'turn.undo',
+        contentVersion: v03Content.manifest.contentVersion,
+        rngBefore: restored.state.random.state,
+        rngAfter,
+        events: [],
+      }
+      restored.restore([...remaining, undoBatch])
+      restored.dispatch({ type: 'turn.spin' })
+      service = restored
+    }
+
+    const original = service.dispatch({ type: 'turn.spin' })
+    const undo = service.dispatch({ type: 'turn.undo' })
+    const redrawn = service.dispatch({ type: 'turn.spin' })
+
+    expect(original.draw?.probability).toBe(1)
+    expect(undo.batch?.events).toContainEqual(expect.objectContaining({
+      type: 'task.reroll-prepared',
+      excludedOptionId: original.draw?.optionId,
+    }))
+    expect(redrawn.draw?.optionId).not.toBe(original.draw?.optionId)
   })
 })
 

@@ -216,6 +216,7 @@ export interface Task {
   /** Mirrors v0.2 queue.unshift() for setup branches that must resolve first. */
   readonly priority?: 'front'
   readonly candidateOptionIds?: readonly OptionId[]
+  readonly rerollExcludedOptionId?: OptionId
   readonly payload?: JsonObject
 }
 
@@ -250,6 +251,7 @@ export type DomainEvent =
   | { readonly type: 'time.advanced'; readonly before: number; readonly after: number }
   | { readonly type: 'signal.emitted'; readonly signalId: SignalId; readonly payload?: JsonObject }
   | { readonly type: 'task.scheduled'; readonly task: Task }
+  | { readonly type: 'task.reroll-prepared'; readonly taskId: string; readonly excludedOptionId: OptionId }
   | { readonly type: 'task.completed'; readonly taskId: string }
   | { readonly type: 'phase.changed'; readonly from: GamePhase; readonly to: GamePhase }
   | { readonly type: 'route.changed'; readonly from: Route; readonly to: Route }

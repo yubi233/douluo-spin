@@ -1,4 +1,4 @@
-import { turnId } from '@/core/ids'
+import { turnId, type OptionId } from '@/core/ids'
 import type {
   CommandReceipt,
   CompiledContent,
@@ -6,10 +6,11 @@ import type {
   EventBatch,
   GameCommand,
   GameState,
+  MechanicsPool,
   Route,
 } from '@/core/model/contracts'
 import { InvalidCommandError } from '@/core/model/errors'
-import { draw } from '@/core/draw/draw'
+import { candidateDistribution, draw } from '@/core/draw/draw'
 import { compileEffects } from '@/core/effects/compileEffects'
 import { characterSetupProcess } from '@/core/processes/characterSetupProcess'
 import { beastCultivationProcess } from '@/core/processes/beastCultivationProcess'
@@ -102,7 +103,8 @@ export class GameService {
     if (!task) throw new InvalidCommandError(`${command.type}:no-task`, this.#state.phase)
     const pool = this.content.mechanics.pools.get(task.poolId)
     if (!pool) throw new Error(`Unknown pool ${task.poolId}`)
-    const result = draw(pool, this.#state, this.policies, task.candidateOptionIds)
+    const candidateOptionIds = this.drawCandidateOptionIds(pool, task.candidateOptionIds, task.rerollExcludedOptionId)
+    const result = draw(pool, this.#state, this.policies, candidateOptionIds)
     const option = pool.options.find((candidate) => candidate.id === result.candidate.optionId)!
     const events: DomainEvent[] = [
       { type: 'option.selected', poolId: pool.id, optionId: option.id, probability: result.candidate.probability },
@@ -135,34 +137,40 @@ export class GameService {
     const removedBatch = this.#batches[index]!
     this.#batches = this.#batches.slice(0, index)
     this.#state = this.#batches.reduce(applyBatch, createInitialGameState(this.content.manifest.contentVersion))
-    const rngAfter = this.rerollState(removedBatch)
+    const reroll = this.prepareReroll(removedBatch)
     const batch: EventBatch = {
       turnId: turnId(`turn.${String(this.#batches.length + 1).padStart(6, '0')}`),
       command: command.type,
       contentVersion: this.content.manifest.contentVersion,
       rngBefore: this.#state.random.state,
-      rngAfter,
-      events: [],
+      rngAfter: nextRandom(this.#state.random.state).state,
+      events: reroll ? [reroll] : [],
     }
     this.#state = applyBatch(this.#state, batch)
     this.#batches = [...this.#batches, batch]
     return { batch: structuredClone(batch) }
   }
 
-  private rerollState(removedBatch: EventBatch): number {
+  private prepareReroll(removedBatch: EventBatch): Extract<DomainEvent, { type: 'task.reroll-prepared' }> | null {
     const previous = removedBatch.events.find((event) => event.type === 'option.selected')
     const task = this.#state.agenda[0]
     const pool = task ? this.content.mechanics.pools.get(task.poolId) : undefined
-    const firstSkippedState = nextRandom(this.#state.random.state).state
-    if (!previous || previous.type !== 'option.selected' || !task || !pool || pool.id !== previous.poolId) return firstSkippedState
+    if (!previous || previous.type !== 'option.selected' || !task || !pool || pool.id !== previous.poolId) return null
+    const alternatives = candidateDistribution(pool, this.#state, this.policies, task.candidateOptionIds)
+      .filter((candidate) => candidate.optionId !== previous.optionId)
+    if (alternatives.length === 0) return null
+    return { type: 'task.reroll-prepared', taskId: task.id, excludedOptionId: previous.optionId }
+  }
 
-    let candidateState = firstSkippedState
-    for (let attempt = 0; attempt < 256; attempt += 1) {
-      const preview = draw(pool, { ...this.#state, random: { ...this.#state.random, state: candidateState } }, this.policies, task.candidateOptionIds)
-      if (preview.candidate.optionId !== previous.optionId) return candidateState
-      candidateState = preview.nextRng
-    }
-    return firstSkippedState
+  private drawCandidateOptionIds(
+    pool: MechanicsPool,
+    candidateOptionIds?: readonly OptionId[],
+    excludedOptionId?: OptionId,
+  ): readonly OptionId[] {
+    const allowed = candidateOptionIds ? new Set(candidateOptionIds) : null
+    return pool.options
+      .filter((option) => (!allowed || allowed.has(option.id)) && option.id !== excludedOptionId)
+      .map((option) => option.id)
   }
 
   private commit(command: GameCommand, initialEvents: readonly DomainEvent[], rngAfter: number): CommandReceipt {
