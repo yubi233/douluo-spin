@@ -30,12 +30,21 @@ export const storyTimelineProcess: ProcessManager = {
       && !state.progression.scheduledStoryMilestones.includes(`${plan.branch}@${entry.atTangAge}`),
     )
     if (!plan || !milestone) return []
+    const timelineGrowth = legacyFlow.progression.humanGrowthByTangAge.find((entry) =>
+      entry.branch === plan.branch
+      && state.stats['tang-age'] >= entry.minTangAge
+      && state.stats['tang-age'] < entry.maxTangAge,
+    )
     return [
       { type: 'story.milestone-scheduled', branch: plan.branch, atTangAge: milestone.atTangAge },
       ...milestone.poolIds.map((poolId) => ({
         type: 'task.scheduled' as const,
         task: task(`story.${plan.branch}.${milestone.atTangAge}.${poolId}`, poolId, 'story-timeline'),
       })),
+      ...(timelineGrowth ? [{
+        type: 'task.scheduled' as const,
+        task: task(`story.${plan.branch}.${milestone.atTangAge}.growth`, timelineGrowth.poolId, 'story-timeline'),
+      }] : []),
     ]
   },
 }

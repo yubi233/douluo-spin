@@ -14,7 +14,7 @@ import { applyBatch, createInitialGameState } from '@/core/reducer/reducer'
 
 type CohortRoute = 'human' | 'beast'
 type JourneyRoute = CohortRoute | 'random'
-type CoverageStatus = 'observed' | 'controlled' | 'blocked'
+type CoverageStatus = 'observed' | 'controlled' | 'composed' | 'blocked'
 
 interface TraceEntry {
   readonly turn: number
@@ -60,6 +60,15 @@ interface ControlledEvidence {
 const cohortSize = 100
 const maxTurns = 240
 const controlledSeedLimit = Number(process.env.RECOVERY_CONTROLLED_SEED_LIMIT ?? 2_000)
+
+function assertCleanWorktree() {
+  const status = execFileSync('git', ['status', '--porcelain=v1', '--untracked-files=all'], { encoding: 'utf8' }).trim()
+  if (status) {
+    throw new Error(`Recovery certification requires a clean worktree before it can bind evidence to a commit:\n${status}`)
+  }
+}
+
+assertCleanWorktree()
 const commit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
 const sourceSha256 = 'a15531384c18d428622596d1d96b645ded8a8d65e14e3d948c1c33ad1c024b1b'
 const generation = process.env.RECOVERY_GENERATION?.trim()
@@ -247,11 +256,20 @@ async function main() {
   const observed = poolHits(runs)
   const controlled = controlledEvidence()
   const originalPools = legacyFlow.pools
+  const composedPoolIds = new Set(originalPools
+    .filter((pool) => pool.title === '兽武魂' || pool.title === '器武魂')
+    .map((pool) => pool.activePoolId))
   const totalDraws = [...observed.values()].reduce((sum, value) => sum + value.draws, 0)
   const frequency = originalPools.map((pool) => {
     const hit = observed.get(pool.activePoolId)
     const controlledProof = controlled.get(pool.activePoolId)
-    const coverageStatus: CoverageStatus = hit ? 'observed' : controlledProof ? 'controlled' : 'blocked'
+    const coverageStatus: CoverageStatus = composedPoolIds.has(pool.activePoolId)
+      ? 'composed'
+      : hit
+        ? 'observed'
+        : controlledProof
+          ? 'controlled'
+          : 'blocked'
     return {
       sourcePoolId: pool.sourcePoolId,
       activePoolId: pool.activePoolId,
@@ -267,6 +285,7 @@ async function main() {
   const coverage = {
     observed: frequency.filter((row) => row.coverageStatus === 'observed').length,
     controlled: frequency.filter((row) => row.coverageStatus === 'controlled').length,
+    composed: frequency.filter((row) => row.coverageStatus === 'composed').length,
     blocked: frequency.filter((row) => row.coverageStatus === 'blocked').length,
     rows: frequency.map((row) => ({ sourcePoolId: row.sourcePoolId, activePoolId: row.activePoolId, coverageStatus: row.coverageStatus })),
   }
@@ -294,7 +313,7 @@ async function main() {
     routes: { human: cohortSize, beast: cohortSize },
     seeds: runs.map((run) => ({ route: run.route, seed: run.seed })),
     staticFidelity: { pools: originalPools.length, sourceSha256 },
-    coverage: { observed: coverage.observed, controlled: coverage.controlled, blocked: coverage.blocked },
+    coverage: { observed: coverage.observed, controlled: coverage.controlled, composed: coverage.composed, blocked: coverage.blocked },
     frequencySha256: sha256(JSON.stringify(frequency)),
     audits: { passed: runs.filter((run) => run.audit.passed).length, total: runs.length, issues: automatedIssues.length },
     godRate: { numerator: godRuns.length, denominator: cohortSize, value: godRate, passed: godRateReport.passed },
@@ -306,7 +325,7 @@ async function main() {
     `- Status: ${manifest.status}`,
     `- Content version: ${v03Content.manifest.contentVersion}`,
     `- Automated runs: ${manifest.audits.passed}/${manifest.audits.total}`,
-    `- Pool coverage: observed ${coverage.observed}, controlled ${coverage.controlled}, blocked ${coverage.blocked}`,
+    `- Pool coverage: observed ${coverage.observed}, controlled ${coverage.controlled}, composed ${coverage.composed}, blocked ${coverage.blocked}`,
     `- Human god rate: ${godRuns.length}/${cohortSize} (${(godRate * 100).toFixed(1)}%)`,
     `- Biography review index: ${biographySamples.length} selected records`,
     '',

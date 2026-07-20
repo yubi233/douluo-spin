@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { GameService } from '@/application/gameService'
 import { v03Content, v03Policies } from '@/content/v03/content'
-import { legacyFlow, legacyOptionSemantic, legacyPoolForRole } from '@/content/v03/legacyFlow'
+import { legacyFlow, legacyOptionSemantic, legacyPoolForRole, legacyPoolsForRole } from '@/content/v03/legacyFlow'
 import { candidateDistribution } from '@/core/draw/draw'
 import { compileEffects } from '@/core/effects/compileEffects'
 import { entityId, signalId } from '@/core/ids'
@@ -108,9 +108,11 @@ describe('v0.3 setup walking skeleton', () => {
       expect(receipt.batch?.events.some((event) => event.type === 'entity.granted')).toBe(true)
     }
 
+    const categoryReceipt = service.dispatch({ type: 'turn.spin' })
+    expect(categoryReceipt.draw?.poolId).toMatch(/^pool\.legacy\.virtual\.martial-soul\.(beast|tool)\.category$/)
+    expect(v03Content.mechanics.pools.get(categoryReceipt.draw?.poolId as never)?.options.length).toBeGreaterThan(1)
     const martialSoulReceipt = service.dispatch({ type: 'turn.spin' })
-    expect(martialSoulReceipt.draw?.poolId).toMatch(/^pool\.legacy\./)
-    expect(v03Content.mechanics.pools.get(martialSoulReceipt.draw?.poolId as never)?.options.length).toBeGreaterThan(1)
+    expect(martialSoulReceipt.draw?.poolId).toMatch(/^pool\.legacy\.virtual\.martial-soul\.(beast|tool)\./)
     expect(service.state.phase).toBe('setup.human')
     expect(service.state.agenda.map((task) => task.poolId)).toEqual([legacyFlow.entrypoints.human[3]!])
     const specialChance = service.dispatch({ type: 'turn.spin' })
@@ -126,17 +128,17 @@ describe('v0.3 setup walking skeleton', () => {
     expect(service.state.entities['martial-soul']).toHaveLength(1)
   })
 
-  it('routes every martial-soul type to its complete original pool and advances after selection', () => {
+  it('replays the old martial-soul category queue and retains direct pools for the other four types', () => {
     const expectedPools = [
-      ['beast', 'pool.legacy.f1afa805-95b7-4d54-aea2-d3de15e54c5a', 136],
-      ['tool', 'pool.legacy.cb2dce39-17c0-4b0b-9cca-94778d215d7f', 89],
-      ['mutated', 'pool.legacy.16e885e9-96bf-4629-9baa-c57e1cbdf571', 9],
-      ['concept', 'pool.legacy.ce8c59c8-cd87-487a-b782-4e6587685f63', 13],
-      ['body', 'pool.legacy.49e3abc8-1361-4348-94aa-b23c68a53720', 13],
-      ['ultimate', 'pool.legacy.8c589787-e43d-4064-8546-8b5b7b403fe2', 33],
+      ['beast', legacyFlow.progression.martialSoul.selectionPools.find((entry) => entry.type === 'beast')!.poolId, 11, true],
+      ['tool', legacyFlow.progression.martialSoul.selectionPools.find((entry) => entry.type === 'tool')!.poolId, 16, true],
+      ['mutated', 'pool.legacy.16e885e9-96bf-4629-9baa-c57e1cbdf571', 9, false],
+      ['concept', 'pool.legacy.ce8c59c8-cd87-487a-b782-4e6587685f63', 13, false],
+      ['body', 'pool.legacy.49e3abc8-1361-4348-94aa-b23c68a53720', 13, false],
+      ['ultimate', 'pool.legacy.8c589787-e43d-4064-8546-8b5b7b403fe2', 33, false],
     ] as const
 
-    for (const [type, expectedPoolId, optionCount] of expectedPools) {
+    for (const [type, expectedPoolId, optionCount, categorized] of expectedPools) {
       const initial = createInitialGameState(v03Content.manifest.contentVersion)
       const state = {
         ...initial,
@@ -153,12 +155,101 @@ describe('v0.3 setup walking skeleton', () => {
 
       const pool = v03Content.mechanics.pools.get(expectedPoolId as never)
       expect(pool?.options).toHaveLength(optionCount)
-      expect(pool?.options.every((option) => option.effects.some((effect) => (
-        effect.type === 'signal.emit' && effect.signalId === 'signal.setup.martial-soul-selected'
-      )))).toBe(true)
+      if (categorized) {
+        const optionId = pool!.options[0]!.id
+        expect(pool?.options.every((option) => option.effects.some((effect) => (
+          effect.type === 'signal.emit' && effect.signalId === 'signal.setup.martial-soul-category-selected'
+        )))).toBe(true)
+        const categoryEvents = characterSetupProcess.react(state, [{
+          type: 'option.selected', poolId: expectedPoolId, optionId, probability: 1,
+        }, { type: 'signal.emitted', signalId: signalId('signal.setup.martial-soul-category-selected') }])
+        const target = legacyOptionSemantic(optionId)?.martialSoulCategoryTargetPoolId
+        expect(categoryEvents).toContainEqual(expect.objectContaining({
+          type: 'task.scheduled', task: expect.objectContaining({ poolId: target }),
+        }))
+        const child = v03Content.mechanics.pools.get(target!)
+        expect(child?.options.length).toBeGreaterThan(0)
+        expect(child?.options.every((option) => option.effects.some((effect) => (
+          effect.type === 'signal.emit' && effect.signalId === 'signal.setup.martial-soul-selected'
+        )))).toBe(true)
+      } else {
+        expect(pool?.options.every((option) => option.effects.some((effect) => (
+          effect.type === 'signal.emit' && effect.signalId === 'signal.setup.martial-soul-selected'
+        )))).toBe(true)
+      }
     }
 
     expect(v03Content.mechanics.pools.has('pool.setup.martial-soul.tool' as never)).toBe(false)
+  })
+
+  it('keeps every special-talent martial-soul branch ahead of age setup', () => {
+    const initial = createInitialGameState(v03Content.manifest.contentVersion)
+    const state = { ...initial, route: 'human' as const, phase: 'setup.human' as const }
+    const talentPool = legacyPoolForRole('special-talent')
+    const talent = (pattern: RegExp) => talentPool.options.find((option) => pattern.test(v03Content.presentation.options.get(option.activeOptionId)?.title ?? ''))!
+    const expected = [
+      [/双生武魂/, 1, undefined],
+      [/三生武魂/, 2, undefined],
+      [/人兽混血/, 0, legacyFlow.progression.martialSoul.selectionPools.find((entry) => entry.type === 'beast')!.poolId],
+      [/真龙血脉/, 0, 'true-dragon'],
+      [/亚龙血脉/, 0, 'sub-dragon'],
+      [/地龙血脉/, 0, 'earth-dragon'],
+    ] as const
+
+    for (const [pattern, extraSelections, speciesKind] of expected) {
+      const option = talent(pattern)
+      const events = characterSetupProcess.react(state, [
+        { type: 'option.selected', poolId: talentPool.activePoolId, optionId: option.activeOptionId, probability: 1 },
+        { type: 'signal.emitted', signalId: signalId('signal.setup.special-talent-selected') },
+      ])
+      const scheduled = reduceEvents(state, events).agenda
+      expect(scheduled.at(-1)?.poolId).toBe(legacyFlow.entrypoints.human[4])
+      if (extraSelections > 0) {
+        expect(scheduled.filter((task) => task.poolId === legacyFlow.entrypoints.human[2])).toHaveLength(extraSelections)
+        expect(scheduled.slice(0, extraSelections).every((task) => task.priority === 'front')).toBe(true)
+      }
+      if (speciesKind === 'true-dragon' || speciesKind === 'sub-dragon' || speciesKind === 'earth-dragon') {
+        const target = legacyFlow.progression.martialSoul.specialTalentTargets.find((entry) => entry.specialTalentOptionId === option.activeOptionId)!
+        expect(target.targetPoolId).toContain(speciesKind)
+        expect(scheduled[0]?.poolId).toBe(target.targetPoolId)
+      }
+      if (extraSelections === 0 && (speciesKind == null || speciesKind.startsWith('pool.'))) {
+        expect(scheduled[0]?.poolId).toBe(speciesKind ?? legacyFlow.progression.martialSoul.selectionPools.find((entry) => entry.type === 'beast')!.poolId)
+      }
+    }
+  })
+
+  it('does not reroll special chance after an extra special-talent martial soul', () => {
+    const initial = createInitialGameState(v03Content.manifest.contentVersion)
+    const state = {
+      ...initial,
+      route: 'human' as const,
+      phase: 'setup.human' as const,
+      agenda: [{ id: 'task.age', poolId: legacyFlow.entrypoints.human[4]!, process: 'character-setup' }],
+    }
+    expect(characterSetupProcess.react(state, [{ type: 'signal.emitted', signalId: signalId('signal.setup.martial-soul-selected') }])).toEqual([])
+  })
+
+  it('routes firearm owners through the old firearm special-growth wheel', () => {
+    const initial = createInitialGameState(v03Content.manifest.contentVersion)
+    const chance = legacyPoolsForRole('special-growth-chance')
+      .find((pool) => pool.auxiliaryKind === 'standard')!
+      .options.find((option) => option.semantic.accepted)!
+    const state = {
+      ...initial,
+      route: 'human' as const,
+      phase: 'adventure.human' as const,
+      entities: {
+        ...initial.entities,
+        'martial-soul': [legacyFlow.progression.martialSoul.firearmMartialSoulEntityIds[0]!],
+      },
+    }
+    const events = humanProgressionProcess.react(state, [{
+      type: 'option.selected', poolId: legacyPoolForRole('special-growth-chance').activePoolId, optionId: chance.activeOptionId, probability: 1,
+    }, { type: 'signal.emitted', signalId: signalId('signal.special-growth-chance-selected'), payload: { accepted: true } }])
+    expect(events).toContainEqual(expect.objectContaining({
+      type: 'task.scheduled', task: expect.objectContaining({ poolId: legacyFlow.progression.martialSoul.firearmStoryPoolId }),
+    }))
   })
 
   it('records the faction stage from the selected original pool rather than delayed actor age', () => {
@@ -237,11 +328,11 @@ describe('v0.3 setup walking skeleton', () => {
     // Non-zero combat power becomes a post-awakening/long-run audit invariant.
     expect(service.state.progression.combatPower.total).toBe(0)
 
-    service.dispatch({ type: 'turn.spin' })
-    service.dispatch({ type: 'turn.spin' })
-    service.dispatch({ type: 'turn.spin' })
-    const awakening = service.dispatch({ type: 'turn.spin' })
-    const awakenedSnapshot = awakening.batch?.events.find((event) => event.type === 'combat-power.recalculated')
+    let awakening
+    for (let index = 0; index < 6 && service.state.entities['martial-soul'].length === 0; index += 1) {
+      awakening = service.dispatch({ type: 'turn.spin' })
+    }
+    const awakenedSnapshot = awakening?.batch?.events.find((event) => event.type === 'combat-power.recalculated')
     expect(awakenedSnapshot).toMatchObject({
       type: 'combat-power.recalculated',
       after: service.state.progression.combatPower,

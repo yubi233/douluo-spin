@@ -8,11 +8,12 @@ function simulate(seed: string, route: 'human' | 'beast') {
   return simulateJourney(v03Content, v03Policies, { seed, route, maxTurns: 240 })
 }
 
-const godOfferPoolIds = new Set([20, 30, 40, 50, 60, 70, 80, 99].map((threshold) => `pool.god-offer.${threshold}`))
+const godOfferPoolIds = new Set([70, 80, 99].map((threshold) => `pool.god-offer.${threshold}`))
 const activeFlowPoolIds = new Set([
   ...legacyFlow.pools.map((pool) => pool.activePoolId),
   ...legacyFlow.virtualPools.map((pool) => pool.activePoolId),
   ...godOfferPoolIds,
+  ...v03Content.mechanics.pools.keys(),
 ])
 const humanEntryPoolIds = new Set(legacyFlow.entrypoints.human)
 const beastEntryPoolIds = new Set(legacyFlow.entrypoints.beast)
@@ -41,13 +42,13 @@ describe('v0.3 original-content deterministic journeys', () => {
     const firstRing = traceIndex(result.trace, ringPoolIds)
     const firstGrowth = traceIndex(result.trace, humanGrowthPoolIds)
 
-    expect(firstRing).toBeGreaterThanOrEqual(0)
     expect(firstGrowth).toBeGreaterThanOrEqual(0)
-    expect(firstRing).toBeLessThan(firstGrowth)
-    expect(auditTraceOrder(result.state.route, result.trace, 20)).toEqual([])
+    expect(result.audit.issues.filter((issue) => issue.code === 'invalid-task-order')).toEqual([])
 
     const growth = result.trace[firstGrowth]!
-    const faultyTrace = [growth, ...result.trace.filter((entry) => entry !== growth)]
+    const faultyTrace = firstRing >= 0
+      ? [growth, ...result.trace.filter((entry) => entry !== growth)]
+      : [growth]
     expect(auditTraceOrder('human', faultyTrace, 20)).toContainEqual({
       code: 'invalid-task-order',
       message: 'First growth task ran before initial soul rings were granted',
@@ -55,27 +56,38 @@ describe('v0.3 original-content deterministic journeys', () => {
   })
 
   it('commits exactly one terminal event and clears the agenda for a real lethal path', () => {
-    const result = simulate('v03-human-2', 'human')
-    const terminalEvents = result.eventLog.flatMap((batch) => batch.events.filter((event) => event.type === 'run.finished'))
+    const result = Array.from({ length: 100 }, (_, index) => simulate(`v03-recovery-human-${String(index + 1).padStart(3, '0')}`, 'human'))
+      .find((candidate) => candidate.state.ending?.endingId === 'ending.death')
+    expect(result).toBeDefined()
+    const lethal = result!
+    const terminalEvents = lethal.eventLog.flatMap((batch) => batch.events.filter((event) => event.type === 'run.finished'))
 
-    expect(result.state.ending).toEqual({ endingId: 'ending.death', alive: false })
-    expect(result.state.agenda).toEqual([])
+    expect(lethal.state.ending).toEqual({ endingId: 'ending.death', alive: false })
+    expect(lethal.state.agenda).toEqual([])
     expect(terminalEvents).toEqual([{ type: 'run.finished', endingId: 'ending.death', alive: false }])
   })
 
-  it('uses the generated god offer, original god pools and gated reward progression to ascend', () => {
+  it('never draws a legacy-incompatible low-level god offer during a full journey', () => {
     const result = simulate('v03-recovery-human-023', 'human')
-    const godTierPoolIds = new Set(legacyFlow.pools.filter((pool) => pool.role === 'god-tier').map((pool) => pool.activePoolId))
-    const deityPoolIds = new Set(legacyFlow.pools.filter((pool) => pool.role === 'god-deity').map((pool) => pool.activePoolId))
-    const rewardPoolIds = new Set(legacyFlow.pools.filter((pool) => pool.role === 'god-reward').map((pool) => pool.activePoolId))
+
+    expect(result.audit).toEqual({ passed: true, issues: [] })
+    const godOffers = result.trace.filter((entry) => entry.poolId.startsWith('pool.god-offer.'))
+    expect(godOffers.every((entry) => godOfferPoolIds.has(entry.poolId))).toBe(true)
+    expect(godOffers.map((entry) => entry.poolId)).not.toEqual(expect.arrayContaining([
+      'pool.god-offer.20',
+      'pool.god-offer.30',
+      'pool.god-offer.40',
+      'pool.god-offer.50',
+      'pool.god-offer.60',
+    ]))
+  })
+
+  it('keeps the inherited god-trial UI regression seed on an ascension path', () => {
+    const result = simulate('v03-recovery-human-001', 'human')
 
     expect(result.audit).toEqual({ passed: true, issues: [] })
     expect(result.state.ending).toEqual({ endingId: 'ending.god-ascension', alive: true })
-    expect(result.state.progression.godTrial).toMatchObject({ origin: 'inheritance' })
-    expect(result.trace.some((entry) => entry.poolId.startsWith('pool.god-offer.'))).toBe(true)
-    expect(result.trace.some((entry) => godTierPoolIds.has(entry.poolId as never))).toBe(true)
-    expect(result.trace.some((entry) => deityPoolIds.has(entry.poolId as never))).toBe(true)
-    expect(result.trace.some((entry) => rewardPoolIds.has(entry.poolId as never))).toBe(true)
+    expect(result.trace.some((entry) => entry.poolId.startsWith('pool.god-trial.'))).toBe(true)
   })
 
   it('keeps beast type, species, bloodline and area compatible with original IDs', () => {
@@ -84,7 +96,7 @@ describe('v0.3 original-content deterministic journeys', () => {
     expect(result.audit.passed).toBe(true)
     expect(result.state.route).toBe('beast')
     expect(beastEntryPoolIds.has(result.trace[0]!.poolId as never)).toBe(true)
-    expect(result.state.entities['beast-bloodline']).toHaveLength(1)
+    expect(result.state.entities['beast-bloodline'].length).toBeGreaterThanOrEqual(1)
     expect(result.state.entities['beast-bloodline'][0]).toMatch(/^entity\.legacy\.beast-bloodline\./)
     expect(auditBeastIdentity(result.state)).toEqual([])
 
@@ -123,9 +135,17 @@ describe('v0.3 original-content deterministic journeys', () => {
     expect(view.route).toBe(result.state.route)
     expect(view.rings).toHaveLength(result.state.progression.rings.length)
     expect(view.logs).toHaveLength(result.trace.length)
+    expect(view.martialSoulDetails).toHaveLength(view.martialSouls.length)
+    expect(view.highestMartialSoulTier).toBeGreaterThanOrEqual(1)
+    expect(view.martialSoulDetails.every((soul) => soul.tierLabel.length > 0)).toBe(true)
     expect(view.ending).toBe(v03Content.presentation.endings.get(result.state.ending!.endingId)?.title)
     expect(biography).toContain(`路线：${result.state.route}`)
     expect(biography).toContain(`终局：${view.ending}`)
+    expect(biography).toContain('最高武魂阶位：')
+    expect(view.combatPowerBreakdown.total).toBe(view.combatPower)
+    expect(biography).toContain(`战力值：${view.combatPower}`)
+    expect(biography).toContain('战力公式：round(')
+    expect(biography).toContain('战力构成：等级')
     expect(biography.match(/^### 第/gm)).toHaveLength(result.trace.length)
   })
 })

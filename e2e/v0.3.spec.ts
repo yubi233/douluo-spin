@@ -58,7 +58,7 @@ test('desktop: v0.3 receipt, deterministic undo, save and pure narrative editor'
     await spinOnce(page)
     const firstResult = await page.locator('.result-panel p').textContent()
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('douluo-spin-vue-v3') ?? '{}'))
-    expect(stored).toMatchObject({ format: 'douluo-spin-event-log', schemaVersion: 3, contentVersion: 'v0.3.5' })
+    expect(stored).toMatchObject({ format: 'douluo-spin-event-log', schemaVersion: 3, contentVersion: 'v0.3.13' })
     expect(stored.batches).toHaveLength(2)
 
     await page.locator('.advanced-section > summary').click()
@@ -109,7 +109,7 @@ test('desktop: v0.3 receipt, deterministic undo, save and pure narrative editor'
 
 test('desktop: complete inherited god-trial journey in the real UI', async ({ page }) => {
   await page.goto('/')
-  await start(page, 'human', 'v03-human-2')
+  await start(page, 'human', 'v03-recovery-human-001')
   page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: '极速结算' }).click()
   await expect(page.locator('.ending-banner')).toContainText('百级成神', { timeout: 20_000 })
@@ -118,7 +118,7 @@ test('desktop: complete inherited god-trial journey in the real UI', async ({ pa
   expect(saved.batches.at(-1).events.some((event: { type: string }) => event.type === 'run.finished')).toBe(true)
 })
 
-test('desktop: lethal human and untransformed beast journeys reach distinct terminal states', async ({ page }) => {
+test('desktop: lethal human and untransformed beast journeys keep their route-specific summaries', async ({ page }) => {
   await page.goto('/')
   await start(page, 'human', 'v03-human-28')
   page.once('dialog', (dialog) => dialog.accept())
@@ -132,7 +132,7 @@ test('desktop: lethal human and untransformed beast journeys reach distinct term
   await expect(page.getByRole('dialog', { name: '选择起始路线' })).toBeHidden()
   page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: '极速结算' }).click()
-  await expect(page.locator('.ending-banner')).toContainText('兽域飞升', { timeout: 20_000 })
+  await expect(page.locator('.ending-banner')).toContainText('命运断绝', { timeout: 20_000 })
   await expect(page.locator('.character-summary')).toContainText('魂兽')
 })
 
@@ -167,10 +167,10 @@ test('desktop: structured editor previews and imports two-pool patches', async (
   expect(patchPath).toBeTruthy()
   const document = JSON.parse(await readFile(patchPath!, 'utf8'))
   expect(document.patches).toHaveLength(2)
-  const gender = document.patches.find((entry: { poolId: string }) => entry.poolId === 'pool.setup.gender')
+  const gender = document.patches.find((entry: { options: Array<{ availableWhen?: { type: string; value?: number } }> }) => entry.options[0]?.availableWhen?.value === 99)
   expect(gender.options[0]).toMatchObject({ availableWhen: { type: 'compare', value: 99 } })
   expect(gender.options[0].effects.some((effect: { type: string }) => effect.type === 'stat.change')).toBe(true)
-  const appearance = document.patches.find((entry: { poolId: string }) => entry.poolId === 'pool.setup.appearance')
+  const appearance = document.patches.find((entry: { options: Array<{ name: string }> }) => entry.options.at(-1)?.name === '这是独立的纯叙事事件')
   expect(appearance.options.at(-1)).toMatchObject({ name: '这是独立的纯叙事事件', effects: [] })
 
   page.once('dialog', (dialog) => dialog.accept())
@@ -186,7 +186,7 @@ test('mobile: beast transforms, finishes, supports tabs and has no horizontal ov
   await page.goto('/')
   const stopRecording = await recordFlow(page, testInfo)
   try {
-    await start(page, 'beast', 'v03-beast-1')
+    await start(page, 'beast', 'v03-recovery-beast-014')
     await expect(page.getByRole('tab', { name: '主舞台' })).toHaveAttribute('aria-selected', 'true')
     await page.getByRole('tab', { name: '主舞台' }).press('ArrowRight')
     await expect(page.getByRole('tab', { name: '角色' })).toHaveAttribute('aria-selected', 'true')

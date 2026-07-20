@@ -29,6 +29,16 @@ function hasMartialSoulAttribute(state: GameState, args?: JsonObject): boolean {
   return attribute != null && hasLegacyMartialSoulAttribute(state.entities['martial-soul'], attribute)
 }
 
+function legacyInnatePowerMultiplier(state: GameState, args?: JsonObject): number {
+  const level = args?.level
+  if (typeof level !== 'number') return 1
+  const tier = highestLegacyMartialSoulTier(state.entities['martial-soul'])
+  if (tier >= 6) return 1
+  const target = ({ 1: 1, 2: 3, 3: 5, 4: 7, 5: 9 } as Record<number, number>)[tier] ?? 5
+  const difference = level - target
+  return Math.exp(-(difference * difference) / (2 * 1.8 * 1.8)) * 8
+}
+
 const appearanceRankByEntity = new Map([
   ['entity.appearance.f', 0], ['entity.appearance.e', 1], ['entity.appearance.d', 2], ['entity.appearance.c', 3],
   ['entity.appearance.b', 4], ['entity.appearance.a', 5], ['entity.appearance.s', 6], ['entity.appearance.ex', 7],
@@ -134,6 +144,7 @@ function hasBeastBloodlineCountAtLeast(state: GameState, args?: JsonObject): boo
 export const v03Policies: PolicyRegistry = new Map<PolicyId, PolicyEvaluator>([
   [policyId('policy.identity'), () => 1],
   [policyId('policy.martial-soul-tier'), (state: GameState) => highestLegacyMartialSoulTier(state.entities['martial-soul'])],
+  [policyId('policy.legacy-innate-power'), legacyInnatePowerMultiplier],
   [policyId('policy.martial-soul-type'), hasMartialSoulType],
   [policyId('policy.martial-soul-attribute'), hasMartialSoulAttribute],
   [policyId('policy.has-domain'), (state: GameState) => state.entities.domain.length > 0],
@@ -161,6 +172,7 @@ export const v03Signals = new Set([
   signalId('signal.setup.gender-selected'),
   signalId('signal.setup.appearance-selected'),
   signalId('signal.setup.martial-type-selected'),
+  signalId('signal.setup.martial-soul-category-selected'),
   signalId('signal.setup.martial-soul-selected'),
   signalId('signal.setup.special-chance-selected'),
   signalId('signal.setup.special-talent-selected'),
@@ -172,6 +184,7 @@ export const v03Signals = new Set([
   signalId('signal.soul-ring.selected'),
   signalId('signal.soul-bone-chance-selected'),
   signalId('signal.special-growth-chance-selected'),
+  signalId('signal.human.special-growth-completed'),
   signalId('signal.killing-city-selected'),
   signalId('signal.story.completed'),
   signalId('signal.story.metric-recorded'),
@@ -212,7 +225,7 @@ export const v03Signals = new Set([
 export const v03ContentSource: ContentSource = {
   manifest: {
     schemaVersion: 3,
-    contentVersion: 'v0.3.9',
+    contentVersion: 'v0.3.13',
     files: [
       'v03/setupContent.ts',
       'v03/progressionContent.ts',

@@ -9,17 +9,17 @@ const props = defineProps<{
   phaseLabel: string
 }>()
 
-const TIER_LABELS: Record<number, string> = { 1: '废武魂', 2: '一般武魂', 3: '优秀武魂', 4: '顶级武魂', 5: '极品武魂', 6: '神级武魂' }
-
 const powerValue = computed(() => props.context.beast?.cultivation ?? props.context.level)
 const powerLabel = computed(() => props.context.beast ? '年限修为' : '魂力等级')
 const combatPower = computed(() => props.context.beast ? 0 : props.context.combatPower)
 const combatDetail = computed(() => {
   if (props.context.beast) return ''
-  return `等级与魂环共享投影战力 ${props.context.combatPower}`
+  const combat = props.context.combatPowerBreakdown
+  const part = (value: number) => Number.isInteger(value) ? value : value.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')
+  return `等级 ${part(combat.levelBase)} + 魂环 ${part(combat.ringPower)} + 武魂 ${part(combat.martialSoulPower)} + 领域 ${part(combat.domainPower)} + 魂骨 ${part(combat.soulBonePower)}；系数 ×${part(combat.multiplier)} = ${combat.total}`
 })
-const topTier = computed(() => props.context.beast ? 0 : props.context.martialSouls.length ? 3 : 0)
-const topTierLabel = computed(() => TIER_LABELS[topTier.value] ?? '')
+const topTier = computed(() => props.context.beast ? 0 : props.context.highestMartialSoulTier)
+const topTierLabel = computed(() => props.context.martialSoulDetails.find((soul) => soul.tier === topTier.value)?.tierLabel ?? '')
 const appearanceValue = computed(() => props.context.beast
   ? props.context.beast.type || '未确定'
   : props.context.appearance || '未确定')
@@ -39,7 +39,7 @@ const soulValues = computed(() => props.context.beast
   : [...props.context.martialSoulTypes, ...props.context.martialSouls])
 const soulChips = computed(() => {
   if (props.context.beast) return soulValues.value
-  return props.context.martialSouls
+  return props.context.martialSoulDetails.map((soul) => `${soul.title}｜${soul.tierLabel}`)
 })
 const traitValues = computed(() => [...props.context.talents, ...props.context.traits, ...props.context.domains])
 const gearValues = computed(() => [

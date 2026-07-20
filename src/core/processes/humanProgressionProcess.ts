@@ -31,8 +31,13 @@ export const humanProgressionProcess: ProcessManager = {
       const stage = `human.special-growth.${kind}.${state.progression.growthCycles}`
       const result: DomainEvent[] = [{ type: 'flow.stage-completed', stage }]
       if (option && legacyOptionSemantic(option)?.accepted === true) {
-        const pool = legacyPoolsForRole('special-growth').find((candidate) => candidate.auxiliaryKind === kind)
-        if (pool) result.push({ type: 'task.scheduled', task: task(stage, pool.activePoolId, 'human-progression') })
+        const hasFirearm = state.entities['martial-soul'].some((martialSoul) =>
+          legacyFlow.progression.martialSoul.firearmMartialSoulEntityIds.includes(martialSoul),
+        )
+        const poolId = hasFirearm
+          ? legacyFlow.progression.martialSoul.firearmStoryPoolId
+          : legacyPoolsForRole('special-growth').find((candidate) => candidate.auxiliaryKind === kind)?.activePoolId
+        if (poolId) result.push({ type: 'task.scheduled', task: task(stage, poolId, 'human-progression') })
       }
       return result
     }
@@ -62,6 +67,15 @@ export const humanProgressionProcess: ProcessManager = {
     }
     if (selectedLegacyRole(events) === 'human-encounter' && isHumanAdventure(state) && state.agenda.length === 0) {
       return afterHumanGrowth(state, state.progression.growthCycles + 1)
+    }
+    if (selectedLegacyRole(events) === 'special-growth' && isHumanAdventure(state)) {
+      const option = selectedOption(events)
+      if (option && legacyOptionSemantic(option)?.completeDomain === true) {
+        const domain = legacyPoolsForRole('domain').find((pool) => pool.auxiliaryKind === 'complete-domain')
+        if (domain) {
+          return [{ type: 'task.scheduled', task: task(`human.domain.${state.progression.growthCycles}`, domain.activePoolId, 'human-progression') }]
+        }
+      }
     }
     if (!hasSignal(events, signalId('signal.human.growth-completed'))) {
       // Auxiliary chains (rings, species, bones and rewards) may outlive the
@@ -139,7 +153,10 @@ function nextHumanAuxiliaryTask(state: GameState) {
 
 function nextGodOfferTask(state: GameState) {
   if (state.progression.godTrial) return undefined
-  const threshold = [20, 30, 40, 50, 60, 70, 80, 99].find((value) => state.stats.level >= value && !state.progression.completedFlowStages.includes(`human.god-offer.${value}`))
+  // v0.2 only began its random inheritance checks at 70, then retried at 80
+  // and 99. The lower offer pools were a v0.3 expansion and let ordinary
+  // mid-level characters enter a god trial far too early.
+  const threshold = [70, 80, 99].find((value) => state.stats.level >= value && !state.progression.completedFlowStages.includes(`human.god-offer.${value}`))
   return threshold == null ? undefined : task(`human.god-offer.${threshold}`, `pool.god-offer.${threshold}` as PoolId, 'god-trial')
 }
 

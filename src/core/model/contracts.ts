@@ -213,6 +213,8 @@ export interface Task {
   readonly id: string
   readonly poolId: PoolId
   readonly process: string
+  /** Mirrors v0.2 queue.unshift() for setup branches that must resolve first. */
+  readonly priority?: 'front'
   readonly candidateOptionIds?: readonly OptionId[]
   readonly payload?: JsonObject
 }

@@ -104,7 +104,13 @@ export function reduceEvent(state: GameState, event: DomainEvent): GameState {
     case 'time.advanced':
       return { ...state, stats: { ...state.stats, 'tang-age': clampStatValue('tang-age', event.after) } }
     case 'task.scheduled':
-      return state.agenda.some((task) => task.id === event.task.id) ? state : { ...state, agenda: [...state.agenda, event.task] }
+      if (state.agenda.some((task) => task.id === event.task.id)) return state
+      return {
+        ...state,
+        agenda: event.task.priority === 'front'
+          ? [event.task, ...state.agenda]
+          : [...state.agenda, event.task],
+      }
     case 'task.completed':
       return { ...state, agenda: state.agenda.filter((task) => task.id !== event.taskId) }
     case 'phase.changed':

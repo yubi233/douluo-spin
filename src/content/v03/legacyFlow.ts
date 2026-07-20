@@ -29,6 +29,7 @@ export interface LegacyOptionSemantic {
   readonly beastTimelineEra?: string
   readonly beastTimelineSpeciesGroup?: string
   readonly branch?: number
+  readonly completeDomain?: boolean
   readonly cultivation?: number
   readonly factionEntityId?: string
   readonly factionStoryId?: string
@@ -41,6 +42,12 @@ export interface LegacyOptionSemantic {
   readonly godRewardExam?: number
   readonly level?: number
   readonly martialSoulType?: string
+  readonly martialSoulCategoryTargetPoolId?: PoolId
+  readonly specialTalentBeastCategory?: boolean
+  readonly specialTalentExtraMartialSoulSelections?: number
+  readonly specialTalentSpeciesKind?: 'true-dragon' | 'sub-dragon' | 'earth-dragon'
+  readonly grantedMartialSoulEntityId?: EntityId
+  readonly grantedMartialSoulType?: string
   readonly ringYears?: number
   readonly ringEntityId?: EntityId
   readonly route?: string
@@ -108,7 +115,15 @@ interface LegacyFlowDocument {
       }[]
     }[]
     readonly soulRingByIndex: readonly { readonly index: number; readonly poolId: PoolId }[]
+    readonly martialSoul: {
+      readonly selectionPools: readonly { readonly type: string; readonly poolId: PoolId }[]
+      readonly categoryTargets: readonly { readonly categoryOptionId: OptionId; readonly targetPoolId: PoolId }[]
+      readonly specialTalentTargets: readonly { readonly specialTalentOptionId: OptionId; readonly targetPoolId: PoolId }[]
+      readonly firearmStoryPoolId: PoolId
+      readonly firearmMartialSoulEntityIds: readonly EntityId[]
+    }
     readonly humanGrowthByAge: readonly { readonly minAge: number; readonly maxAge?: number; readonly poolId: PoolId }[]
+    readonly humanGrowthByTangAge: readonly { readonly branch: number; readonly minTangAge: number; readonly maxTangAge: number; readonly poolId: PoolId }[]
     readonly humanGrowthByLevel: readonly { readonly minLevel: number; readonly maxLevel: number; readonly poolId: PoolId }[]
     readonly humanEncounterByLevel: readonly { readonly minLevel: number; readonly maxLevel: number; readonly poolId: PoolId }[]
     readonly humanGrowthPoolIds: readonly PoolId[]

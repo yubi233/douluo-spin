@@ -1,6 +1,7 @@
-import { entityId, poolId, signalId, type PoolId } from '../ids'
+import { entityId, signalId, type PoolId } from '../ids'
 import type { DomainEvent, GameState, Task } from '../model/contracts'
 import { legacyBeastTypeRequiresArea, legacyFlow, legacyOptionPool, legacyOptionSemantic, legacyPoolForRole } from '@/content/v03/legacyFlow'
+import { highestLegacyMartialSoulTier } from '@/content/v03/legacyMartialSoulRules'
 import { hasSignal, selectedOption, task } from './processHelpers'
 import type { ProcessManager } from './processManager'
 
@@ -20,23 +21,16 @@ const pools = {
   beastType: legacyFlow.entrypoints.beast[3]!,
 }
 
-const martialSoulPools = new Map([
-  [entityId('entity.martial-type.beast'), poolId('pool.legacy.f1afa805-95b7-4d54-aea2-d3de15e54c5a')],
-  [entityId('entity.martial-type.tool'), poolId('pool.legacy.cb2dce39-17c0-4b0b-9cca-94778d215d7f')],
-  [entityId('entity.martial-type.mutated'), poolId('pool.legacy.16e885e9-96bf-4629-9baa-c57e1cbdf571')],
-  [entityId('entity.martial-type.concept'), poolId('pool.legacy.ce8c59c8-cd87-487a-b782-4e6587685f63')],
-  [entityId('entity.martial-type.body'), poolId('pool.legacy.49e3abc8-1361-4348-94aa-b23c68a53720')],
-  [entityId('entity.martial-type.ultimate'), poolId('pool.legacy.8c589787-e43d-4064-8546-8b5b7b403fe2')],
-])
-
-function setupTask(poolIdValue: PoolId): Task {
-  return { id: `task.${poolIdValue}`, poolId: poolIdValue, process: 'character-setup' }
+function setupTask(poolIdValue: PoolId, priority?: Task['priority'], suffix?: string): Task {
+  return { id: `task.${poolIdValue}${suffix ? `.${suffix}` : ''}`, poolId: poolIdValue, process: 'character-setup', ...(priority ? { priority } : {}) }
 }
 
 function initialPowerPool(state: GameState): PoolId {
   const age = state.stats.age
   const hasUltimate = state.entities['martial-soul-type'].includes(entityId('entity.martial-type.ultimate'))
-  if (age === 6 && hasUltimate) return legacyFlow.progression.ultimateInitialPowerPoolId
+  if (age === 6 && (hasUltimate || highestLegacyMartialSoulTier(state.entities['martial-soul']) >= 6)) {
+    return legacyFlow.progression.ultimateInitialPowerPoolId
+  }
   return legacyFlow.progression.initialPowerByAge.find((entry) => entry.age === age)?.poolId
     ?? legacyFlow.progression.initialPowerByAge.find((entry) => entry.age === 18)?.poolId
     ?? legacyFlow.progression.initialPowerByAge[0]!.poolId
@@ -93,18 +87,58 @@ export const characterSetupProcess: ProcessManager = {
       return [{ type: 'task.scheduled', task: setupTask(pools.martialType) }]
     }
     if (hasSignal(events, signalId('signal.setup.martial-type-selected'))) {
-      const selectedType = [...state.entities['martial-soul-type']].reverse().find((id) => martialSoulPools.has(id))
-      const nextPool = selectedType ? martialSoulPools.get(selectedType) : undefined
-      return nextPool ? [{ type: 'task.scheduled', task: setupTask(nextPool) }] : []
+      const selectedType = [...state.entities['martial-soul-type']]
+        .reverse()
+        .map((id) => id.replace('entity.martial-type.', ''))
+        .find((type) => legacyFlow.progression.martialSoul.selectionPools.some((entry) => entry.type === type))
+      const nextPool = selectedType
+        ? legacyFlow.progression.martialSoul.selectionPools.find((entry) => entry.type === selectedType)?.poolId
+        : undefined
+      return nextPool ? [{ type: 'task.scheduled', task: setupTask(nextPool, 'front') }] : []
+    }
+    if (hasSignal(events, signalId('signal.setup.martial-soul-category-selected'))) {
+      const option = selectedOption(events)
+      const targetPoolId = option
+        ? legacyOptionSemantic(option)?.martialSoulCategoryTargetPoolId
+        : undefined
+      return targetPoolId ? [{ type: 'task.scheduled', task: setupTask(targetPoolId, 'front') }] : []
     }
     if (hasSignal(events, signalId('signal.setup.martial-soul-selected'))) {
+      // Extra martial souls from a special talent were queued ahead of the
+      // already-scheduled age task in v0.2. Do not restart the talent chance.
+      if (state.agenda.some((entry) => entry.poolId === pools.age)) return []
       return [{ type: 'task.scheduled', task: setupTask(pools.specialChance) }]
     }
     if (hasSignal(events, signalId('signal.setup.special-chance-selected'))) {
       return [{ type: 'task.scheduled', task: setupTask(selectedAccepted(events) ? pools.specialTalent : pools.age) }]
     }
     if (hasSignal(events, signalId('signal.setup.special-talent-selected'))) {
-      return [{ type: 'task.scheduled', task: setupTask(pools.age) }]
+      const option = selectedOption(events)
+      const semantic = option ? legacyOptionSemantic(option) : undefined
+      const extraSelections = semantic?.specialTalentExtraMartialSoulSelections ?? 0
+      const targetPoolId = option
+        ? legacyFlow.progression.martialSoul.specialTalentTargets.find((entry) => entry.specialTalentOptionId === option)?.targetPoolId
+        : undefined
+      const result: DomainEvent[] = [{ type: 'task.scheduled', task: setupTask(pools.age) }]
+      if (semantic?.specialTalentBeastCategory === true) {
+        result.push(
+          { type: 'entity.granted', entityType: 'martial-soul-type', entityId: entityId('entity.martial-type.beast') },
+          { type: 'task.scheduled', task: setupTask(legacyFlow.progression.martialSoul.selectionPools.find((entry) => entry.type === 'beast')!.poolId, 'front') },
+        )
+      }
+      for (let index = 0; index < extraSelections; index += 1) {
+        result.push({ type: 'task.scheduled', task: setupTask(pools.martialType, 'front', `special-${index + 1}`) })
+      }
+      if (targetPoolId) {
+        result.push(
+          { type: 'entity.granted', entityType: 'martial-soul-type', entityId: entityId('entity.martial-type.beast') },
+          { type: 'task.scheduled', task: setupTask(targetPoolId, 'front') },
+        )
+      }
+      if (semantic?.godEntry === 'general') {
+        result.push({ type: 'task.scheduled', task: setupTask(legacyFlow.progression.god.generalTriggerPoolId, 'front') })
+      }
+      return result
     }
     if (hasSignal(events, signalId('signal.setup.age-selected'))) {
       return [{ type: 'task.scheduled', task: setupTask(pools.period) }]

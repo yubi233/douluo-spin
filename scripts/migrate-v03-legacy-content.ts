@@ -44,6 +44,7 @@ type LegacyOption = {
   readonly availableWhen?: Record<string, unknown>
   readonly additionalEffects?: readonly Record<string, unknown>[]
   readonly martialSoul?: boolean
+  readonly specialTalentMartialSoulEntityId?: string
 }
 
 type LegacyPool = {
@@ -65,9 +66,15 @@ const ROADSIDE_BEAST_TRAIT = '路边'
 const SEA_GOD_ISLAND_BEAST_WORSHIPPER_TRAIT = '海神岛魂兽供奉'
 const SEA_GOD_GROWTH_POOL_TITLE = '5年后，你的成长（进入海神岛后限定）（无神位最多只能达到99级）'
 const SEA_GOD_TRAINING_POOL_TITLE = '海神岛修行（有神考限定）'
+const FIREARM_ADAPTED_SOUL_BONE_ENTITY_ID = 'entity.legacy.soul-bone.firearm-adapted'
 const MARTIAL_SOUL_TYPE_BY_POOL: Readonly<Record<string, string>> = {
   兽武魂: 'beast', 器武魂: 'tool', 本体武魂: 'body', 变异武魂: 'mutated', 概念型武魂: 'concept', 极致武魂: 'ultimate',
 }
+const SPECIAL_TALENT_SPECIES_POOLS = [
+  { kind: 'true-dragon', sourceTitle: '纯血龙种魂兽初始池' },
+  { kind: 'sub-dragon', sourceTitle: '亚龙种魂兽初始池子' },
+  { kind: 'earth-dragon', sourceTitle: '地龙种魂兽初始池子' },
+] as const
 const BEAST_SPECIES_POOL_BY_TYPE: Readonly<Record<string, string>> = {
   '猴子类': '猿猴类魂兽初始池子',
   '猿猴类': '猿猴类魂兽初始池子',
@@ -160,6 +167,7 @@ const martialSoulRules = createMartialSoulRules(catalogDecisions)
 const martialSoulByTitle = new Map(martialSoulRules.map((rule) => [rule.title, rule]))
 const martialSoulCategories = createMartialSoulCategories(catalogDecisions)
 const virtualPools = createVirtualPools(catalogDecisions, martialSoulCategories)
+const specialTalentMartialSoulRules = createSpecialTalentMartialSoulRules(virtualPools)
 
 const entities = [
   ...source.tags.map((tag) => ({
@@ -193,6 +201,11 @@ const entities = [
       entityType: 'soul-bone',
       presentation: { title: option.name, description: '原版魂骨抽取结果' },
     }))),
+  {
+    id: FIREARM_ADAPTED_SOUL_BONE_ENTITY_ID,
+    entityType: 'soul-bone',
+    presentation: { title: '适配枪械武魂魂骨', description: '枪械武魂专属剧情池奖励' },
+  },
   ...catalogDecisions
     .filter((pool) => legacyRoleForSourcePool(pool) === 'beast-type')
     .flatMap((pool) => pool.options.map((option) => ({
@@ -269,7 +282,7 @@ for (const title of domainLabels) {
 const generated = {
   schemaVersion: 1,
   source: {
-    origin: '1338d1b^:src/data/wheels.json',
+    origin: '1338d1b legacy wheel snapshot',
     sha256: sourceSha256,
     pools: source.decisions.length,
     options: source.decisions.reduce((count, pool) => count + pool.options.length, 0),
@@ -284,7 +297,7 @@ const generated = {
     martialSoulRules: martialSoulRules.length,
     correctedWeights: [{ pool: '基础设定8:穿越时期', option: '唐三6岁', weight: 20 }],
   },
-  martialSoulTiers: martialSoulRules,
+  martialSoulTiers: [...martialSoulRules, ...specialTalentMartialSoulRules],
   combatRules: {
     talentTraitIds: [...talentLabels].sort().map((title) => traitEntityId(`talent:${title}`)),
     battleTraitIds: [...traitLabels]
@@ -319,7 +332,7 @@ const audit = {
     tagEntities: source.tags.length,
     traitEntities: traitLabels.size,
     domainEntities: domainLabels.size,
-    martialSoulEntities: martialSoulRules.length,
+    martialSoulEntities: martialSoulRules.length + specialTalentMartialSoulRules.length,
   },
   expansion: generated.expansion,
   semantics: {
@@ -420,6 +433,9 @@ type LegacyFlowRole =
   | 'setup-age'
   | 'setup-period'
   | 'martial-soul'
+  | 'martial-soul-category'
+  | 'special-talent-martial-soul'
+  | 'firearm-story'
   | 'special-talent'
   | 'initial-power'
   | 'soul-ring'
@@ -518,6 +534,36 @@ function createLegacyFlow(
   if (!seaGodTierPool || !seaGodPlanPool || !seaGodGrowthPool || !seaGodTrainingPool || !seaGodCompletionGatePool || !seaGodInheritanceDeityId) {
     throw new Error('Missing original Sea God progression metadata')
   }
+  const martialSoulCategoryPool = (kind: 'beast' | 'tool') => {
+    const title = kind === 'beast' ? '兽武魂分类' : '器武魂分类'
+    const pool = virtualPools.find((candidate) => candidate.title === title)
+    if (!pool) throw new Error(`Missing legacy ${title} pool`)
+    return pool
+  }
+  const martialSoulCategoryTargets = (kind: 'beast' | 'tool') => {
+    const categoryPool = martialSoulCategoryPool(kind)
+    return categoryPool.options.map((option) => {
+      const category = kind === 'beast'
+        ? BEAST_MARTIAL_SOUL_CATEGORIES.find((candidate) => option.activeOptionId.endsWith(shortHash(candidate)))
+        : TOOL_MARTIAL_SOUL_CATEGORIES.find((candidate) => option.activeOptionId.endsWith(shortHash(candidate)))
+      if (!category) throw new Error(`Missing ${kind} martial-soul category for ${option.activeOptionId}`)
+      const targetTitle = kind === 'beast' ? beastMartialSoulPoolName(category) : toolMartialSoulPoolName(category)
+      const target = virtualPools.find((candidate) => candidate.title === targetTitle)
+      if (!target) throw new Error(`Missing legacy ${targetTitle} pool`)
+      return { categoryOptionId: option.activeOptionId, targetPoolId: target.activePoolId }
+    })
+  }
+  const firearmStoryPool = virtualPools.find((pool) => pool.title === FIREARM_STORY_POOL_NAME)
+  if (!firearmStoryPool) throw new Error('Missing legacy firearm story pool')
+  const specialTalentPool = pools.find((pool) => pool.role === 'special-talent')
+  if (!specialTalentPool) throw new Error('Missing original special talent pool')
+  const specialTalentTargets = specialTalentPool.options.flatMap((option) => {
+    const kind = option.semantic.specialTalentSpeciesKind
+    if (!kind) return []
+    const target = virtualPools.find((pool) => pool.sourcePoolId === `virtual.special-talent.martial-soul.${kind}`)
+    if (!target) throw new Error(`Missing ${kind} special-talent martial-soul pool`)
+    return [{ specialTalentOptionId: option.activeOptionId, targetPoolId: target.activePoolId }]
+  })
   const storyPlan = [
     { branch: 1, tag: '《斗罗大陆》剧情第一分支', milestones: [[12, 1, 3], [14, 4, 9], [19, 10, 13], [20, 14, 15], [21, 16, 16], [24.5, 17, 18.4], [24.8, 19, 20], [25, 21, 25]] },
     { branch: 2, tag: '《斗罗大陆》剧情第二分支', milestones: [[14, 1, 3], [20, 4, 9], [24, 10, 12.4], [24.8, 13, 14], [25, 15, 17]] },
@@ -589,10 +635,29 @@ function createLegacyFlow(
         index,
         poolId: sourceIdFor(`魂环吸收（${chinese}魂环）（抽取完魂环后请进入对应的魂骨抽奖池）`),
       })),
+      martialSoul: {
+        selectionPools: [
+          { type: 'beast', poolId: martialSoulCategoryPool('beast').activePoolId },
+          { type: 'tool', poolId: martialSoulCategoryPool('tool').activePoolId },
+          ...Object.entries(MARTIAL_SOUL_TYPE_BY_POOL)
+            .filter(([title]) => title !== '兽武魂' && title !== '器武魂')
+            .map(([title, type]) => ({ type, poolId: sourceIdFor(title) })),
+        ],
+        categoryTargets: [
+          ...martialSoulCategoryTargets('beast'),
+          ...martialSoulCategoryTargets('tool'),
+        ],
+        specialTalentTargets,
+        firearmStoryPoolId: firearmStoryPool.activePoolId,
+        firearmMartialSoulEntityIds: FIREARM_MARTIAL_SOULS.map((option) => martialSoulByTitle.get(option.name)?.entityId ?? missingMartialSoul(option.name)),
+      },
       humanGrowthByAge: [
         { minAge: 6, maxAge: 11, title: '2年后，你的成长（6岁-12岁限定，已达12岁则不可再抽取该池）' },
         { minAge: 12, maxAge: 17, title: '2年后，你的成长（12岁-18岁限定，已达18岁不可再抽取该池）（没有神位最多到99级）' },
         { minAge: 18, title: '2年后，你的成长（18岁+的年龄通用池）（无神位最多只能达到99级）' },
+      ].map(({ title, ...range }) => ({ ...range, poolId: sourceIdFor(title) })),
+      humanGrowthByTangAge: [
+        { branch: 1, minTangAge: 19, maxTangAge: 20, title: '1年后，你的成长（唐三19岁-20岁，天斗宫变后限定）（没有神位最多到99级）' },
       ].map(({ title, ...range }) => ({ ...range, poolId: sourceIdFor(title) })),
       humanGrowthByLevel: [
         { minLevel: 1, maxLevel: 10, title: '2年后，你的成长（1-10级限定池，10级以上不可抽取）' },
@@ -712,6 +777,24 @@ function legacyOptionSemantic(pool: LegacyPool, option: LegacyOption, role: Lega
     const type = MARTIAL_SOUL_TYPE_BY_POOL[option.name]
     if (type) semantic.martialSoulType = type
   }
+  if (role === 'martial-soul-category') {
+    const kind = pool.name === '兽武魂分类' ? 'beast' : 'tool'
+    semantic.martialSoulCategoryTargetPoolId = `pool.legacy.virtual.martial-soul.${kind}.${shortHash(option.name)}`
+  }
+  if (role === 'special-talent') {
+    if (/双生武魂/.test(option.name)) semantic.specialTalentExtraMartialSoulSelections = 1
+    if (/三生武魂/.test(option.name)) semantic.specialTalentExtraMartialSoulSelections = 2
+    if (/人兽混血/.test(option.name)) semantic.specialTalentBeastCategory = true
+    if (/真龙血脉/.test(option.name)) semantic.specialTalentSpeciesKind = 'true-dragon'
+    if (/亚龙血脉/.test(option.name)) semantic.specialTalentSpeciesKind = 'sub-dragon'
+    if (/地龙血脉/.test(option.name)) semantic.specialTalentSpeciesKind = 'earth-dragon'
+  }
+  if (role === 'special-growth' && isGrassShoeDualGunAwakening(option.name)) {
+    const dualGun = martialSoulByTitle.get('双枪')
+    if (!dualGun) throw new Error('Missing dual-gun martial soul metadata')
+    semantic.grantedMartialSoulEntityId = dualGun.entityId
+    semantic.grantedMartialSoulType = 'tool'
+  }
   if (role === 'setup-special-chance' || role === 'special-growth-chance' || role === 'beast-special-growth-chance' || role === 'soul-bone-chance' || role === 'killing-city') {
     semantic.accepted = legacyAffirmative(option.name)
   }
@@ -761,6 +844,7 @@ function legacyOptionSemantic(pool: LegacyPool, option: LegacyOption, role: Lega
     if (grade && grade !== 'sea-god') semantic.seaGodGrade = grade
     if (exam != null) semantic.seaGodRewardExam = exam
   }
+  if (role === 'special-growth' && /获得完整领域|领域雏形/.test(option.name)) semantic.completeDomain = true
   if (role === 'soul-ring') semantic.ringYears = legacyCultivation(option.name)
   if (role === 'soul-ring') semantic.ringEntityId = legacySoulRingEntityId(pool, option)
   if (role === 'soul-bone') semantic.soulBoneEntityId = legacySoulBoneEntityId(pool, option)
@@ -919,6 +1003,9 @@ function chineseMagnitude(value: string): number {
 
 function legacyFlowRole(pool: LegacyPool, tags: readonly string[]): LegacyFlowRole {
   if (pool.id.startsWith('virtual.faction-story.')) return 'faction-story'
+  if (pool.id.startsWith('virtual.special-talent.martial-soul.')) return 'special-talent-martial-soul'
+  if (pool.name === '兽武魂分类' || pool.name === '器武魂分类') return 'martial-soul-category'
+  if (pool.name === FIREARM_STORY_POOL_NAME) return 'firearm-story'
   const exact: Readonly<Record<string, LegacyFlowRole>> = {
     '基础设定1:你的种族是？': 'setup-race',
     '基础设定2:穿越的时间线': 'setup-timeline',
@@ -992,7 +1079,8 @@ function legacyFlowTrigger(role: LegacyFlowRole): string {
   const triggers: Readonly<Record<LegacyFlowRole, string>> = {
     'setup-race': 'run.start:random', 'setup-timeline': 'setup.race:selected', 'setup-gender': 'run.start:human|beast-transform',
     'setup-appearance': 'setup.gender:selected', 'setup-martial-type': 'setup.appearance:selected', 'setup-special-chance': 'setup.martial-soul:selected',
-    'setup-age': 'setup.special-talent:resolved', 'setup-period': 'setup.age:selected', 'martial-soul': 'setup.martial-type:selected',
+    'setup-age': 'setup.special-talent:resolved', 'setup-period': 'setup.age:selected', 'martial-soul': 'setup.martial-type:selected|martial-soul-category:selected',
+    'martial-soul-category': 'setup.martial-type:selected', 'special-talent-martial-soul': 'setup.special-talent:selected', 'firearm-story': 'special-growth-chance:yes:firearm',
     'special-talent': 'setup.special-chance:yes', 'initial-power': 'setup.period:selected', 'soul-ring': 'progression.level:threshold',
     'ring-species': 'soul-ring:selected', 'ring-bonus': 'soul-ring:selected', 'human-time': 'human.progression:idle',
     'special-growth-chance': 'human-time:selected', 'special-growth': 'special-growth-chance:yes', 'faction': 'setup.period:selected|age-threshold',
@@ -1101,6 +1189,20 @@ function createVirtualPools(catalog: readonly LegacyPool[], categories: readonly
 
   const beastPools = categorizedMartialSoulPools('beast', beastSource, categories.filter((entry) => entry.kind === 'beast'), beastMartialSoulPoolName)
   const toolPools = categorizedMartialSoulPools('tool', toolSource, categories.filter((entry) => entry.kind === 'tool'), toolMartialSoulPoolName)
+  const specialTalentMartialSoulPools = SPECIAL_TALENT_SPECIES_POOLS.map(({ kind, sourceTitle }) => {
+    const sourcePool = pool(sourceTitle)
+    return {
+      id: `virtual.special-talent.martial-soul.${kind}`,
+      name: `特殊天赋武魂：${sourcePool.name}`,
+      description: `复用原版${sourcePool.name}的选项与权重，将结果作为额外兽武魂。`,
+      tags: sourcePool.tags,
+      options: sourcePool.options.map((option) => ({
+        ...option,
+        id: `virtual.special-talent.martial-soul.${kind}.${option.id}`,
+        specialTalentMartialSoulEntityId: legacyBeastMartialSoulEntityId(sourcePool, option),
+      })),
+    }
+  })
   const firearmMartialSouls = FIREARM_MARTIAL_SOULS.map((option) => martialSoulEntityId(option.name))
   const firearmRequirement = { type: 'any', items: firearmMartialSouls.map((entityId) => ({ type: 'contains', fact: 'actor.martial-souls', value: entityId })) }
   const mentorRequirement = { type: 'contains', fact: 'actor.traits', value: traitEntityId(SHREK_MENTOR_TRAIT) }
@@ -1165,7 +1267,26 @@ function createVirtualPools(catalog: readonly LegacyPool[], categories: readonly
         })),
       })),
   ]
-  return [...beastPools, ...toolPools, ...staticPools]
+  return [...beastPools, ...toolPools, ...specialTalentMartialSoulPools, ...staticPools]
+}
+
+function createSpecialTalentMartialSoulRules(pools: readonly LegacyPool[]) {
+  const rules = new Map<string, { readonly entityId: string; readonly title: string; readonly tier: number; readonly types: readonly string[]; readonly attributes: readonly string[] }>()
+  for (const pool of pools) {
+    if (!pool.id.startsWith('virtual.special-talent.martial-soul.')) continue
+    for (const option of pool.options) {
+      const entityId = option.specialTalentMartialSoulEntityId
+      if (!entityId || rules.has(entityId)) continue
+      rules.set(entityId, {
+        entityId,
+        title: option.name,
+        tier: getMartialSoulTier(option.name),
+        types: ['beast'],
+        attributes: MARTIAL_SOUL_ATTRIBUTES.filter(([, matcher]) => matcher.test(option.name)).map(([attribute]) => attribute),
+      })
+    }
+  }
+  return [...rules.values()]
 }
 
 function categorizedMartialSoulPools(
@@ -1219,6 +1340,9 @@ function legacyProcessEffects(pool: LegacyPool, option: LegacyOption): Array<Rec
     effects.push({ type: 'entity.grant', entityType: 'trait', entityId: traitEntityId(SEA_GOD_ISLAND_BEAST_WORSHIPPER_TRAIT) })
   }
   if (/血脉精炼/.test(option.name)) emit('signal.beast.bloodline-refinement-selected')
+  if (pool.name === FIREARM_STORY_POOL_NAME && /获得一块适配魂骨/.test(option.name)) {
+    effects.push({ type: 'entity.grant', entityType: 'soul-bone', entityId: FIREARM_ADAPTED_SOUL_BONE_ENTITY_ID })
+  }
 
   switch (role) {
     case 'setup-race':
@@ -1239,6 +1363,9 @@ function legacyProcessEffects(pool: LegacyPool, option: LegacyOption): Array<Rec
       emit('signal.setup.martial-type-selected')
       break
     }
+    case 'martial-soul-category':
+      emit('signal.setup.martial-soul-category-selected')
+      break
     case 'setup-special-chance':
       emit('signal.setup.special-chance-selected', { accepted: legacyAffirmative(option.name) })
       break
@@ -1247,6 +1374,11 @@ function legacyProcessEffects(pool: LegacyPool, option: LegacyOption): Array<Rec
       effects.push({ type: 'entity.grant', entityType: 'trait', entityId: traitEntityId(`talent:${option.name}`) })
       emit('signal.setup.special-talent-selected')
       if (godEntry) emit('signal.god-trial-entry-selected', { entry: godEntry })
+      break
+    case 'special-talent-martial-soul':
+      if (!option.specialTalentMartialSoulEntityId) throw new Error(`Missing special-talent martial soul ID for ${option.name}`)
+      effects.push({ type: 'entity.grant', entityType: 'martial-soul', entityId: option.specialTalentMartialSoulEntityId })
+      emit('signal.setup.martial-soul-selected')
       break
     case 'setup-age':
       change('age', legacyFirstNumber(option.name, 6))
@@ -1294,6 +1426,9 @@ function legacyProcessEffects(pool: LegacyPool, option: LegacyOption): Array<Rec
       break
     case 'special-growth':
       if (godEntry) emit('signal.god-trial-entry-selected', { entry: godEntry })
+      break
+    case 'firearm-story':
+      emit('signal.human.special-growth-completed')
       break
     case 'killing-city':
       emit('signal.killing-city-selected', { accepted: legacyAffirmative(option.name) })
@@ -1451,6 +1586,10 @@ function legacyStoryMetrics(title: string): readonly ('negative' | 'combat')[] {
 
 function legacyAffirmative(title: string) { return /^(是|拥有|获得)/.test(title) }
 
+function isGrassShoeDualGunAwakening(title: string) {
+  return /(?:草鞋.*双枪|穿上草鞋)/.test(title)
+}
+
 function legacyFirstNumber(title: string, fallback: number) {
   const match = title.match(/-?\d+(?:\.\d+)?/)
   return match ? Number(match[0]) : fallback
@@ -1594,6 +1733,7 @@ function legacyCultivation(title: string) {
 function migrateOption(pool: LegacyPool, option: LegacyOption) {
   const title = option.name
   const labels = labelsIn(title)
+  const martialSoulLabels = isGrassShoeDualGunAwakening(title) ? new Set(['草鞋', '双枪']) : new Set<string>()
   const referencedLabels = conditionReferenceLabels(title)
   const revoked = revokedLabels(title)
   const effects: Array<Record<string, unknown>> = []
@@ -1605,6 +1745,7 @@ function migrateOption(pool: LegacyPool, option: LegacyOption) {
     effects.push({ type: 'entity.revoke', entityType: 'trait', entityId: traitEntityId(label) })
   }
   for (const label of labels) {
+    if (martialSoulLabels.has(label)) continue
     traitLabels.add(label)
     if (referencedLabels.has(label) || revoked.has(label)) continue
     effects.push({ type: 'entity.grant', entityType: 'trait', entityId: traitEntityId(label) })
@@ -1639,9 +1780,17 @@ function migrateOption(pool: LegacyPool, option: LegacyOption) {
     const rule = martialSoulByTitle.get(title)
     if (!rule) throw new Error(`Missing martial soul metadata for ${title}`)
     effects.push({ type: 'entity.grant', entityType: 'martial-soul', entityId: rule.entityId })
-    if (MARTIAL_SOUL_POOL_NAMES.has(pool.name)) {
+    if (MARTIAL_SOUL_POOL_NAMES.has(pool.name) || pool.id.startsWith('virtual.martial-soul.')) {
       effects.push({ type: 'signal.emit', signalId: 'signal.setup.martial-soul-selected' })
     }
+  }
+  if (isGrassShoeDualGunAwakening(title)) {
+    const dualGun = martialSoulByTitle.get('双枪')
+    if (!dualGun) throw new Error('Missing dual-gun martial soul metadata')
+    effects.push(
+      { type: 'entity.grant', entityType: 'martial-soul', entityId: dualGun.entityId },
+      { type: 'entity.grant', entityType: 'martial-soul-type', entityId: 'entity.martial-type.tool' },
+    )
   }
 
   const appearance = pool.name === '基础设定4:容貌（B级以下无法恋爱）' ? legacyAppearance(option.name) : undefined
@@ -1652,6 +1801,7 @@ function migrateOption(pool: LegacyPool, option: LegacyOption) {
   if (isLegacyLethal(title)) effects.push({ type: 'run.finish', endingId: 'ending.death' })
 
   const availableWhen = eligibility(pool, option, labels)
+  const role = legacyFlowRole(pool, pool.tags.flatMap((tagId) => tagById.get(tagId)?.name ? [tagById.get(tagId)!.name] : []))
   return {
     id: `option.legacy.${pool.id}.${option.id}`,
     presentation: { title },
@@ -1659,6 +1809,9 @@ function migrateOption(pool: LegacyPool, option: LegacyOption) {
       enabled: option.enabled !== false,
       baseWeight: positiveWeight(option.weight),
       ...(availableWhen ? { availableWhen } : {}),
+      ...(role === 'initial-power' ? {
+        weightModifier: { type: 'policy', policyId: 'policy.legacy-innate-power', args: { level: legacyInitialLevel(title) } },
+      } : {}),
       effects,
     },
   }
@@ -1667,7 +1820,15 @@ function migrateOption(pool: LegacyPool, option: LegacyOption) {
 function eligibility(pool: LegacyPool, option: LegacyOption, labels: readonly string[]) {
   const title = option.name
   const predicates: Array<Record<string, unknown>> = []
-  const requiredLabels = [...title.matchAll(/要求(?:拥有|有)【([^】]+)】/g)].map((match) => match[1]!).filter(Boolean)
+  const requiredMartialSouls = [...title.matchAll(/要求(?:拥有|有)【([^】]+)】武魂/g)].map((match) => match[1]!).filter(Boolean)
+  for (const martialSoul of requiredMartialSouls) {
+    const rule = martialSoulByTitle.get(martialSoul)
+    if (!rule) throw new Error(`Missing required martial soul metadata for ${martialSoul}`)
+    predicates.push({ type: 'contains', fact: 'actor.martial-souls', value: rule.entityId })
+  }
+  const requiredLabels = [...title.matchAll(/要求(?:拥有|有)【([^】]+)】/g)]
+    .map((match) => match[1]!)
+    .filter((label) => Boolean(label) && !requiredMartialSouls.includes(label))
   for (const label of requiredLabels) {
     traitLabels.add(label)
     predicates.push({ type: 'contains', fact: 'actor.traits', value: traitEntityId(label) })
@@ -1764,6 +1925,11 @@ function eligibility(pool: LegacyPool, option: LegacyOption, labels: readonly st
   if (/获得领域雏形/.test(title)) {
     traitLabels.add(DOMAIN_SEED_TRAIT)
     predicates.push({ type: 'not', item: { type: 'contains', fact: 'actor.traits', value: traitEntityId(DOMAIN_SEED_TRAIT) } })
+  }
+  if (isGrassShoeDualGunAwakening(title)) {
+    const dualGun = martialSoulByTitle.get('双枪')
+    if (!dualGun) throw new Error('Missing dual-gun martial soul metadata')
+    predicates.push({ type: 'not', item: { type: 'contains', fact: 'actor.martial-souls', value: dualGun.entityId } })
   }
   if (/有神考情况获得/.test(title)) {
     predicates.push({ type: 'compare', fact: 'god-trial.active', op: 'eq', value: true })
@@ -1959,7 +2125,14 @@ function legacyDomain(text: string) {
 }
 
 function labelsIn(text: string) {
-  return [...new Set([...text.matchAll(/【([^】]+)】/g)].map((match) => match[1]!.trim()).filter(Boolean))]
+  return [...new Set([...text.matchAll(/【([^】]+)】/g)]
+    .map((match) => match[1]!.trim())
+    .filter((label) => label && !isPresentationMetadataLabel(label)))]
+}
+
+function isPresentationMetadataLabel(label: string) {
+  return /(?:^|·)(?:女性路线|男性路线|启蒙期|成长期|担当期|精英职责)(?:·|$)/.test(label)
+    || /^\d+(?:岁|级)\+?$/.test(label)
 }
 
 function conditionReferenceLabels(text: string): ReadonlySet<string> {
