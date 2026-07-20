@@ -21,6 +21,7 @@ async function recordFlow(page: Page, testInfo: TestInfo) {
   return async () => {
     await session.send('Page.stopScreencast')
     await Promise.all(writes)
+    await session.detach()
     if (!frame) return
     await execFileAsync('/opt/homebrew/bin/ffmpeg', ['-y', '-framerate', '6', '-i', `${frames}/frame-%04d.jpg`, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', video])
     await testInfo.attach(`${testInfo.project.name}-v03-flow`, { path: video, contentType: 'video/mp4' })
@@ -48,7 +49,7 @@ async function spinOnce(page: Page) {
 
 async function openMenu(page: Page) { await page.getByRole('button', { name: '更多操作' }).click() }
 
-test('desktop: v0.3 receipt, deterministic undo, save and pure narrative editor', async ({ page }, testInfo) => {
+test('desktop: v0.3 receipt, rerolling undo, save and pure narrative editor', async ({ page }, testInfo) => {
   await page.goto('/')
   const stopRecording = await recordFlow(page, testInfo)
   try {
@@ -58,7 +59,7 @@ test('desktop: v0.3 receipt, deterministic undo, save and pure narrative editor'
     await spinOnce(page)
     const firstResult = await page.locator('.result-panel p').textContent()
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('douluo-spin-vue-v3') ?? '{}'))
-    expect(stored).toMatchObject({ format: 'douluo-spin-event-log', schemaVersion: 3, contentVersion: 'v0.3.13' })
+    expect(stored).toMatchObject({ format: 'douluo-spin-event-log', schemaVersion: 3, contentVersion: 'v0.3.14' })
     expect(stored.batches).toHaveLength(2)
 
     await page.locator('.advanced-section > summary').click()
@@ -74,7 +75,7 @@ test('desktop: v0.3 receipt, deterministic undo, save and pure narrative editor'
 
     await page.getByRole('button', { name: /返回/ }).click()
     await spinOnce(page)
-    await expect(page.locator('.result-panel p')).toHaveText(firstResult ?? '')
+    await expect(page.locator('.result-panel p')).not.toHaveText(firstResult ?? '')
     await page.getByLabel('进入下一项').click()
 
     await page.getByRole('button', { name: '修改' }).click()

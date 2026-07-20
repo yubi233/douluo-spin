@@ -350,19 +350,22 @@ describe('v0.3 setup walking skeleton', () => {
     expect(run()).toBe(run())
   })
 
-  it('undoes three turns by truncating and replaying, then redraws the same options', () => {
+  it('records undo RNG advancement and redraws a different option when alternatives exist', () => {
     const service = createService()
     start(service, 'undo-v03')
     const originals = Array.from({ length: 3 }, () => service.dispatch({ type: 'turn.spin' }))
-    const stateAfterOriginal = service.state
 
     for (let remaining = 2; remaining >= 0; remaining -= 1) {
-      service.dispatch({ type: 'turn.undo' })
+      const receipt = service.dispatch({ type: 'turn.undo' })
       expect(service.state.turn).toBe(remaining)
+      expect(receipt.batch).toMatchObject({ command: 'turn.undo', events: [] })
     }
     const redrawn = Array.from({ length: 3 }, () => service.dispatch({ type: 'turn.spin' }))
-    expect(redrawn).toEqual(originals)
-    expect(service.state).toEqual(stateAfterOriginal)
+    expect(redrawn[0]?.draw?.optionId).not.toBe(originals[0]?.draw?.optionId)
+
+    const restored = createService()
+    restored.restore(service.eventLog)
+    expect(restored.state).toEqual(service.state)
   })
 })
 

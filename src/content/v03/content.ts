@@ -225,7 +225,7 @@ export const v03Signals = new Set([
 export const v03ContentSource: ContentSource = {
   manifest: {
     schemaVersion: 3,
-    contentVersion: 'v0.3.13',
+    contentVersion: 'v0.3.14',
     files: [
       'v03/setupContent.ts',
       'v03/progressionContent.ts',

@@ -72,7 +72,7 @@ idle -> setup.human -> adventure.human -> god-trial -> ended
 ## RNG、回退与存档
 
 - RNG 状态属于 `GameState.random`，抽取只消费显式输入并返回 `rngAfter`。
-- `turn.undo` 删除最近一次 spin 及其后续日志，再从初始状态重放保留的批次；重抽得到相同选项。
+- `turn.undo` 删除最近一次 spin 及其后续日志，再从初始状态重放保留批次，并追加一条不增加回合数的 RNG 推进收据；当前池存在其他有效选项时，重抽不会再次得到刚撤销的选项。
 - 存档只保存 schema 3 的 `EventBatch[]`、内容版本和 checksum。
 - 恢复时校验版本、checksum、连续 `turnId`、连续 RNG 收据和首批 `run.start`，失败时不修改当前服务。
 

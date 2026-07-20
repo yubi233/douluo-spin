@@ -24258,7 +24258,7 @@
       "role": "human-encounter",
       "route": "human",
       "trigger": "human-time:selected|story.branch",
-      "sourceOptionCount": 13,
+      "sourceOptionCount": 16,
       "options": [
         {
           "sourceOptionId": "virtual.martial-soul.beast.4303bc8143e9d39e.a762cc",
@@ -24313,6 +24313,21 @@
         {
           "sourceOptionId": "virtual.martial-soul.beast.4303bc8143e9d39e.eb9533",
           "activeOptionId": "option.legacy.virtual.martial-soul.beast.4303bc8143e9d39e.virtual.martial-soul.beast.4303bc8143e9d39e.eb9533",
+          "semantic": {}
+        },
+        {
+          "sourceOptionId": "virtual.martial-soul.beast.4303bc8143e9d39e.fb5264",
+          "activeOptionId": "option.legacy.virtual.martial-soul.beast.4303bc8143e9d39e.virtual.martial-soul.beast.4303bc8143e9d39e.fb5264",
+          "semantic": {}
+        },
+        {
+          "sourceOptionId": "virtual.martial-soul.beast.4303bc8143e9d39e.9e7418",
+          "activeOptionId": "option.legacy.virtual.martial-soul.beast.4303bc8143e9d39e.virtual.martial-soul.beast.4303bc8143e9d39e.9e7418",
+          "semantic": {}
+        },
+        {
+          "sourceOptionId": "virtual.martial-soul.beast.4303bc8143e9d39e.5aebdf",
+          "activeOptionId": "option.legacy.virtual.martial-soul.beast.4303bc8143e9d39e.virtual.martial-soul.beast.4303bc8143e9d39e.5aebdf",
           "semantic": {}
         },
         {
@@ -24676,26 +24691,11 @@
       "role": "human-encounter",
       "route": "human",
       "trigger": "human-time:selected|story.branch",
-      "sourceOptionCount": 6,
+      "sourceOptionCount": 3,
       "options": [
         {
           "sourceOptionId": "virtual.martial-soul.beast.7955f229c7b0da94.d350b7",
           "activeOptionId": "option.legacy.virtual.martial-soul.beast.7955f229c7b0da94.virtual.martial-soul.beast.7955f229c7b0da94.d350b7",
-          "semantic": {}
-        },
-        {
-          "sourceOptionId": "virtual.martial-soul.beast.7955f229c7b0da94.fb5264",
-          "activeOptionId": "option.legacy.virtual.martial-soul.beast.7955f229c7b0da94.virtual.martial-soul.beast.7955f229c7b0da94.fb5264",
-          "semantic": {}
-        },
-        {
-          "sourceOptionId": "virtual.martial-soul.beast.7955f229c7b0da94.9e7418",
-          "activeOptionId": "option.legacy.virtual.martial-soul.beast.7955f229c7b0da94.virtual.martial-soul.beast.7955f229c7b0da94.9e7418",
-          "semantic": {}
-        },
-        {
-          "sourceOptionId": "virtual.martial-soul.beast.7955f229c7b0da94.5aebdf",
-          "activeOptionId": "option.legacy.virtual.martial-soul.beast.7955f229c7b0da94.virtual.martial-soul.beast.7955f229c7b0da94.5aebdf",
           "semantic": {}
         },
         {

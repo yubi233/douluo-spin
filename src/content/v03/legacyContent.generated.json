@@ -3904,6 +3904,9 @@
         "entity.legacy.martial-soul.a84839bd752d835f",
         "entity.legacy.martial-soul.2aef77641cc3997b",
         "entity.legacy.martial-soul.e141ff681ae5afee",
+        "entity.legacy.martial-soul.0331c542e9fada0e",
+        "entity.legacy.martial-soul.d64521da4641fda4",
+        "entity.legacy.martial-soul.1ca4172c401e2571",
         "entity.legacy.martial-soul.8b710fb22d0a292f",
         "entity.legacy.martial-soul.29a8b5ad24d34dfa"
       ]
@@ -4000,9 +4003,6 @@
       "category": "其他奇兽",
       "martialSoulEntityIds": [
         "entity.legacy.martial-soul.860c18010d7c0bb8",
-        "entity.legacy.martial-soul.0331c542e9fada0e",
-        "entity.legacy.martial-soul.d64521da4641fda4",
-        "entity.legacy.martial-soul.1ca4172c401e2571",
         "entity.legacy.martial-soul.1fc4b706d4e6fa9b",
         "entity.legacy.martial-soul.44415b9eccdf8f2c"
       ]
@@ -89520,7 +89520,7 @@
           },
           "mechanics": {
             "enabled": true,
-            "baseWeight": 13,
+            "baseWeight": 16,
             "effects": [
               {
                 "type": "signal.emit",
@@ -89632,7 +89632,7 @@
           },
           "mechanics": {
             "enabled": true,
-            "baseWeight": 6,
+            "baseWeight": 3,
             "effects": [
               {
                 "type": "signal.emit",
@@ -91307,6 +91307,69 @@
           }
         },
         {
+          "id": "option.legacy.virtual.martial-soul.beast.4303bc8143e9d39e.virtual.martial-soul.beast.4303bc8143e9d39e.fb5264",
+          "presentation": {
+            "title": "路边的野狗"
+          },
+          "mechanics": {
+            "enabled": true,
+            "baseWeight": 1,
+            "effects": [
+              {
+                "type": "entity.grant",
+                "entityType": "martial-soul",
+                "entityId": "entity.legacy.martial-soul.0331c542e9fada0e"
+              },
+              {
+                "type": "signal.emit",
+                "signalId": "signal.setup.martial-soul-selected"
+              }
+            ]
+          }
+        },
+        {
+          "id": "option.legacy.virtual.martial-soul.beast.4303bc8143e9d39e.virtual.martial-soul.beast.4303bc8143e9d39e.9e7418",
+          "presentation": {
+            "title": "萨摩耶"
+          },
+          "mechanics": {
+            "enabled": true,
+            "baseWeight": 1,
+            "effects": [
+              {
+                "type": "entity.grant",
+                "entityType": "martial-soul",
+                "entityId": "entity.legacy.martial-soul.d64521da4641fda4"
+              },
+              {
+                "type": "signal.emit",
+                "signalId": "signal.setup.martial-soul-selected"
+              }
+            ]
+          }
+        },
+        {
+          "id": "option.legacy.virtual.martial-soul.beast.4303bc8143e9d39e.virtual.martial-soul.beast.4303bc8143e9d39e.5aebdf",
+          "presentation": {
+            "title": "阿拉斯加"
+          },
+          "mechanics": {
+            "enabled": true,
+            "baseWeight": 1,
+            "effects": [
+              {
+                "type": "entity.grant",
+                "entityType": "martial-soul",
+                "entityId": "entity.legacy.martial-soul.1ca4172c401e2571"
+              },
+              {
+                "type": "signal.emit",
+                "signalId": "signal.setup.martial-soul-selected"
+              }
+            ]
+          }
+        },
+        {
           "id": "option.legacy.virtual.martial-soul.beast.4303bc8143e9d39e.virtual.martial-soul.beast.4303bc8143e9d39e.canon.61c3739d9c88fde8.8b710fb22d0a292f",
           "presentation": {
             "title": "疾风双头狼"
@@ -92523,69 +92586,6 @@
                 "type": "entity.grant",
                 "entityType": "martial-soul",
                 "entityId": "entity.legacy.martial-soul.860c18010d7c0bb8"
-              },
-              {
-                "type": "signal.emit",
-                "signalId": "signal.setup.martial-soul-selected"
-              }
-            ]
-          }
-        },
-        {
-          "id": "option.legacy.virtual.martial-soul.beast.7955f229c7b0da94.virtual.martial-soul.beast.7955f229c7b0da94.fb5264",
-          "presentation": {
-            "title": "路边的野狗"
-          },
-          "mechanics": {
-            "enabled": true,
-            "baseWeight": 1,
-            "effects": [
-              {
-                "type": "entity.grant",
-                "entityType": "martial-soul",
-                "entityId": "entity.legacy.martial-soul.0331c542e9fada0e"
-              },
-              {
-                "type": "signal.emit",
-                "signalId": "signal.setup.martial-soul-selected"
-              }
-            ]
-          }
-        },
-        {
-          "id": "option.legacy.virtual.martial-soul.beast.7955f229c7b0da94.virtual.martial-soul.beast.7955f229c7b0da94.9e7418",
-          "presentation": {
-            "title": "萨摩耶"
-          },
-          "mechanics": {
-            "enabled": true,
-            "baseWeight": 1,
-            "effects": [
-              {
-                "type": "entity.grant",
-                "entityType": "martial-soul",
-                "entityId": "entity.legacy.martial-soul.d64521da4641fda4"
-              },
-              {
-                "type": "signal.emit",
-                "signalId": "signal.setup.martial-soul-selected"
-              }
-            ]
-          }
-        },
-        {
-          "id": "option.legacy.virtual.martial-soul.beast.7955f229c7b0da94.virtual.martial-soul.beast.7955f229c7b0da94.5aebdf",
-          "presentation": {
-            "title": "阿拉斯加"
-          },
-          "mechanics": {
-            "enabled": true,
-            "baseWeight": 1,
-            "effects": [
-              {
-                "type": "entity.grant",
-                "entityType": "martial-soul",
-                "entityId": "entity.legacy.martial-soul.1ca4172c401e2571"
               },
               {
                 "type": "signal.emit",

@@ -55,7 +55,7 @@ export function classifyBeastMartialSoul(option: WheelOption): BeastMartialSoulC
   if (/地龙|霸王龙|迅猛龙|翼龙|蛇颈龙|剑龙|甲龙|白甲地龙|山龙王/.test(name)) return '亚龙族'
   if (/龙|青龙/.test(name)) return '龙族'
   if (/虎|狮|豹|猫|又旅/.test(name)) return '猫科'
-  if (/狼|狐|獒|犀犬/.test(name)) return '犬狼狐'
+  if (/狼|狐|獒|犬|狗|萨摩耶|阿拉斯加/.test(name)) return '犬狼狐'
   if (/凤凰|燕|天鹅|翼龙|狮鹫|天使|鹰|鸾/.test(name)) return '鸟禽飞行'
   if (/蛇|龟|玄武|鳄|蛇颈龙|甲龙|矶抚/.test(name)) return '爬行水生'
   if (/蚁|蝎|蚕|蛛|蜘蛛|蝶|重明/.test(name)) return '虫蛛节肢'

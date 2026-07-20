@@ -21,7 +21,7 @@ import { settleProcesses, type ProcessManager } from '@/core/processes/processMa
 import { soulRingProcess } from '@/core/processes/soulRingProcess'
 import { seaGodProcess } from '@/core/processes/seaGodProcess'
 import { storyTimelineProcess } from '@/core/processes/storyTimelineProcess'
-import { hashSeed } from '@/core/random/random'
+import { hashSeed, nextRandom } from '@/core/random/random'
 import { applyBatch, createInitialGameState } from '@/core/reducer/reducer'
 import { canExecuteCommand } from '@/core/statechart/gameLifecycle'
 import type { PolicyRegistry } from '@/core/rules/evaluate'
@@ -132,9 +132,37 @@ export class GameService {
       }
     }
     if (index < 0) throw new InvalidCommandError(`${command.type}:empty`, this.#state.phase)
+    const removedBatch = this.#batches[index]!
     this.#batches = this.#batches.slice(0, index)
     this.#state = this.#batches.reduce(applyBatch, createInitialGameState(this.content.manifest.contentVersion))
-    return { batch: null }
+    const rngAfter = this.rerollState(removedBatch)
+    const batch: EventBatch = {
+      turnId: turnId(`turn.${String(this.#batches.length + 1).padStart(6, '0')}`),
+      command: command.type,
+      contentVersion: this.content.manifest.contentVersion,
+      rngBefore: this.#state.random.state,
+      rngAfter,
+      events: [],
+    }
+    this.#state = applyBatch(this.#state, batch)
+    this.#batches = [...this.#batches, batch]
+    return { batch: structuredClone(batch) }
+  }
+
+  private rerollState(removedBatch: EventBatch): number {
+    const previous = removedBatch.events.find((event) => event.type === 'option.selected')
+    const task = this.#state.agenda[0]
+    const pool = task ? this.content.mechanics.pools.get(task.poolId) : undefined
+    const firstSkippedState = nextRandom(this.#state.random.state).state
+    if (!previous || previous.type !== 'option.selected' || !task || !pool || pool.id !== previous.poolId) return firstSkippedState
+
+    let candidateState = firstSkippedState
+    for (let attempt = 0; attempt < 256; attempt += 1) {
+      const preview = draw(pool, { ...this.#state, random: { ...this.#state.random, state: candidateState } }, this.policies, task.candidateOptionIds)
+      if (preview.candidate.optionId !== previous.optionId) return candidateState
+      candidateState = preview.nextRng
+    }
+    return firstSkippedState
   }
 
   private commit(command: GameCommand, initialEvents: readonly DomainEvent[], rngAfter: number): CommandReceipt {

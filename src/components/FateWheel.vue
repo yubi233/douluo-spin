@@ -16,6 +16,7 @@ const props = defineProps<{
 defineEmits<{ spin: [] }>()
 
 const canvas = ref<HTMLCanvasElement | null>(null)
+const particleCanvas = ref<HTMLCanvasElement | null>(null)
 const rotation = ref(0)
 const reducedMotion = ref(false)
 const resetInProgress = ref(false)
@@ -24,6 +25,15 @@ let observer: ResizeObserver | null = null
 let resetFrame: number | null = null
 const minLabelAngle = 8 * (Math.PI / 180)
 const optionWeight = (option: WheelOption) => option.weight
+
+// 粒子系统
+interface Particle {
+  x: number; y: number; vx: number; vy: number
+  life: number; maxLife: number; size: number; color: string; alpha: number
+}
+const particles = ref<Particle[]>([])
+let particleFrame: number | null = null
+let particleActive = false
 
 const visibleOptions = computed(() => props.options.length > 0
   ? props.options
@@ -135,6 +145,75 @@ function draw() {
   context.stroke()
 }
 
+// 粒子效果系统
+function spawnParticles(count: number) {
+  const el = particleCanvas.value
+  if (!el) return
+  const size = el.width
+  const center = size / 2
+  const dpr = window.devicePixelRatio
+  const pointerRadius = center * 0.92
+  const goldColors = ['#d8bc69', '#e8cc79', '#f0d88a', '#c4a54a', '#fff1a8']
+  for (let i = 0; i < count; i++) {
+    const angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.6
+    const dist = pointerRadius + (Math.random() - 0.5) * 20 * dpr
+    particles.value.push({
+      x: center + Math.cos(angle) * dist,
+      y: center + Math.sin(angle) * dist,
+      vx: (Math.random() - 0.5) * 2 * dpr,
+      vy: (Math.random() - 0.5) * 2 * dpr - 1.5 * dpr,
+      life: 0,
+      maxLife: 30 + Math.random() * 40,
+      size: (1.5 + Math.random() * 2.5) * dpr,
+      color: goldColors[Math.floor(Math.random() * goldColors.length)]!,
+      alpha: 0.8 + Math.random() * 0.2,
+    })
+  }
+}
+
+function drawParticles() {
+  const el = particleCanvas.value
+  if (!el) return
+  const ctx = el.getContext('2d')
+  if (!ctx) return
+  ctx.clearRect(0, 0, el.width, el.height)
+  const alive: Particle[] = []
+  for (const p of particles.value) {
+    p.life++
+    if (p.life >= p.maxLife) continue
+    p.x += p.vx
+    p.y += p.vy
+    p.vy -= 0.02 * window.devicePixelRatio
+    const progress = p.life / p.maxLife
+    const fade = progress < 0.2 ? progress / 0.2 : 1 - (progress - 0.2) / 0.8
+    ctx.globalAlpha = p.alpha * fade
+    ctx.fillStyle = p.color
+    ctx.beginPath()
+    ctx.arc(p.x, p.y, p.size * (1 - progress * 0.5), 0, Math.PI * 2)
+    ctx.fill()
+    alive.push(p)
+  }
+  ctx.globalAlpha = 1
+  particles.value = alive
+  if (alive.length > 0 || particleActive) {
+    particleFrame = window.requestAnimationFrame(drawParticles)
+  }
+}
+
+function startParticles() {
+  particleActive = true
+  spawnParticles(6)
+  const burstInterval = setInterval(() => {
+    if (!particleActive) { clearInterval(burstInterval); return }
+    spawnParticles(3)
+  }, 80)
+  setTimeout(() => {
+    clearInterval(burstInterval)
+    particleActive = false
+  }, props.duration + 200)
+  drawParticles()
+}
+
 function optionIndexAt(event: MouseEvent) {
   const element = canvas.value
   if (!element) return -1
@@ -187,6 +266,8 @@ watch(() => props.spinNonce, () => {
   const target = targetRotationForSegment(weights, props.selectedIndex, visualRandom())
   const fullTurns = 5 + Math.floor(visualRandom() * 4)
   rotation.value = advanceWheelRotation(rotation.value, target, fullTurns)
+  // 触发粒子效果
+  if (!reducedMotion.value) startParticles()
 })
 
 function resetRotation() {
@@ -209,7 +290,13 @@ onMounted(() => {
   const query = window.matchMedia('(prefers-reduced-motion: reduce)')
   reducedMotion.value = query.matches
   query.addEventListener('change', (event) => { reducedMotion.value = event.matches })
-  observer = new ResizeObserver(draw)
+  observer = new ResizeObserver(() => {
+    draw()
+    // 同步粒子 canvas 尺寸
+    const pc = particleCanvas.value
+    const mc = canvas.value
+    if (pc && mc) { pc.width = mc.width; pc.height = mc.height }
+  })
   if (canvas.value) observer.observe(canvas.value)
   draw()
 })
@@ -217,6 +304,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
   observer?.disconnect()
   if (resetFrame != null) window.cancelAnimationFrame(resetFrame)
+  if (particleFrame != null) window.cancelAnimationFrame(particleFrame)
+  particleActive = false
 })
 </script>
 
@@ -228,6 +317,11 @@ onBeforeUnmount(() => {
       class="wheel-canvas"
       :style="{ transform: `rotate(${rotation}deg)`, transitionDuration: `${resetInProgress ? 0 : reducedMotion ? Math.min(duration, 100) : duration}ms` }"
       @click="inspect"
+    />
+    <canvas
+      ref="particleCanvas"
+      class="wheel-particles"
+      aria-hidden="true"
     />
     <div
       v-if="inspected && inspectedOption"
