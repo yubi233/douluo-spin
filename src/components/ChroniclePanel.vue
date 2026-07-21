@@ -34,7 +34,7 @@ const copyTitle = computed(() => {
 <template>
   <section class="panel chronicle-panel">
     <header class="panel-header">
-      <div><p class="eyebrow">历程</p><h2>命运纪事</h2></div>
+      <div><p class="eyebrow">历程</p><h2>模拟纪事</h2></div>
       <span class="record-count">{{ filtered.length }} 条</span>
     </header>
     <div class="chronicle-tools">
@@ -62,7 +62,7 @@ const copyTitle = computed(() => {
           <div><header><strong>{{ entry.title }}</strong><time>{{ entry.characterStatus }}</time></header><p>{{ entry.text }}</p></div>
         </article>
       </section>
-      <p v-if="!filtered.length" class="empty-state">还没有符合条件的命运纪事。</p>
+      <p v-if="!filtered.length" class="empty-state">还没有符合条件的模拟纪事。</p>
     </div>
   </section>
 </template>

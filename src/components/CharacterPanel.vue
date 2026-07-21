@@ -70,7 +70,7 @@ const ringDetails = computed(() => props.context.rings.map((ring) => ({
       <div class="avatar" aria-hidden="true">{{ context.beast ? '兽' : context.route === 'transformed' ? '化' : '魂' }}</div>
       <div class="identity-copy">
         <strong>{{ routeLabel }}</strong>
-        <span>{{ context.seed ? `种子 ${context.seed}` : '等待命运启封' }}</span>
+        <span>{{ context.seed ? `种子 ${context.seed}` : '等待模拟启封' }}</span>
       </div>
       <div class="power-value">
         <strong>{{ powerValue }}</strong>

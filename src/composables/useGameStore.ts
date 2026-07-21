@@ -125,7 +125,7 @@ function scheduleAutoSpin() {
 
 function toggleAuto(turbo = false) {
   if (isAuto.value) return stopAuto()
-  if (turbo && !window.confirm('确定开启极速结算？将自动快速完成所有命运步骤。')) return
+  if (turbo && !window.confirm('确定开启极速结算？将自动快速完成所有模拟步骤。')) return
   isAuto.value = true
   isTurbo.value = turbo
   void spin()
@@ -184,7 +184,7 @@ function importSave(content: string): boolean {
 }
 
 function exportSave() {
-  downloadText(`斗罗大陆命运存档_${safeFileName(context.value.seed)}.json`, serializeSave(contentService.content.manifest.contentVersion, gameService.eventLog), 'application/json')
+  downloadText(`斗罗大陆模拟存档_${safeFileName(context.value.seed)}.json`, serializeSave(contentService.content.manifest.contentVersion, gameService.eventLog), 'application/json')
 }
 
 function biography() { return formatBiography(context.value) }
@@ -268,8 +268,8 @@ const canUndo = computed(() => {
   return gameService.eventLog.some((batch) => batch.command === 'turn.spin') && !isBusy.value
 })
 const routeLabel = computed(() => ({ human: '人类魂师', beast: '魂兽', transformed: '化形魂师' })[context.value.route ?? 'human'])
-const phaseLabel = computed(() => ({ idle: '尚未启封', 'setup.human': '人类基础设定', 'setup.beast': '魂兽基础设定', 'setup.transformed': '化形重塑', 'adventure.human': '人类命运推进', 'adventure.beast': '魂兽命运推进', 'adventure.transformed': '化形命运推进', 'god-trial': '神考进行中', ended: '命运终章' })[serviceState.value.phase])
-const taskTitle = computed(() => wheelTask.value?.pool ?? (serviceState.value.phase === 'ended' ? '本轮旅程已经结束' : '展开下一段命运'))
+const phaseLabel = computed(() => ({ idle: '尚未启封', 'setup.human': '人类基础设定', 'setup.beast': '魂兽基础设定', 'setup.transformed': '化形重塑', 'adventure.human': '人类模拟推进', 'adventure.beast': '魂兽模拟推进', 'adventure.transformed': '化形模拟推进', 'god-trial': '神考进行中', ended: '模拟终章' })[serviceState.value.phase])
+const taskTitle = computed(() => wheelTask.value?.pool ?? (serviceState.value.phase === 'ended' ? '本轮旅程已经结束' : '展开下一段模拟'))
 const displayResult = computed(() => soften(context.value.lastResult || '等待第一次转动。', settings.value.softenText))
 const displayLogs = computed(() => context.value.logs.map((entry) => ({ ...entry, text: soften(entry.text, settings.value.softenText) })))
 const overrideCount = computed(() => { revision.value; return contentService.count })

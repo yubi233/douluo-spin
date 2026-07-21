@@ -29,12 +29,12 @@ async function recordFlow(page: Page, testInfo: TestInfo) {
 }
 
 async function start(page: Page, route: 'human' | 'beast', seed: string) {
-  await expect(page).toHaveTitle(/斗罗大陆.*命运轮盘/)
+  await expect(page).toHaveTitle(/我的斗罗模拟器/)
   await page.locator('.seed-field input').fill(seed)
   await page.getByRole('button', { name: route === 'human' ? '人类魂师' : '魂兽肉鸽' }).click()
   await expect(page.getByRole('dialog', { name: '选择起始路线' })).toBeHidden()
   await expect(page.locator('.character-summary strong')).toHaveText(/^斗罗历\d+(?:\.\d)?年$/)
-  await expect(page.locator('.task-header h2')).not.toHaveText('展开下一段命运')
+  await expect(page.locator('.task-header h2')).not.toHaveText('展开下一段模拟')
 }
 
 async function speedUp(page: Page) {
@@ -44,7 +44,7 @@ async function speedUp(page: Page) {
 }
 
 async function spinOnce(page: Page) {
-  await page.getByRole('button', { name: '转动命运轮盘' }).click()
+  await page.getByRole('button', { name: '转动模拟轮盘' }).click()
   await expect(page.locator('.result-panel small')).toContainText(/第 \d+ 次投掷/, { timeout: 5_000 })
 }
 
@@ -125,16 +125,16 @@ test('desktop: lethal human and untransformed beast journeys keep their route-sp
   await start(page, 'human', 'v03-human-28')
   page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: '极速结算' }).click()
-  await expect(page.locator('.ending-banner')).toContainText('命运断绝', { timeout: 20_000 })
+  await expect(page.locator('.ending-banner')).toContainText('模拟断绝', { timeout: 20_000 })
   await expect(page.locator('.character-summary')).toContainText('已陨落')
 
-  await page.getByRole('button', { name: '新命运' }).click()
+  await page.getByRole('button', { name: '新模拟' }).click()
   await page.locator('.seed-field input').fill('v03-beast-2')
   await page.getByRole('button', { name: '魂兽肉鸽' }).click()
   await expect(page.getByRole('dialog', { name: '选择起始路线' })).toBeHidden()
   page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: '极速结算' }).click()
-  await expect(page.locator('.ending-banner')).toContainText('命运断绝', { timeout: 20_000 })
+  await expect(page.locator('.ending-banner')).toContainText('模拟断绝', { timeout: 20_000 })
   await expect(page.locator('.character-summary')).toContainText('魂兽')
 })
 
@@ -243,7 +243,7 @@ test('desktop: responsive viewport matrix keeps the primary controls visible', a
     if (await page.locator('.app-shell').getAttribute('data-layout') !== target) {
       await page.getByRole('button', { name: target === 'mobile' ? '切换为移动端布局' : '切换为 PC 布局' }).click()
     }
-    await expect(page.getByRole('button', { name: '转动命运轮盘' })).toBeVisible()
+    await expect(page.getByRole('button', { name: '转动模拟轮盘' })).toBeVisible()
     const dimensions = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, viewport: window.innerWidth }))
     expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.viewport)
   }

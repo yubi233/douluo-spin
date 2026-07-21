@@ -26,10 +26,10 @@ const currentOptions = computed<readonly WheelOptionView[]>(() => [...store.whee
 const editorModified = computed(() => Boolean(store.activePool.value && store.isPoolModified(store.activePool.value.id)))
 const recentLogs = computed(() => store.displayLogs.value.slice(-3).reverse())
 const statusText = computed(() => {
-  if (store.isBusy.value) return `命运转动中 · 第 ${store.context.value.step + 1} 步`
+  if (store.isBusy.value) return `模拟转动中 · 第 ${store.context.value.step + 1} 步`
   if (store.isAuto.value) return store.isTurbo.value ? '极速推进中' : '自动推进中'
-  if (store.awaitingAdvance.value) return '查看本次命运'
-  if (store.machine.value.value === 'ending') return '命运已完结'
+  if (store.awaitingAdvance.value) return '查看本次模拟'
+  if (store.machine.value.value === 'ending') return '模拟已完结'
   return store.isStarted.value ? '待命' : '尚未开始'
 })
 const resultTone = computed(() => {
@@ -99,7 +99,7 @@ function setLayoutMode(mode: 'desktop' | 'mobile') {
     <header class="topbar">
       <div class="brand">
         <span class="brand-mark"><Sparkles :size="22" /></span>
-        <div><h1>斗罗大陆 · 命运轮盘</h1><p>自动剧情与肉鸽成长模拟器</p></div>
+        <div><h1>我的斗罗模拟器</h1><p>自动剧情与肉鸽成长模拟器</p></div>
       </div>
       <div class="top-actions">
         <span class="status"><i :class="{ active: store.isBusy.value || store.isAuto.value }" />{{ statusText }}</span>
@@ -119,7 +119,7 @@ function setLayoutMode(mode: 'desktop' | 'mobile') {
           @export-chronicle="store.exportChronicle"
           @clear-overrides="clearOverrides"
         />
-        <button class="button primary" @click="store.openStart"><Sparkles :size="17" />新命运</button>
+        <button class="button primary" @click="store.openStart"><Sparkles :size="17" />新模拟</button>
       </div>
     </header>
     <p v-if="importStatus" class="import-toast" role="status">{{ importStatus }}</p>
@@ -132,7 +132,7 @@ function setLayoutMode(mode: 'desktop' | 'mobile') {
     <main class="main-grid">
       <section class="panel stage-panel" :class="{ 'mobile-hidden': mobileTab !== 'stage' }">
         <header class="task-header">
-          <div><p class="eyebrow">{{ store.phaseLabel.value }}</p><h2>{{ store.taskTitle.value }}</h2><span>{{ store.activePool.value ? `${currentOptions.length} 个当前候选结果` : '命运尚未展开' }}</span></div>
+          <div><p class="eyebrow">{{ store.phaseLabel.value }}</p><h2>{{ store.taskTitle.value }}</h2><span>{{ store.activePool.value ? `${currentOptions.length} 个当前候选结果` : '模拟尚未展开' }}</span></div>
           <button class="button editor-entry" :disabled="!store.activePool.value || store.isBusy.value || store.awaitingAdvance.value" @click="openEditor"><Pencil :size="16" />修改</button>
         </header>
         <div class="stage-content">
@@ -148,13 +148,13 @@ function setLayoutMode(mode: 'desktop' | 'mobile') {
           />
           <div class="stage-feedback">
             <div class="result-panel" :data-tone="resultTone">
-              <span>本次命运</span><p>{{ store.displayResult.value }}</p>
+              <span>本次模拟</span><p>{{ store.displayResult.value }}</p>
               <small v-if="store.context.value.lastPool">{{ store.context.value.lastPool }} · 第 {{ store.context.value.step }} 次投掷<template v-if="store.context.value.lastProbability != null"> · 概率 {{ (store.context.value.lastProbability * 100).toFixed(2) }}%</template></small>
             </div>
-            <section class="recent-log"><header><span>最近经历</span><small>{{ recentLogs.length }} 条</small></header><p v-for="entry in recentLogs" :key="entry.id"><strong>{{ entry.title }}</strong>{{ entry.text }}</p><p v-if="!recentLogs.length" class="empty">转动命运轮盘后，这里会显示最近经历。</p></section>
+            <section class="recent-log"><header><span>最近经历</span><small>{{ recentLogs.length }} 条</small></header><p v-for="entry in recentLogs" :key="entry.id"><strong>{{ entry.title }}</strong>{{ entry.text }}</p><p v-if="!recentLogs.length" class="empty">转动模拟轮盘后，这里会显示最近经历。</p></section>
           </div>
         </div>
-        <div class="play-controls" aria-label="命运推进操作">
+        <div class="play-controls" aria-label="模拟推进操作">
           <button class="button gold" :disabled="!store.isStarted.value || store.isBusy.value || store.isAuto.value || store.machine.value.value === 'ending'" @click="advanceOrSpin"><Play :size="17" />{{ store.awaitingAdvance.value ? '进入下一项' : '继续剧情' }}</button>
           <button class="button primary" :disabled="store.isBusy.value || store.machine.value.value === 'ending'" @click="store.toggleAuto(false)"><Pause v-if="store.isAuto.value && !store.isTurbo.value" :size="17" /><Play v-else :size="17" />{{ store.isAuto.value && !store.isTurbo.value ? '暂停自动' : '自动推进' }}</button>
           <button class="button" :disabled="store.isBusy.value || store.machine.value.value === 'ending'" @click="store.toggleAuto(true)"><Pause v-if="store.isAuto.value && store.isTurbo.value" :size="17" /><FastForward v-else :size="17" />{{ store.isAuto.value && store.isTurbo.value ? '暂停极速' : '极速结算' }}</button>
@@ -184,5 +184,5 @@ function setLayoutMode(mode: 'desktop' | 'mobile') {
   <input ref="importOverridesInput" class="sr-only" type="file" accept="application/json,.json" aria-label="导入转盘覆盖文件" @change="handleOverridesImport" />
   <StartDialog :open="store.isStartOpen.value || !store.isStarted.value" :cancellable="store.isStarted.value" @start="store.start" @cancel="store.cancelStart" />
   <WheelEditorDialog :open="editorOpen" :pool="store.activePool.value" :modified="editorModified" :external-error="editorError" :catalog="store.editorCatalog.value" :preview="store.previewWheelOverride" @close="editorOpen = false" @apply="applyEditor" @reset="resetEditor" />
-  <div v-if="store.machine.value.value === 'ending'" class="ending-banner" role="status"><div><span>{{ store.context.value.alive ? '命运终章' : '命运断绝' }}</span><strong>{{ store.context.value.ending }}</strong></div><button class="button primary" @click="store.openStart"><Sparkles :size="17" />再来一局</button></div>
+  <div v-if="store.machine.value.value === 'ending'" class="ending-banner" role="status"><div><span>{{ store.context.value.alive ? '模拟终章' : '模拟断绝' }}</span><strong>{{ store.context.value.ending }}</strong></div><button class="button primary" @click="store.openStart"><Sparkles :size="17" />再来一局</button></div>
 </template>

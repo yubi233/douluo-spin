@@ -23,7 +23,7 @@ function onKeydown(event: KeyboardEvent, index: number) {
 </script>
 
 <template>
-  <div class="mobile-tabs" role="tablist" aria-label="命运信息视图" :data-tab="modelValue">
+  <div class="mobile-tabs" role="tablist" aria-label="模拟信息视图" :data-tab="modelValue">
     <button
       v-for="(tab, index) in values"
       :key="tab"

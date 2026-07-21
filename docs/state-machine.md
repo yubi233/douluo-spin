@@ -4,7 +4,7 @@
 
 | `GamePhase` | 责任 | 可执行核心命令 |
 |---|---|---|
-| `idle` | 未创建命运 | `run.start` |
+| `idle` | 未创建模拟 | `run.start` |
 | `setup.human` | 性别、容貌、武魂、年龄、时期、魂力、势力 | `turn.spin` |
 | `setup.beast` | 时期、性别、修为、类型、种族、区域 | `turn.spin` |
 | `setup.transformed` | 化形后的性别、容貌和势力 | `turn.spin` |

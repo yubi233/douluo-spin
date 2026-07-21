@@ -38,7 +38,7 @@ export const progressionEntities: readonly EntitySource[] = [
 ]
 
 export const progressionEndings: readonly EndingSource[] = [
-  { id: endingId('ending.death'), alive: false, presentation: { title: '命运断绝', description: '在成长旅途中陨落。' } },
+  { id: endingId('ending.death'), alive: false, presentation: { title: '模拟断绝', description: '在成长旅途中陨落。' } },
   { id: endingId('ending.god-ascension'), alive: true, presentation: { title: '百级成神', description: '完成神考，踏入神界。' } },
   { id: endingId('ending.beast-ascension'), alive: true, presentation: { title: '兽域飞升', description: '渡过百万年神劫，凝聚兽域权柄。' } },
   { id: endingId('ending.beast-immortal'), alive: true, presentation: { title: '百万年长生', description: '渡过百万年神劫，但未能自创兽神神位。' } },

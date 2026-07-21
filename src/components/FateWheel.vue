@@ -37,7 +37,7 @@ let particleActive = false
 
 const visibleOptions = computed(() => props.options.length > 0
   ? props.options
-  : ['斗罗大陆', '命运', '武魂', '魂兽', '神考', '雷劫'].map((name, index) => ({ id: String(index), name, enabled: true, weight: 1, probability: 1 / 6, effects: [] })))
+  : ['斗罗大陆', '模拟', '武魂', '魂兽', '神考', '雷劫'].map((name, index) => ({ id: String(index), name, enabled: true, weight: 1, probability: 1 / 6, effects: [] })))
 const inspectedOption = computed(() => inspected.value ? visibleOptions.value[inspected.value.index] : null)
 const inspectedProbability = computed(() => {
   const option = inspectedOption.value
@@ -331,7 +331,7 @@ onBeforeUnmount(() => {
       <strong>{{ inspectedOption.name }}</strong>
       <span>概率 {{ (inspectedProbability * 100).toFixed(2) }}% · 权重 {{ optionWeight(inspectedOption) }}</span>
     </div>
-    <button class="wheel-trigger" :disabled="disabled" :aria-busy="disabled" :aria-label="awaitingAdvance ? '进入下一项' : '转动命运轮盘'" @click="$emit('spin')">
+    <button class="wheel-trigger" :disabled="disabled" :aria-busy="disabled" :aria-label="awaitingAdvance ? '进入下一项' : '转动模拟轮盘'" @click="$emit('spin')">
       <span>{{ awaitingAdvance ? '继续' : '转动' }}</span>
       <small>{{ awaitingAdvance ? 'NEXT' : 'SPIN' }}</small>
     </button>

@@ -217,7 +217,7 @@ export function formatBiography(view: GameViewModel): string {
   return [
     `# ${view.name}的人物传记`,
     '',
-    `命运种子：${view.seed}`,
+    `模拟种子：${view.seed}`,
     `路线：${view.route ?? '未开始'}`,
     `终局：${view.ending || '旅程进行中'}`,
     `当前历法：${formatDouluoDate(view.tangAge ?? 0)}`,
@@ -239,7 +239,7 @@ export function formatBiography(view: GameViewModel): string {
     '## 斗罗历关键节点',
     ...DOULUO_CALENDAR_MILESTONES.map((milestone) => `- ${formatDouluoDate(milestone.tangAge)}：${milestone.title}`),
     '',
-    '## 命运纪事',
+    '## 模拟纪事',
     ...formatBiographyChronicle(view.logs),
   ].join('\n')
 }

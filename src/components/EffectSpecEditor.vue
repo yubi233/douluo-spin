@@ -25,7 +25,7 @@ function updateEntityType(value: string) {
 
 <template>
   <div class="effect-editor">
-    <label><span>Effect</span><select :value="modelValue.type" @change="replaceType"><option value="stat.change">修改属性</option><option value="entity.grant">授予实体</option><option value="entity.revoke">移除实体</option><option value="time.advance">推进时间</option><option value="signal.emit">发送信号</option><option value="run.finish">结束命运</option></select></label>
+    <label><span>Effect</span><select :value="modelValue.type" @change="replaceType"><option value="stat.change">修改属性</option><option value="entity.grant">授予实体</option><option value="entity.revoke">移除实体</option><option value="time.advance">推进时间</option><option value="signal.emit">发送信号</option><option value="run.finish">结束模拟</option></select></label>
     <template v-if="modelValue.type === 'stat.change'">
       <label><span>属性</span><select :value="modelValue.stat" @change="emit('update:modelValue', { ...modelValue, stat: ($event.target as HTMLSelectElement).value as never })"><option v-for="stat in statIds" :key="stat" :value="stat">{{ stat }}</option></select></label>
       <NumberExpressionEditor :model-value="modelValue.delta" :catalog="catalog" @update:model-value="emit('update:modelValue', { ...modelValue, delta: $event })" />
