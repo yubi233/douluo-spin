@@ -89,7 +89,7 @@ function draw() {
   const center = size / 2
   const radius = center - 8 * window.devicePixelRatio
   const totalWeight = options.reduce((sum, option) => sum + optionWeight(option), 0)
-  const palette = ['#294e50', '#755f2d', '#3e475e', '#6f3e42', '#315a46', '#544367']
+  const palette = ['#4f8db5', '#d7a94c', '#6f80c7', '#b9685f', '#5aa875', '#9a7ac5', '#64aeb0']
   context.clearRect(0, 0, size, size)
 
   let startAngle = -Math.PI / 2
@@ -103,13 +103,13 @@ function draw() {
     context.fillStyle = palette[index % palette.length] ?? '#3e475e'
     context.fill()
     if (inspected.value?.index === index) {
-      context.fillStyle = '#e5ca7044'
+      context.fillStyle = '#f7d78366'
       context.fill()
-      context.strokeStyle = '#fff1a8'
+      context.strokeStyle = '#fff1b8'
       context.lineWidth = 4 * window.devicePixelRatio
       context.stroke()
     }
-    context.strokeStyle = '#d8c47a55'
+    context.strokeStyle = '#fff5d885'
     context.lineWidth = Math.max(1, window.devicePixelRatio)
     context.stroke()
 
@@ -129,7 +129,7 @@ function draw() {
       context.rotate(start + angle / 2)
       context.textAlign = 'right'
       context.textBaseline = 'middle'
-      context.fillStyle = '#f8f5e9'
+      context.fillStyle = '#fffaf0'
       context.font = `${fontSize}px system-ui`
       const label = fitLabel(context, option.name, maxLabelWidth)
       if (label) context.fillText(label, labelRadius, 0)
@@ -140,7 +140,7 @@ function draw() {
 
   context.beginPath()
   context.arc(center, center, radius, 0, Math.PI * 2)
-  context.strokeStyle = '#e5ca70'
+  context.strokeStyle = '#f0c96a'
   context.lineWidth = 3 * window.devicePixelRatio
   context.stroke()
 }
